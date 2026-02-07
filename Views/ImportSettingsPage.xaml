@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pulse_MAUI.Views.ImportSettingsPage"
+             xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+             xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+             xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+             Title="ImportSettingsPage"
+             x:DataType="vm:ImportSettingsPageViewModel">
+
+    <StackLayout Padding="20,20,20,20" Spacing="10">
+        <Label Text="{resources:Translate ImportPage_ImportTitle}"
+        VerticalOptions="CenterAndExpand" 
+        HorizontalOptions="CenterAndExpand" 
+          BackgroundColor="OrangeRed" TextColor="White" />
+
+        <Label Text="Please enter the provided address into the box below and click Import to apply your customer settings to the application. Click Close to restart the application with new settings applied.">
+        </Label>
+
+
+        <Label Text="{Binding ServiceName}" x:Name="lblServiceName"
+        VerticalOptions="CenterAndExpand" 
+        HorizontalOptions="CenterAndExpand" />
+
+        <Entry Text="{Binding Url}" x:Name="txtUrl"  HorizontalOptions="Center"
+        VerticalOptions="CenterAndExpand" WidthRequest="350" />
+
+        <controls:CustomButton x:Name="btnImport"
+                               Command="{Binding ImportSettingsCommand}"
+	                           HorizontalOptions="Center"
+                               Text="{resources:Translate ImportPage_Import}"
+                               WidthRequest="150"/>
+
+        <controls:CustomButton x:Name="btnCancel"
+                               Command="{Binding CancelCommand}"
+	                           HorizontalOptions="Center"
+                               Text="Close"  
+                               WidthRequest="150"/>
+
+    </StackLayout>
+
+
+</ContentPage>
