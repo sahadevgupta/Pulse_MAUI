@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Pulse_MAUI.Helpers;
+using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.ViewModels;
 
 namespace Pulse_MAUI.Controls
@@ -10,11 +11,11 @@ namespace Pulse_MAUI.Controls
 		CustomLabel name, date;
 		Color fontColor;
 
-		public ProfileView(Color fontColor)
+		public ProfileView(IDialogService dialogService,Color fontColor)
 		{
 			this.fontColor = fontColor;
 
-			BindingContext = new ProfilePageViewModel();
+			BindingContext = new ProfilePageViewModel(dialogService);
 
 			SetupUserInterface();
 			SetupBindings();

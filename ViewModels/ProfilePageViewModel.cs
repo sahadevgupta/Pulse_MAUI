@@ -1,4 +1,5 @@
-﻿using Pulse_MAUI.Resources.Languages;
+﻿using Pulse_MAUI.Interfaces;
+using Pulse_MAUI.Resources.Languages;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Pulse_MAUI.ViewModels
             }
         }
 
-        public ProfilePageViewModel()
+        public ProfilePageViewModel(IDialogService dialogService) : base(dialogService) 
         {
             PopulateProfile();
         }

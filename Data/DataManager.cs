@@ -147,6 +147,7 @@ namespace PCATablet.Core.Data
         /// <returns></returns>
         public async Task<IEnumerable<Discipline>> GetAllDisciplines()
         {
+            InitDataManager();
             return await disciplineTable.ToListAsync();
         }
 
@@ -156,6 +157,7 @@ namespace PCATablet.Core.Data
         /// <returns>All activities async.</returns>
         public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
         {
+            InitDataManager();
             return await activityTable
                 .ToListAsync();
         }
@@ -167,6 +169,7 @@ namespace PCATablet.Core.Data
         /// <param name="activity">Activity to get activity tasks for.</param>
         public async Task<IEnumerable<ActivityTask>> GetAllActivityTasksForActivityAsync(Activity activity)
         {
+            InitDataManager();
             return await activityTaskTable
                 .Where(p => p.ActivityId == activity.PCAId)
                 .ToListAsync();
@@ -179,6 +182,7 @@ namespace PCATablet.Core.Data
         /// <param name="id">Identifier.</param>
         public async Task<ActivityTask> GetActivityTaskById(string id)
         {
+            InitDataManager();
             var activityTask = await activityTaskTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -194,6 +198,7 @@ namespace PCATablet.Core.Data
         /// <returns></returns>
         public async Task<Activity> GetActivityById(string id)
         {
+            InitDataManager();
             var activity = await activityTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -207,6 +212,7 @@ namespace PCATablet.Core.Data
         /// <returns>All punch items async.</returns>
         public async Task<IEnumerable<PunchItem>> GetAllPunchItemsAsync()
         {
+            InitDataManager();
             return await punchItemTable
                 .ToListAsync();
         }
@@ -218,6 +224,7 @@ namespace PCATablet.Core.Data
         /// <param name="id">Identifier.</param>
         public async Task<PunchItem> GetPunchItemById(string id)
         {
+            InitDataManager();
             var punchItem = await punchItemTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -231,6 +238,7 @@ namespace PCATablet.Core.Data
         /// <returns>All Engineers async.</returns>
         public async Task<IEnumerable<Engineer>> GetAllEngineersAsync()
         {
+            InitDataManager();
             return await engineerTable
                 .ToListAsync();
         }
@@ -241,6 +249,7 @@ namespace PCATablet.Core.Data
         /// <returns>All Users async.</returns>
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
+            InitDataManager();
             return await userTable
                 .ToListAsync();
         }
@@ -251,6 +260,7 @@ namespace PCATablet.Core.Data
         /// <returns>The all projects async.</returns>
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
+            InitDataManager();
             return await projectTable
                 .ToListAsync();
         }
@@ -261,6 +271,7 @@ namespace PCATablet.Core.Data
         /// <returns>All units async.</returns>
         public async Task<IEnumerable<Unit>> GetAllUnitsAsync()
         {
+            InitDataManager();
             return await unitTable
                 .ToListAsync();
         }
@@ -271,6 +282,7 @@ namespace PCATablet.Core.Data
         /// <returns>All commissioning systems async.</returns>
         public async Task<IEnumerable<CommissioningSystem>> GetAllCommissioningSystemsAsync()
         {
+            InitDataManager();
             return await commissioningSystemTable
                 .ToListAsync();
         }
@@ -281,6 +293,7 @@ namespace PCATablet.Core.Data
         /// <returns>All components async.</returns>
         public async Task<IEnumerable<Component>> GetAllComponentsAsync()
         {
+            InitDataManager();
             return await componentTable
                 .ToListAsync();
         }
@@ -291,6 +304,7 @@ namespace PCATablet.Core.Data
         /// <returns>All lookups async.</returns>
         public async Task<IEnumerable<Lookup>> GetAllLookupsAsync()
         {
+            InitDataManager();
             return await lookupTable
                 .ToListAsync();
         }
@@ -301,6 +315,7 @@ namespace PCATablet.Core.Data
         /// <returns>All lookups async.</returns>
         public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
+            InitDataManager();
             return await itemTable
                 .ToListAsync();
         }
@@ -311,6 +326,7 @@ namespace PCATablet.Core.Data
         /// <returns></returns>
         public async Task<IEnumerable<Equipment>> GetAllEquipmentAsync()
         {
+            InitDataManager();
             return await equipmentTable
                  .ToListAsync();
 
@@ -323,6 +339,7 @@ namespace PCATablet.Core.Data
         /// <returns></returns>
         public async Task<IEnumerable<Priority>> GetAllPriority()
         {
+            InitDataManager();
             return await priorityTable
                  .ToListAsync();
         }
@@ -337,6 +354,7 @@ namespace PCATablet.Core.Data
         /// <param name="activityTask">Activity task to save.</param>
         public async Task SaveActivityTaskAsync(ActivityTask activityTask)
         {
+            InitDataManager();
             await activityTaskTable.ReplaceItemAsync(activityTask);
         }
 
@@ -347,6 +365,7 @@ namespace PCATablet.Core.Data
         /// <returns></returns>
         public async Task SaveActivityAsync(Activity activity)
         {
+            InitDataManager();
             await activityTable.ReplaceItemAsync(activity);
         }
 
@@ -357,6 +376,7 @@ namespace PCATablet.Core.Data
         /// <param name="punchItem">Punch item to save.</param>
         public async Task SavePunchItemAsync(PunchItem punchItem)
         {
+            InitDataManager();
             if (string.IsNullOrEmpty(punchItem.Id))
             {
                 await punchItemTable.InsertItemAsync(punchItem);
@@ -374,6 +394,7 @@ namespace PCATablet.Core.Data
 		/// <param name="Item">Item to save.</param>
         public async Task SaveItemAsync(Item item)
         {
+            InitDataManager();
             if (string.IsNullOrEmpty(item.Id))
             {
                 try
@@ -405,6 +426,7 @@ namespace PCATablet.Core.Data
         /// <param name="Item">Item to delete.</param>
         public async Task DeleteItemAsync(Item item)
         {
+            InitDataManager();
             if (item != null)
             {
                 await itemTable.DeleteItemAsync(item);
@@ -421,6 +443,7 @@ namespace PCATablet.Core.Data
         /// <param name="incremental">Do an incremental or full pull of the data</param>
         public async Task<List<string>> SyncPushAndPullItemsAsync(bool incremental, bool secondPass)
         {
+            InitDataManager();
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
             List<string> Errors = new List<string>();
 
@@ -572,6 +595,7 @@ namespace PCATablet.Core.Data
         /// <returns>async task.</returns>
         public async Task SyncPushAndPurgeAsync()
         {
+            InitDataManager();
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
 
             try
@@ -648,6 +672,7 @@ namespace PCATablet.Core.Data
             string result = "";
             try
             {
+
                 var output = await tableSyncApi.GetAzureConnectionAsync().ConfigureAwait(false);
                 //result = output.Value<string>();
             }

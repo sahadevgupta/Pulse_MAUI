@@ -2,6 +2,7 @@
 using FFImageLoading.Maui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Mopups.Hosting;
 using Pulse_MAUI.Extensions;
 using System.Reflection;
 
@@ -22,6 +23,7 @@ namespace Pulse_MAUI
                 .UseMauiApp<App>()
                 .SetupAppConfig(environment)
                 .UseMauiCommunityToolkit()
+                .ConfigureMopups()
                 .UseFFImageLoading()
                 .InitializeApp()
                 .ConfigureFonts(fonts =>
@@ -30,6 +32,9 @@ namespace Pulse_MAUI
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("Signika-Regular.ttf", "SignikaRegular");
                     fonts.AddFont("Signika-Bold.ttf", "SignikaSemibold");
+
+                    //fontawesome
+                    fonts.AddFont("fa-solid-900.ttf", "MyFont");
                 });
 
 #if DEBUG

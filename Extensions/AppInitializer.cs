@@ -22,22 +22,5 @@ namespace Pulse_MAUI.Extensions
 
             return builder;
         }
-
-        private static MauiAppBuilder RegisterAppServices(this MauiAppBuilder builder)
-        {
-            builder.Services.AddSingleton<IAppConfiguration, AppConfiguration>()
-                            .AddSingleton<IAuthConfig, AppConfiguration>()
-                            .AddSingleton<IAuthDriver, AuthDriver>()
-                            .AddSingleton<ILoginProvider, LoginProvider>()
-                            .AddSingleton<IDataManager,DataManager>()
-                            .AddSingleton<IProjectServices, ProjectServices>()
-                            .AddSingleton<IShellNavigationService, ShellNavigationService>();
-
-            //builder.Services.AddTransient<IViewModelParameters, ViewModelParameters>()
-            //                .AddTransient<IApiServiceBaseParams, ApiServiceBaseParams>()
-            //                .AddTransient<IDialogService, DialogService>();
-
-            return builder;
-        }
     }
 }

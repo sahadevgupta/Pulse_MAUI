@@ -21,7 +21,7 @@ namespace Pulse_MAUI.ViewModels
 
         #endregion
 
-        public ImportSettingsPageViewModel(IDataManager dataManager)
+        public ImportSettingsPageViewModel(IDataManager dataManager, IDialogService dialogService) : base(dialogService)
         {
             _dataManager = dataManager;
         }

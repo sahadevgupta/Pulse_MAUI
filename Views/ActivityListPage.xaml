@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pulse_MAUI.Views.ActivityListPage"
+             xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+             xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+             xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:views="clr-namespace:Pulse_MAUI.Views.ContentViews"
+             Title="{resources:Translate ActivityListPage_Title}">
+    <Grid Padding="10" RowDefinitions="Auto,*">
+        <toolkit:Expander x:Name="expander">
+            <toolkit:Expander.Header>
+                <HorizontalStackLayout Padding="12"
+                                       BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
+                    <Image Source="{x:Static helpers:Images.Filter }"/>
+
+                    <Label Text="{resources:Translate Hide}"
+                           Style="{StaticResource LabelDefaultSignikaRegular}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
+                                         Value="True">
+                                <Setter Property="Text" Value="{resources:Translate Show}"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+
+                </HorizontalStackLayout>
+                                       
+            </toolkit:Expander.Header>
+            <views:ActivitySearchView Margin="0,10"/>
+        </toolkit:Expander>
+
+        <controls:CustomListView x:Name="activitiesList"
+                                 IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
+				HasUnevenRows="true"
+				ItemsSource="{Binding Activities}">
+            <controls:CustomListView.ItemTemplate>
+                <DataTemplate>
+                    <controls:ActivityCell/>
+                </DataTemplate>
+            </controls:CustomListView.ItemTemplate>
+        </controls:CustomListView>
+
+    </Grid>
+</ContentPage>

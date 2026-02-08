@@ -1,6 +1,6 @@
 namespace Pulse_MAUI.Views;
 
-public partial class MenuPage : ContentPage
+public partial class MenuPage : ContentView
 {
 	public MenuPage()
 	{

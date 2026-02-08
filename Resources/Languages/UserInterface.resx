@@ -321,4 +321,10 @@
   <data name="ImportPage_ImportTitle" xml:space="preserve">
     <value>Import Settings</value>
   </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
 </root>

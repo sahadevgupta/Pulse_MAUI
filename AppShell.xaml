@@ -5,13 +5,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Pulse_MAUI"
     xmlns:pages="clr-namespace:Pulse_MAUI.Views"
-    Title="Pulse_MAUI">
+    Title="Pulse_MAUI"
+    FlyoutBehavior="Flyout">
+
+    <Shell.FlyoutHeaderTemplate>
+        <DataTemplate>
+            <pages:MenuPage/>
+        </DataTemplate>
+    </Shell.FlyoutHeaderTemplate>
+
 
     <!-- Flyout Menu -->
-    <FlyoutItem Title="Activities" Route="activities">
-        <ShellContent ContentTemplate="{DataTemplate pages:ImportSettingsPage}" />
+    <FlyoutItem>
+        <ShellContent ContentTemplate="{DataTemplate pages:MenuPage}" />
     </FlyoutItem>
 
-    <ShellContent ContentTemplate="{DataTemplate pages:ImportSettingsPage}"/>
+    <!--<ShellContent ContentTemplate="{DataTemplate pages:MenuPage}"/>-->
 
 </Shell>

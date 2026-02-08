@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pulse_MAUI.Views.ContentViews.ActivitySearchView"
+             xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+             xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+             xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages">
+
+    <Grid BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+	Padding="10" 
+	RowSpacing="0" ColumnSpacing="0">
+        
+        <controls:CustomPicker Title="{resources:Translate SearchView_UnitName}"
+                               ItemsSource="{Binding Units}"
+							   SelectedItem="{Binding SelectedUnit}"/>
+
+        <controls:CustomPicker Title="{resources:Translate SearchView_CommSystemName}"
+                       ItemsSource="{Binding CommSystem}"
+					   SelectedItem="{Binding SelectedCommSystem}"
+                               Grid.Row="1"/>
+
+        <controls:CustomPicker Title="{resources:Translate SearchView_ComponentType}"
+                       ItemsSource="{Binding ComponentTypes}"
+					   SelectedItem="{Binding SelectedComponentType}"
+                               Grid.Row="2"/>
+
+        <controls:CustomPicker Title="{resources:Translate SearchView_ComponentTag}"
+                       ItemsSource="{Binding ComponentTags}"
+					   SelectedItem="{Binding SelectedComponentTag}"
+                               Grid.Row="3"/>
+
+        <controls:CustomPicker Title="{resources:Translate SearchView_ActivityName}"
+                       ItemsSource="{Binding Activities}"
+					   SelectedItem="{Binding SelectedActivity}"
+                               Grid.Row="4"/>
+
+
+        <!--<Label Style="{StaticResource LabelDefaultSignikaRegular}"
+		Grid.Column="0"
+		Grid.Row="0"
+		HorizontalOptions="Start"
+		Text="{resources:Translate SearchView_UnitName}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomSearchPicker
+		Grid.Column="0"
+		Grid.Row="1"
+		HorizontalOptions="Start"
+		ItemsSource="{Binding Units}"
+		SelectedItem="{Binding SelectedUnit}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Default}"
+		Grid.Column="0"
+		Grid.Row="2"
+		HorizontalOptions="Start"
+		Text="{resources:Translate SearchView_CommSystemName}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomSearchPicker
+		Grid.Column="0"
+		Grid.Row="3"
+		HorizontalOptions="Start"
+		ItemsSource="{Binding CommSystem}"
+		SelectedItem="{Binding SelectedCommSystem}"
+		TextColor="White"
+        VerticalOptions="CenterAndExpand"/>
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Default}"
+		Grid.Column="0"
+		Grid.Row="4"
+		HorizontalOptions="Start"
+        VerticalOptions="CenterAndExpand"
+		Text="{resources:Translate SearchView_ComponentType}"
+		TextColor="White"/>
+        <controls:CustomSearchPicker
+		Grid.Column="0"
+		Grid.Row="5"
+		HorizontalOptions="Start"
+		ItemsSource="{Binding ComponentTypes}"
+		SelectedItem="{Binding SelectedComponentType}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Default}"
+		Grid.Column="0"
+		Grid.Row="6"
+		HorizontalOptions="Start"
+		Text="{resources:Translate SearchView_ComponentTag}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomSearchPicker
+		Grid.Column="0"
+		Grid.Row="7"
+		HorizontalOptions="Start"
+		ItemsSource="{Binding ComponentTags}"
+		SelectedItem="{Binding SelectedComponentTag}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Default}"
+		Grid.Column="0"
+		Grid.Row="8"
+		HorizontalOptions="Start"
+		Text="{resources:Translate SearchView_ActivityName}"
+		TextColor="White"
+		VerticalOptions="Center"/>
+        <controls:CustomSearchPicker
+		Grid.Column="0"
+		Grid.Row="9"
+		HorizontalOptions="Start"
+		ItemsSource="{Binding Activities}"
+		SelectedItem="{Binding SelectedActivity}"
+		TextColor="White"
+		VerticalOptions="Center"/>-->
+
+    </Grid>
+
+</ContentView>
