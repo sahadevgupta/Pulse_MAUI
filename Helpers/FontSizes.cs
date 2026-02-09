@@ -33,7 +33,7 @@ namespace Pulse_MAUI.Helpers
 		/// <summary>
 		/// The large font size.
 		/// </summary>
-		public static readonly double Large = 21 * App.SizeFormula;
+		public static readonly double Large = 21 * 1;
 
 
     }

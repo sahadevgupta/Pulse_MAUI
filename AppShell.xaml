@@ -3,23 +3,31 @@
     x:Class="Pulse_MAUI.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
     xmlns:local="clr-namespace:Pulse_MAUI"
-    xmlns:pages="clr-namespace:Pulse_MAUI.Views"
-    Title="Pulse_MAUI"
-    FlyoutBehavior="Flyout">
+    xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+    xmlns:models="clr-namespace:Pulse_MAUI.Models"
+    xmlns:views="clr-namespace:Pulse_MAUI.Views"
+    xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+    Shell.BackgroundColor="Black"
+    Shell.TitleColor="White"
+    Shell.ForegroundColor="White">
 
-    <Shell.FlyoutHeaderTemplate>
+    <!--<Shell.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Shell.Nav
+        </ResourceDictionary>
+    </Shell.Resources>-->
+
+    <Shell.FlyoutContentTemplate>
         <DataTemplate>
-            <pages:MenuPage/>
+            <views:MenuPage />
+            <!-- FULL SCREEN FLYOUT -->
         </DataTemplate>
-    </Shell.FlyoutHeaderTemplate>
+    </Shell.FlyoutContentTemplate>
 
-
-    <!-- Flyout Menu -->
     <FlyoutItem>
-        <ShellContent ContentTemplate="{DataTemplate pages:MenuPage}" />
+        <ShellContent 
+               ContentTemplate="{DataTemplate views:ActivityListPage}" />
     </FlyoutItem>
-
-    <!--<ShellContent ContentTemplate="{DataTemplate pages:MenuPage}"/>-->
-
 </Shell>

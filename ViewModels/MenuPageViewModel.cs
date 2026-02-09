@@ -33,10 +33,7 @@ namespace Pulse_MAUI.ViewModels
         {
             get
             {
-                return string.Format(UserInterface.MenuPage_HelloTitle,
-                                     EngineerService.Instance.CurrentEngineer != null ?
-                                     EngineerService.Instance.CurrentEngineer.Name :
-                                     "N/A");
+                return string.Format("N/A");
             }
 
         }

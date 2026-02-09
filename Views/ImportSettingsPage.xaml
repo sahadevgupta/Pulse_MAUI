@@ -25,13 +25,13 @@
         <Entry Text="{Binding Url}" x:Name="txtUrl"  HorizontalOptions="Center"
         VerticalOptions="CenterAndExpand" WidthRequest="350" />
 
-        <controls:CustomButton x:Name="btnImport"
+        <Button x:Name="btnImport"
                                Command="{Binding ImportSettingsCommand}"
 	                           HorizontalOptions="Center"
                                Text="{resources:Translate ImportPage_Import}"
                                WidthRequest="150"/>
 
-        <controls:CustomButton x:Name="btnCancel"
+        <Button x:Name="btnCancel"
                                Command="{Binding CancelCommand}"
 	                           HorizontalOptions="Center"
                                Text="Close"  

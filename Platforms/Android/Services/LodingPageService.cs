@@ -22,6 +22,9 @@ namespace Pulse_MAUI.Platforms.Android.Services
 
         private void InitLoadingPage()
         {
+            if(Application.Current?.Windows.Any() == false)
+                return;
+
             var page = Application.Current?.Windows[0].Page;
             var loadingView = new LoadingIndicatorView();
             if (page?.Handler != null)

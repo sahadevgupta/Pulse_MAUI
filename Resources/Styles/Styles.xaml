@@ -9,6 +9,12 @@
         <Setter Property="FontSize" Value="{x:Static helpers:FontSizes.Default}"/>
         <Setter Property="VerticalOptions" Value="Center"/>
     </Style>
+
+    <Style TargetType="Label" x:Key="LabelLargeSignikaRegularStockLightBlueStyle"
+           BasedOn="{StaticResource LabelDefaultSignikaRegular}">
+        <Setter Property="FontSize" Value="{x:Static helpers:FontSizes.Large}"/>
+        <Setter Property="TextColor" Value="{x:Static helpers:Colors.StockLightBlue}"/>
+    </Style>
     
     <!--#region MAUI Default Syles-->
     <Style TargetType="ActivityIndicator">
@@ -32,11 +38,11 @@
 
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="BackgroundColor" Value="{x:Static helpers:Colors.StandardOrange}" />
+        <Setter Property="FontFamily" Value="SignikaRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Padding" Value="14,10"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>

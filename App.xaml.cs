@@ -21,5 +21,25 @@ namespace Pulse_MAUI
         {
             return new Window(new AppShell());
         }
+
+        public static void SetSizeFormula(double topMultiplier, float xdpi)
+        {
+
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                sizeFormula = 1;
+            }
+            else
+            {
+
+                if (DeviceInfo.Idiom == DeviceIdiom.Tablet)
+                {
+                    topMultiplier = topMultiplier * 1.5;
+                }
+
+                sizeFormula = topMultiplier / (xdpi / 428);
+
+            }
+        }
     }
 }
