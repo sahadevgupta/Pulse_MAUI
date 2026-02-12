@@ -19,27 +19,29 @@ namespace Pulse_MAUI.ViewModels
     {
         #region [ Properties ]
 
+        readonly IEngineerService _engineerService;
+
         [ObservableProperty]
         ObservableCollection<MenuOption>? _optionsItems;
 
         [ObservableProperty]
         private string? _currenDate = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
 
-        /// <summary>
-        /// Gets the name of the profile.
-        /// </summary>
-        /// <value>The name of the profile.</value>
         public string ProfileName
         {
             get
             {
-                return string.Format("N/A");
+                return string.Format(UserInterface.MenuPage_HelloTitle,
+                                     _engineerService.CurrentEngineer != null ?
+                                     _engineerService.CurrentEngineer.Name :
+                                     "N/A");
             }
 
         }
         #endregion
-        public MenuPageViewModel(IDialogService dialogService) : base(dialogService)
+        public MenuPageViewModel(IDialogService dialogService,IEngineerService engineerService) : base(dialogService)
         {
+            _engineerService = engineerService;
             PopulateOptionsMenu();
 
             App.Current?.Dispatcher.StartTimer(TimeSpan.FromSeconds(1), () =>
@@ -94,13 +96,15 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task FetchData()
         {
-            if (EngineerService.Instance.CurrentEngineer == null)
-                await EngineerService.Instance.FetchCurrentEngineer();
+            if (_engineerService.CurrentEngineer == null)
+                await _engineerService.FetchCurrentEngineer();
+
             if (UserService.Instance.CurrentUser == null)
                 await UserService.Instance.FetchCurrentUser();
 
-            this.OnPropertyChanged("ProfileName");
-            this.OnPropertyChanged("CurrentDate");
+            
+            this.OnPropertyChanged(nameof(ProfileName));
+            this.OnPropertyChanged(nameof(CurrenDate));
         }
 
         [RelayCommand]

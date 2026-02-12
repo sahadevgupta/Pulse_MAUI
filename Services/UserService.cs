@@ -70,7 +70,7 @@ namespace Pulse_MAUI.Services
         {
             try
             {
-                await dataManager.LoginAsync();
+                //await dataManager.LoginAsync();
                 AADAuthenticated = true;
 
             }

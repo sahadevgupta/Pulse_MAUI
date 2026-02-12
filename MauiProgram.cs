@@ -13,7 +13,7 @@ namespace Pulse_MAUI
         public static MauiApp CreateMauiApp()
         {
 #if DEBUG
-        string environment = "PROD";
+        string environment = "DEV";
 #else
 		string environment = "PROD";
 #endif

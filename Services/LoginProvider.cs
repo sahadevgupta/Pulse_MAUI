@@ -1,8 +1,10 @@
 ﻿using Microsoft.Datasync.Client;
 using Newtonsoft.Json.Linq;
 using PCATablet.Core.Data;
+using Pulse_MAUI.Constants;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
+using Pulse_MAUI.Models.Request;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,29 +12,21 @@ using System.Text;
 
 namespace Pulse_MAUI.Services
 {
-    public class LoginProvider(IAuthDriver authDriver, IProjectBackendService backendAPI) : ILoginProvider
+    public class LoginProvider(IAuthService authService) : ILoginProvider
     {
-        public async Task<object> LoginAsync(DatasyncClient client, DataManager dataManager)
+        public async Task<MobileServiceUser> LoginAsync(DatasyncClient client, IDataManager dataManager,string azureMobileServiceUrl)
         {
+            MobileServiceUser user = new();
             try
             {
+                var authResult = await authService.Auth(azureMobileServiceUrl);
 
-                var ar = await authDriver.AuthenticateUser();
-
-                if (ar is object)
+                if (authResult is object)
                 {
-                    //client.CurrentUser = user;
-                    var header = new Dictionary<string, string>
-                    {
-                        { "Authorization", ar.AccessToken! }
-                    };
-                    
-                    var user = await backendAPI.GetUserInfoAsync(header);
+                    user.AuthenticationToken = authResult.ZumoAuthToken;
+                    user.UserId = authResult?.ZumoUserId;
+                    user.UserName = authResult?.UserId;
 
-                    //d.CurrentClient = new MobileServiceClient(client.MobileAppUri, new ReqHandler(ar.Token));
-                    //d.CurrentClient.CurrentUser = user;
-
-                    //user.UserId = ar.Account.Username;
                 }
             }
             catch (Exception ex)
@@ -40,7 +34,7 @@ namespace Pulse_MAUI.Services
                 Debug.WriteLine("MobileServiceUser Login issue : " + ex.StackTrace);
 
             }
-            return null;
+            return user;
         }
 
         public Task LogoutAsync(DatasyncClient client)

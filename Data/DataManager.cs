@@ -10,9 +10,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Activity = Pulse_MAUI.Models.Activity;
 
-namespace PCATablet.Core.Data
+namespace Pulse_MAUI.Data
 {
-    public partial class DataManager(IProjectBackendService tableSyncApi) : IDataManager
+    public partial class DataManager(IProjectServices projectServices) : IDataManager
     {
         private DatasyncClient client;
         private readonly OfflineSQLiteStore localStore;
@@ -121,9 +121,9 @@ namespace PCATablet.Core.Data
         /// Logs the user into the mobile client and server.
         /// </summary>
         /// <returns>async task.</returns>
-        public Task<object> LoginAsync()
+        public async Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl)
         {
-            return loginProvider?.LoginAsync(client, this);
+            return await loginProvider?.LoginAsync(client, this, azureMobileServiceUrl)!;
         }
 
         /// <summary>
@@ -673,7 +673,7 @@ namespace PCATablet.Core.Data
             try
             {
 
-                var output = await tableSyncApi.GetAzureConnectionAsync().ConfigureAwait(false);
+                var output = await projectServices.GetAzureConnectionAsync().ConfigureAwait(false);
                 //result = output.Value<string>();
             }
             catch (Exception ex)
@@ -693,7 +693,7 @@ namespace PCATablet.Core.Data
             string result = "";
             try
             {
-                var output = await tableSyncApi.GetAppConfigAsync().ConfigureAwait(false);
+                result = await projectServices.GetAppConfigAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -736,7 +736,7 @@ namespace PCATablet.Core.Data
             try
             {
                 // SyncLog/PostLogItem
-                var output = await tableSyncApi.PostSyncLogAsync(myEntry).ConfigureAwait(false);
+                await projectServices.PostSyncLogAsync(myEntry).ConfigureAwait(false);
             }
 
             catch (Exception ex)

@@ -6,4 +6,11 @@ public partial class ProfileView : ContentView
 	{
 		InitializeComponent();
 	}
+
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        var a = this.BindingContext;
+    }
 }

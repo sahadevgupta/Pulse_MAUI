@@ -30,6 +30,12 @@ namespace Pulse_MAUI.ViewModels
 
         public ServiceInfo ReadSettingData(string fileContent)
         {
+            // remove leading & trailing quotes
+            fileContent = fileContent.Trim('"');
+
+            // unescape inner quotes
+            string xml = fileContent.Replace("\\\"", "\"");
+
             ServiceInfo serviceInfo = new ServiceInfo();
             serviceInfo.ServiceTitle = "";
             serviceInfo.ServiceURL = "";
@@ -41,12 +47,11 @@ namespace Pulse_MAUI.ViewModels
             {
                 try
                 {
-                    TextReader tr = new StringReader(fileContent);
-                    XDocument doc = XDocument.Load(tr);
+                    XDocument doc = XDocument.Parse(xml);
 
-                    serviceInfo.ServiceTitle = doc.Descendants().Where(a => a.Name.LocalName == "SERVICETITLE").FirstOrDefault().Value;
-                    serviceInfo.ServiceURL = doc.Descendants().Where(a => a.Name.LocalName == "SERVICEURL").FirstOrDefault().Value;
-                    serviceInfo.StorageName = doc.Descendants().Where(a => a.Name.LocalName == "STORAGENAME").FirstOrDefault().Value;
+                    serviceInfo.ServiceTitle = doc.Descendants().FirstOrDefault(a => a.Name.LocalName == "SERVICETITLE")?.Value ?? string.Empty;
+                    serviceInfo.ServiceURL = doc.Descendants().FirstOrDefault(a => a.Name.LocalName == "SERVICEURL")?.Value ?? string.Empty;
+                    serviceInfo.StorageName = doc.Descendants().FirstOrDefault(a => a.Name.LocalName == "STORAGENAME")?.Value ?? string.Empty;
 
                 }
                 catch (Exception ex)
@@ -86,33 +91,26 @@ namespace Pulse_MAUI.ViewModels
                 }
 
                 _dataManager.InitDataManager(customUrl);
-                var user = await _dataManager.LoginAsync();
+                var user = await _dataManager.LoginAsync(Url);
 
                 if (user is object)
                 {
-                    if ( user is not null  /*!String.IsNullOrEmpty(user.UserId)*/)
+                    var setting = await _dataManager.GetSettings();
+                    ServiceInfo info = ReadSettingData(setting);
+                    var x = 1;
+
+                    if (info.ServiceError.Length == 0)
                     {
-                        var setting = await _dataManager.GetSettings();
-                        ServiceInfo info = ReadSettingData(setting);
-                        var x = 1;
+                        Preferences.Set("AppTitle", info.ServiceTitle);
+                        Preferences.Set("ServiceURL", info.ServiceURL);
+                        Preferences.Set("StorageNAME", info.StorageName);
 
-                        if (info.ServiceError.Length == 0)
-                        {
-                            Preferences.Set("AppTitle", info.ServiceTitle);
-                            Preferences.Set("ServiceURL", info.ServiceURL);
-                            Preferences.Set("StorageNAME", info.StorageName);
-
-                            ServiceName = "Found Service: " + info.ServiceTitle;
-                            // Please restart the application
-                        }
-                        else
-                        {
-                            ServiceName = "No Service Found";
-                        }
+                        ServiceName = "Found Service: " + info.ServiceTitle;
+                        // Please restart the application
                     }
                     else
                     {
-                        ServiceName = "Unable to Authenticate User";
+                        ServiceName = "No Service Found";
                     }
                 }
                 else

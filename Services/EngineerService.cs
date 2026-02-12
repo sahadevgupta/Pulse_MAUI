@@ -1,37 +1,10 @@
 ﻿using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulse_MAUI.Services
 {
-    /// <summary>
-	/// Class for generic engineer functionality
-	/// Fogbugz Case:
-	/// Author: Manuel Dambrine
-	/// Created: 29/03/2013
-	/// </summary>
-	public class EngineerService(IDataManager dataManager)
+    public class EngineerService(IDataManager dataManager) : IEngineerService
     {
-        private static EngineerService instance;
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-        public static EngineerService Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    //instance = new EngineerService();
-                }
-
-                return instance;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the current engineer.
@@ -46,14 +19,14 @@ namespace Pulse_MAUI.Services
         /// <returns>Task.</returns>
         public async Task FetchCurrentEngineer()
         {
-            //var engineers = await dataManager.GetAllEngindeersAsync();
+            var engineers = await dataManager.GetAllEngineersAsync();
 
-            //if (engineers != null)
-            //{
-            //    var availableEngineers = engineers.ToList();
+            if (engineers != null)
+            {
+                var availableEngineers = engineers.ToList();
 
-            //    CurrentEngineer = availableEngineers.Count > 0 ? availableEngineers[0] : null;
-            //}
+                CurrentEngineer = availableEngineers.Count > 0 ? availableEngineers[0] : null;
+            }
         }
     }
 }

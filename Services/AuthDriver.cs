@@ -1,10 +1,15 @@
 ﻿using Microsoft.Identity.Client;
+using Pulse_MAUI.Constants;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models.Response;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
+
 
 #if IOS
 using UIKit;
@@ -15,6 +20,7 @@ namespace Pulse_MAUI.Services
     public class AuthDriver : IAuthDriver
     {
         private readonly IAuthConfig _configuration;
+        private HttpClient _httpClient { get; set; }
         private IPublicClientApplication PCA { get; set; }
 
         public AuthDriver(IAuthConfig config)
@@ -43,11 +49,80 @@ namespace Pulse_MAUI.Services
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1416:This call site is reachable on: 'iOS' 14.2 and later, 'maccatalyst' 14.2 and later.", Justification = "MAUI we uses only latest platform API.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1416:This call site is reachable on: 'Android' 21.0 and later.", Justification = "MAUI we uses only latest platform API.")]
-        public async Task<AuthResultDto> AuthenticateUser()
+        public async Task<AuthResultDto> AuthenticateUser(string azureMobileAppsBackendUrl)
         {
-            var result = Preferences.Get("AD_ObjectId", string.Empty);
+            InitializeHttpClient(azureMobileAppsBackendUrl);
+            var result = Preferences.Get(ADConstants.ObjectId, string.Empty);
             var authResult = await AcquireTokenAsync(result);
-            return GetAuthResultDto(authResult);
+            var authInfo =  GetAuthResultDto(authResult);
+            var response =  await ExchangeTokenForZumoAsync(authResult.IdToken, authInfo);
+            if (response.Item1)
+                return response.Item2;
+            return null;
+        }
+
+        private void InitializeHttpClient(string azureMobileAppsBackendUrl)
+        {
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(azureMobileAppsBackendUrl),
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+
+            // Set default headers similar to MobileServiceClient
+            _httpClient.DefaultRequestHeaders.Add("ZUMO-API-VERSION", "2.0.0");
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        /// <summary>
+        /// Exchanges an Azure AD access token for an Azure Mobile Apps ZUMO authentication token.
+        /// This replicates the behavior of IMobileServiceClient.LoginAsync().
+        /// </summary>
+        /// <param name="azureAdToken">The Azure AD access token to exchange.</param>
+        /// <returns>True if the exchange was successful, false otherwise.</returns>
+        private async Task<(bool, AuthResultDto?)> ExchangeTokenForZumoAsync(string azureAdToken, AuthResultDto authInfo)
+        {
+            try
+            {
+                // Create the token exchange request payload
+                var tokenPayload = new
+                {
+                    access_token = azureAdToken
+                };
+
+                var jsonContent = JsonSerializer.Serialize(tokenPayload);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                // Call the Azure Mobile Apps /.auth/login/aad endpoint
+                var response = await _httpClient.PostAsync("/.auth/login/aad", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"ZUMO token exchange failed: {response.StatusCode} - {errorContent}");
+                    return (false,null);
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var zumoResponse = JsonSerializer.Deserialize<MobileServiceLoginDto>(responseContent);
+
+                if (zumoResponse != null && !string.IsNullOrEmpty(zumoResponse.AuthenticationToken))
+                {
+                    authInfo.ZumoAuthToken = zumoResponse.AuthenticationToken;
+                    authInfo.ZumoUserId = zumoResponse.User?.UserId;
+
+                    // Set token expiration (ZUMO tokens typically expire in 24 hours)
+                    authInfo.ZumoTokenExpiryTime = DateTimeOffset.UtcNow.AddHours(24);
+                    return (true, authInfo);
+                }
+
+                return (false, null);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ZUMO token exchange error: {ex.Message}");
+                return (false, null);
+            }
         }
 
 #if IOS
@@ -89,7 +164,7 @@ namespace Pulse_MAUI.Services
         {
             if (result == null)
                 return null;
-            Preferences.Set("AD_ObjectId", result?.UniqueId);
+
             return new AuthResultDto()
             {
                 UserId = result?.Account?.Username,
@@ -103,7 +178,8 @@ namespace Pulse_MAUI.Services
                 //Scope = result.Scopes.FirstOrDefault(),
                 TokenType = string.Empty,
                 //Upn = result.Account.Username,
-                OId = result?.UniqueId
+                OId = result?.UniqueId,
+                IdToken = result?.IdToken ?? string.Empty,
             };
         }
 
@@ -176,7 +252,7 @@ namespace Pulse_MAUI.Services
 
         private async Task<AuthenticationResult?> AcquireTokenInteractiveAsync()
         {
-            var a = await PCA.AcquireTokenInteractive(_configuration.Scopes)
+            return await PCA.AcquireTokenInteractive(_configuration.Scopes)
                             .WithExtraScopesToConsent(_configuration.GraphApiScopes)
 #if ANDROID
                            .WithParentActivityOrWindow(Platform.CurrentActivity)
@@ -187,8 +263,6 @@ namespace Pulse_MAUI.Services
                             .WithUseEmbeddedWebView(false)
                             .ExecuteAsync()
                             .ConfigureAwait(false);
-
-            return a;
         }
     }
 }

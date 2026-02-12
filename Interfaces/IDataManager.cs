@@ -30,7 +30,7 @@ namespace Pulse_MAUI.Interfaces
         void InitDataManager();
         void InitDataManager(string url);
         bool IsUserValid();
-        Task<object> LoginAsync();
+        Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl);
         Task? LogoutAsync();
         Task PostSyncLog(string SyncMode, Guid TransactionBatchId);
         Task SaveActivityAsync(Activity activity);

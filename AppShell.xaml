@@ -28,6 +28,6 @@
 
     <FlyoutItem>
         <ShellContent 
-               ContentTemplate="{DataTemplate views:ActivityListPage}" />
+               ContentTemplate="{DataTemplate views:ImportSettingsPage}" />
     </FlyoutItem>
 </Shell>

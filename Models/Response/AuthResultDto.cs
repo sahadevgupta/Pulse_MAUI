@@ -9,6 +9,7 @@ namespace Pulse_MAUI.Models.Response
         public string? UserId { get; set; }
         public string? DisplayName { get; set; }
         public string? AccessToken { get; set; }
+        public string? IdToken { get; set; }
         public string? ExpiresIn { get; set; }
         public string? ExpiresOn { get; set; }
         public string? ExtExpiresIn { get; set; }
@@ -21,6 +22,9 @@ namespace Pulse_MAUI.Models.Response
         public string? OId { get; set; }
         public string? AuthType { get; set; }
         public string? Upn { get; set; }
+        public string? ZumoUserId { get; set; }
+        public string? ZumoAuthToken { get; set; }
+        public DateTimeOffset ZumoTokenExpiryTime { get; set; }
 
     }
 }

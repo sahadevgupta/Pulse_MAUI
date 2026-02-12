@@ -3,6 +3,7 @@ using Mopups.Interfaces;
 using Mopups.Services;
 using PCATablet.Core.Data;
 using Pulse_MAUI.Configurations;
+using Pulse_MAUI.Data;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Services;
 using System;
@@ -20,11 +21,16 @@ namespace Pulse_MAUI.Extensions
                             .AddSingleton<IAppConfiguration, AppConfiguration>()
                             .AddSingleton<IAuthConfig, AppConfiguration>()
                             .AddSingleton<IAuthDriver, AuthDriver>()
+                            .AddSingleton<IAuthService, AuthService>()
+                            .AddSingleton<IConnectivityService, ConnectivityService>()
                             .AddSingleton<IDialogService, DialogService>()
+                            .AddSingleton<IEngineerService,EngineerService>()
                             .AddSingleton<ILoginProvider, LoginProvider>()
                             .AddSingleton<IDataManager, DataManager>()
                             .AddSingleton<IProjectServices, ProjectServices>()
+                            .AddSingleton<ISecureStorageService,SecureStorageService>()
                             .AddSingleton<IShellNavigationService, ShellNavigationService>()
+                            .AddSingleton<ITokenService, TokenService>()
                             .AddSingleton<IPopupNavigation>(MopupService.Instance)
 #if ANDROID
                             .AddSingleton<ILoadingService, Pulse_MAUI.Platforms.Android.Services.LodingPageService>();

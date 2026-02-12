@@ -1,5 +1,7 @@
 ﻿using Microsoft.Datasync.Client;
 using PCATablet.Core.Data;
+using Pulse_MAUI.Data;
+using Pulse_MAUI.Models;
 
 namespace Pulse_MAUI.Interfaces
 {
@@ -17,7 +19,7 @@ namespace Pulse_MAUI.Interfaces
         /// <returns>Task.</returns>
         /// <param name="client">Azure Mobile Service client.</param>
         //Task<DataSyncUser> LoginAsync(DatasyncClient client, DataManager dataManager);
-        Task<object> LoginAsync(DatasyncClient client, DataManager dataManager);
+        Task<MobileServiceUser> LoginAsync(DatasyncClient client, IDataManager dataManager, string azureMobileServiceUrl);
         //Task LoginAsync(MobileServiceClient client, DataManagerItems defaultInstance);
 
         /// <summary>

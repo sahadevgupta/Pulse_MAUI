@@ -1,4 +1,5 @@
 ﻿using Pulse_MAUI.Models.Request;
+using Pulse_MAUI.Models.Response;
 using Refit;
 using System.Text.Json;
 
@@ -9,10 +10,10 @@ namespace Pulse_MAUI.Interfaces
         #region [ GET Method ]
 
         [Get("/Utility/AppConfig")]
-        Task<object> GetAppConfigAsync();
+        Task<string> GetAppConfigAsync([HeaderCollection] IDictionary<string, string> headers);
 
         [Get("/Utility/AzureConnection")]
-        Task<object> GetAzureConnectionAsync();
+        Task<string> GetAzureConnectionAsync([HeaderCollection] IDictionary<string, string> headers);
 
         [Get("/userinfo")]
         Task<object> GetUserInfoAsync([HeaderCollection] IDictionary<string, string> headers);
@@ -21,8 +22,11 @@ namespace Pulse_MAUI.Interfaces
 
         #region [ POST Methods ]
 
+        [Post("/.auth/login/aad")] 
+        Task<MobileServiceLoginDto> LoginAsync([Body(BodySerializationMethod.Serialized)] LoginRequest payload);
+
         [Post("/SyncLog")]
-        Task<object> PostSyncLogAsync([Body(BodySerializationMethod.Serialized)] SyncLogRequest request);
+        Task<object> PostSyncLogAsync([HeaderCollection] IDictionary<string, string> headers,[Body(BodySerializationMethod.Serialized)] SyncLogRequest request);
 
         [Post("/api/{tableName}")]
         Task<JsonDocument> InsertAsync(string tableName, [Body] JsonDocument item);
