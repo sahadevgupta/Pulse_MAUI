@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Pulse_MAUI.ViewModels
 {
-    public partial class BaseViewModel(IDialogService dialogService) : ObservableObject
+    public partial class BaseViewModel(IViewModelParameters viewModelParameters) : ObservableObject
     {
-        protected readonly IDialogService DialogService = dialogService;
+        protected readonly IViewModelParameters ViewModelParameters = viewModelParameters;
 
         [ObservableProperty]
         private string? _title;

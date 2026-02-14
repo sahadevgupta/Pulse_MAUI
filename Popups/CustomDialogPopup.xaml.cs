@@ -6,8 +6,11 @@ namespace Pulse_MAUI.Popups;
 
 public partial class CustomDialogPopup : PopupPage
 {
+    public static BindableProperty AlertTitleProperty =
+        BindableProperty.Create(nameof(AlertTitle), typeof(string), typeof(CustomDialogPopup));
+
     public static BindableProperty MessageProperty =
-    BindableProperty.Create(nameof(Message), typeof(string), typeof(CustomDialogPopup), null, BindingMode.TwoWay);
+        BindableProperty.Create(nameof(Message), typeof(string), typeof(CustomDialogPopup), null, BindingMode.TwoWay);
 
     /// <summary>
     /// set Icon for the control
@@ -23,6 +26,12 @@ public partial class CustomDialogPopup : PopupPage
         typeof(Color),
         typeof(CustomDialogPopup),
         default(Color));
+
+    public string AlertTitle
+    {
+        get => (string)GetValue(AlertTitleProperty);
+        set => SetValue(AlertTitleProperty, value);
+    }
 
     public string Message
     {

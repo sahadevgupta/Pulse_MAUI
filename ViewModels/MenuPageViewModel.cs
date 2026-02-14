@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Datasync.Client;
 using Pulse_MAUI.Enums;
 using Pulse_MAUI.Events;
 using Pulse_MAUI.Helpers;
@@ -19,29 +20,46 @@ namespace Pulse_MAUI.ViewModels
     {
         #region [ Properties ]
 
-        readonly IEngineerService _engineerService;
+        readonly IAppWorkflowManager _appWorkflowManager;
+        readonly IActivityService _activityService;
+        readonly IActivitySearchService _activitySearchService;
+        readonly IPunchSearchService _punchSearchService;
+        //readonly ILookupService _lookupService;
+        //readonly IUserService _userService;
+        //readonly ISyncLogService _syncLogService;
+        //readonly ISynchroniseService _synchroniseService;
 
         [ObservableProperty]
         ObservableCollection<MenuOption>? _optionsItems;
 
         [ObservableProperty]
-        private string? _currenDate = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
+        private string? _currentDate = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
 
         public string ProfileName
         {
             get
             {
                 return string.Format(UserInterface.MenuPage_HelloTitle,
-                                     _engineerService.CurrentEngineer != null ?
-                                     _engineerService.CurrentEngineer.Name :
+                                     _appWorkflowManager.EngineerService.CurrentEngineer != null ?
+                                     _appWorkflowManager.EngineerService.CurrentEngineer.Name :
                                      "N/A");
             }
 
         }
+        public string AppName =>Preferences.Get("AppTitle", "Pulse Mobile");
+        public string AppVersion => string.Format("Version {0}", VersionTracking.CurrentVersion);
+
         #endregion
-        public MenuPageViewModel(IDialogService dialogService,IEngineerService engineerService) : base(dialogService)
+        public MenuPageViewModel(IViewModelParameters viewModelParameters,
+            IActivityService activityService,
+            IActivitySearchService activitySearchService,
+            IPunchSearchService punchSearchService) : base(viewModelParameters)
         {
-            _engineerService = engineerService;
+            _appWorkflowManager = viewModelParameters.AppWorkflowManager;
+            _activityService = activityService;
+            _activitySearchService = activitySearchService;
+            _punchSearchService = punchSearchService;
+
             PopulateOptionsMenu();
 
             App.Current?.Dispatcher.StartTimer(TimeSpan.FromSeconds(1), () =>
@@ -49,6 +67,7 @@ namespace Pulse_MAUI.ViewModels
                 this.OnPropertyChanged("CurrentDate");
                 return true;
             });
+            
         }
 
         #region [ Methods && Service Calls ]
@@ -58,7 +77,7 @@ namespace Pulse_MAUI.ViewModels
 		/// </summary>
 		private void PopulateOptionsMenu()
         {
-            if (Keys.AzureService == "https://www.syncservice.com")
+            if (AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
             {
                 OptionsItems = new ObservableCollection<MenuOption>
                 {
@@ -96,15 +115,15 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task FetchData()
         {
-            if (_engineerService.CurrentEngineer == null)
-                await _engineerService.FetchCurrentEngineer();
+            if (_appWorkflowManager.EngineerService.CurrentEngineer == null)
+                await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
 
-            if (UserService.Instance.CurrentUser == null)
-                await UserService.Instance.FetchCurrentUser();
+            if (_appWorkflowManager.UserService.CurrentUser == null)
+                await _appWorkflowManager.UserService.FetchCurrentUser();
 
             
             this.OnPropertyChanged(nameof(ProfileName));
-            this.OnPropertyChanged(nameof(CurrenDate));
+            this.OnPropertyChanged(nameof(CurrentDate));
         }
 
         [RelayCommand]
@@ -112,174 +131,172 @@ namespace Pulse_MAUI.ViewModels
         {
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
-                await DialogService.ShowAlertDialog("No Internet Connection Available",false);
+                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
                 return;
             }
 
-            DialogService.ShowLoading();
-            await UserService.Instance.LoginAsync();
+            ViewModelParameters.DialogService.ShowLoading();
+            await _appWorkflowManager.UserService.LoginAsync(AppHelpers.AzureServiceUrl);
 
-            //if (UserService.Instance.AADAuthenticated == true && SynchroniseService.Instance.isUserValid() == true)
-            //{
+            if (AppHelpers.IsLoggedIn)
+            {
+                // Create and display the value of two GUIDs.
+                Guid TransactionBatchId = Guid.NewGuid();
 
-            //    // Create and display the value of two GUIDs.
-            //    Guid TransactionBatchId;
-            //    TransactionBatchId = Guid.NewGuid();
+                await _appWorkflowManager.SyncLogService.PostSyncLogStart(TransactionBatchId);
 
-            //    await SyncLogService.Instance.PostSyncLogStart(TransactionBatchId);
+                var blobConnectionString = await _appWorkflowManager.UserService.GetAzureBlobStorageString();
 
-            //    var connectionString = await UserService.Instance.GetAzureBlobStorageString();
+                if (ViewModelParameters.ConnectivityService.IsConnected)
+                {
 
-            //    if (CrossConnectivity.Current.IsConnected)
-            //    {
+                    List<string> result = new List<string>();
+                    // Service failure handling here!
+                    try
+                    {
+                        //Do a full or incremental pull of the standing data
+                        IEnumerable<Project> projectData = await _appWorkflowManager.LookupService.GetProjectListAsync();
 
-            //        List<string> result = new List<string>();
-            //        // Service failure handling here!
-            //        try
-            //        {
-            //            //Do a full or incremental pull of the standing data
-            //            IEnumerable<Project> projectData = await LookupService.Instance.GetProjectListAsync();
+                        if (projectData != null && projectData.Count() > 0)
+                        {
+                            ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
+                            result = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, false);
+                        }
+                        else
+                        {
+                            ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising + " (Full)");
+                            result = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(false, false);
+                        }
 
-            //            if (projectData != null && projectData.Count() > 0)
-            //            {
-            //                DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
-            //                result = await SynchroniseService.Instance.PushAndPullDataAsync(true, false);
-            //            }
-            //            else
-            //            {
-            //                DialogService.ShowLoading(UserInterface.MenuPage_Synchronising + " (Full)");
-            //                result = await SynchroniseService.Instance.PushAndPullDataAsync(false, false);
-            //            }
+                    }
+                    catch (DatasyncInvalidOperationException ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
 
-            //        }
-            //        catch (MobileServiceInvalidOperationException ex)
-            //        {
-            //            Debug.WriteLine(ex.Message);
-            //        }
-
-            //        catch (Exception ex)
-            //        {
-            //            Debug.WriteLine(ex.Message);
-            //            await DialogService.DisplayAlertAsync("Unable to complete data sync", "Sync Error");
-            //        }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error","Unable to complete data sync",AlertType.Error );
+                    }
 
 
-            //        if (result.Count > 0)
-            //        {
-            //            StringBuilder sb = new StringBuilder();
-            //            foreach (String err in result)
-            //            {
-            //                sb.AppendLine(err);
-            //            }
+                    if (result.Count > 0)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (String err in result)
+                        {
+                            sb.AppendLine(err);
+                        }
 
-            //            await DialogService.DisplayAlertAsync(sb.ToString(), "Sync Error");
-            //        }
-
-
-            //    }
-            //    else
-            //    {
-            //        DialogService.ShowError("No Internet Connection Available");
-            //        return;
-            //    }
+                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(),AlertType.Error);
+                    }
 
 
-            //    if (CrossConnectivity.Current.IsConnected)
-            //    {
-            //        DialogService.ShowLoading("Uploading Image Items");
-            //        await SynchroniseService.Instance.UploadBlobData(connectionString);
-            //    }
-            //    else
-            //    {
-            //        DialogService.ShowError("No Internet Connection Available");
-            //        return;
-            //    }
-
-            //    if (CrossConnectivity.Current.IsConnected)
-            //    {
-            //        DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
-            //        await SynchroniseService.Instance.PushAndPullDataAsync(true, true);
-            //    }
-            //    else
-            //    {
-            //        DialogService.ShowError("No Internet Connection Available");
-            //        return;
-            //    }
+                }
+                else
+                {
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    return;
+                }
 
 
-            //    if (CrossConnectivity.Current.IsConnected)
-            //    {
-            //        DialogService.ShowLoading("Downloading Image Items");
-            //        await SynchroniseService.Instance.DownloadBlobData(connectionString);
-            //    }
-            //    else
-            //    {
-            //        DialogService.ShowError("No Internet Connection Available");
-            //        return;
-            //    }
+                if (ViewModelParameters.ConnectivityService.IsConnected)
+                {
+                    ViewModelParameters.DialogService.ShowLoading("Uploading Image Items");
+                    await _appWorkflowManager.SynchroniseService.UploadBlobData(blobConnectionString);
+                }
+                else
+                {
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    return;
+                }
 
-            //    await SyncLogService.Instance.PostSyncLogFinish(TransactionBatchId);
-            //    // store the last sync date
-            //    AppSettings.AddOrUpdateValue("SyncDate", DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss"));
+                if (ViewModelParameters.ConnectivityService.IsConnected)
+                {
+                    ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
+                    await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
+                }
+                else
+                {
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    return;
+                }
 
 
-            //    await UserService.Instance.FetchCurrentUser();
-            //    var currentUser = UserService.Instance.CurrentUser;
+                if (ViewModelParameters.ConnectivityService.IsConnected)
+                {
+                    ViewModelParameters.DialogService.ShowLoading("Downloading Image Items");
+                    await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
+                }
+                else
+                {
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
+                    return;
+                }
 
-            //    if (currentUser != null)
-            //    {
+                await _appWorkflowManager.SyncLogService.PostSyncLogFinish(TransactionBatchId);
+                // store the last sync date
+                AppHelpers.SyncDate = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
 
-            //        try
-            //        {
 
-            //            await Task.Delay(2000);
-            //            // implement the required lists
-            //            await ActivityService.Instance.FetchActivityListAsync();
-            //            await PunchService.Instance.FetchPunchListAsync();
-            //            await UserService.Instance.FetchCurrentUser();
-            //            await EngineerService.Instance.FetchCurrentEngineer();
-            //            await Task.Delay(2000);
+                await _appWorkflowManager.UserService.FetchCurrentUser();
+                var currentUser = _appWorkflowManager.UserService.CurrentUser;
 
-            //            await ActivitySearchService.Instance.FetchSearchItems();
-            //            await PunchSearchService.Instance.FetchSearchItems();
+                if (currentUser != null)
+                {
 
-            //            this.OnPropertyChanged("ProfileName");
-            //            this.OnPropertyChanged("CurrentDate");
-            //        }
+                    try
+                    {
 
-            //        catch (Exception ex)
-            //        {
-            //            await DialogService.DisplayAlertAsync(ex.Message, "Sync Error");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        // Display warning and force user logout
-            //        await DialogService.DisplayAlertAsync("You are not a registered user", "Warning");
-            //        await UserService.Instance.LogoutAsync();
-            //    }
+                        await Task.Delay(2000);
+                        // implement the required lists
+                        await _activityService.FetchActivityListAsync();
+                        await _appWorkflowManager.PunchService.FetchPunchListAsync();
+                        await _appWorkflowManager.UserService.FetchCurrentUser();
+                        await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
+                        await Task.Delay(2000);
 
-            //    if (!System.Diagnostics.Debugger.IsAttached)
-            //    {
-            //        //if (CrossConnectivity.Current.IsConnected)
-            //        // {
-            //        //   await UserService.Instance.LogoutAsync();
-            //        // }
-            //    }
+                        await _activitySearchService.FetchSearchItems(_activityService.Activities);
+                        await _punchSearchService.FetchSearchItems();
+
+                        this.OnPropertyChanged("ProfileName");
+                        this.OnPropertyChanged("CurrentDate");
+                    }
+
+                    catch (Exception ex)
+                    {
+                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error",ex.Message,AlertType.Error);
+                    }
+                }
+                else
+                {
+                    // Display warning and force user logout
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Warning","You are not a registered user" );
+                    await _appWorkflowManager.UserService.LogoutAsync();
+                }
+
+                if (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    //if (ViewModelParameters.ConnectivityService.IsConnected)
+                    // {
+                    //   await UserService.Instance.LogoutAsync();
+                    // }
+                }
 
 
 
-            //}
-            //else
-            //{
-            //    // invalid user
-            //    await DialogService.ShowAlertDialog("Invalid User Login",false);
-            //}
+            }
+            else
+            {
+                // invalid user
+                await ViewModelParameters.DialogService.ShowAlertDialog("Login Error", "Invalid User Login", AlertType.Error);
+            }
 
-            DialogService.HideLoading();
-            WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.PostSyncRefresh));
+            ViewModelParameters.DialogService.HideLoading();
+            WeakReferenceMessenger.Default.Send(new NotificationMessageEvent( NotifyType.PostSyncRefresh));
         }
-
+       
         #endregion
     }
 }

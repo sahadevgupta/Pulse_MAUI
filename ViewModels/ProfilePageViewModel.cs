@@ -25,7 +25,7 @@ namespace Pulse_MAUI.ViewModels
             }
         }
 
-        public ProfilePageViewModel(IDialogService dialogService) : base(dialogService) 
+        public ProfilePageViewModel(IViewModelParameters viewModelParameters) : base(viewModelParameters) 
         {
             PopulateProfile();
         }

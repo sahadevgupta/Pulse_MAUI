@@ -1,4 +1,6 @@
-﻿namespace Pulse_MAUI.Helpers
+﻿using Pulse_MAUI.Constants;
+
+namespace Pulse_MAUI.Helpers
 {
     /// <summary>
     /// Class with all File Handling Utility methods
@@ -63,11 +65,9 @@
         /// <returns></returns>
         public static string GetPunchStoragePath(int projectId, int pcaId)
         {
-            string basePath = FileSystem.Current.AppDataDirectory;
-
             string path = Path.Combine(
-                basePath,
-                Helpers.Keys.BlobStorage,
+                AppConstants.AppRootFolder,
+                AppHelpers.BlobStorageName,
                 "Storage_Projects",
                 $"Project_{projectId}",
                 "Punch",
@@ -85,11 +85,9 @@
         /// <returns></returns>
         public static string GetActivityStoragePath(int pcaId)
         {
-            string basePath = FileSystem.Current.AppDataDirectory;
-
             string path = Path.Combine(
-                basePath,
-                Helpers.Keys.BlobStorage
+                AppConstants.AppRootFolder,
+                AppHelpers.BlobStorageName
             );
 
             return path + Path.DirectorySeparatorChar;

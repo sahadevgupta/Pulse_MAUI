@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PCATablet.Core.Data;
+using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using System.Xml.Linq;
@@ -21,7 +22,8 @@ namespace Pulse_MAUI.ViewModels
 
         #endregion
 
-        public ImportSettingsPageViewModel(IDataManager dataManager, IDialogService dialogService) : base(dialogService)
+        public ImportSettingsPageViewModel(IDataManager dataManager,
+            IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _dataManager = dataManager;
         }
@@ -101,9 +103,9 @@ namespace Pulse_MAUI.ViewModels
 
                     if (info.ServiceError.Length == 0)
                     {
-                        Preferences.Set("AppTitle", info.ServiceTitle);
-                        Preferences.Set("ServiceURL", info.ServiceURL);
-                        Preferences.Set("StorageNAME", info.StorageName);
+                        AppHelpers.AppTitle = info.ServiceTitle;
+                        AppHelpers.AzureServiceUrl = info.ServiceURL;
+                        AppHelpers.BlobStorageName = info.StorageName;
 
                         ServiceName = "Found Service: " + info.ServiceTitle;
                         // Please restart the application
@@ -131,7 +133,7 @@ namespace Pulse_MAUI.ViewModels
 #if ANDROID
             Java.Lang.JavaSystem.Exit(2);
 #endif
-        }
+        }  
         
 #endregion
     }

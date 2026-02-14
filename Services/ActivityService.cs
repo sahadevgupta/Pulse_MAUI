@@ -9,7 +9,7 @@ namespace Pulse_MAUI.Services
         /// <summary>
         /// The activities.
         /// </summary>
-        public ObservableRangeCollection<Activity>? Activities = new ObservableRangeCollection<Activity>();
+        public ObservableRangeCollection<Activity>? Activities { get; set; }
 
         /// <summary>
         /// Fetchs the assigned activities and populates the Activity collection.

@@ -42,6 +42,7 @@ namespace Pulse_MAUI.Services
         /// 
         public ObservableRangeCollection<string>? CommSystem { get; set; }
 
+
         /// <summary>
         /// Fetches and populates all Activity search values
         /// </summary>

@@ -6,84 +6,23 @@ using System.Text;
 
 namespace Pulse_MAUI.Services
 {
-    public class UserService(IDataManager dataManager)
+    public class UserService(IDataManager dataManager) : IUserService
     {
-        private static UserService instance;
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-        public static UserService Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    //instance = new UserService();
-                }
-
-                return instance;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current user.
-        /// </summary>
-        /// <value>The current user.</value>
-        public User CurrentUser { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mobile service user.
-        /// </summary>
-        /// <value>
-        /// The mobile service user.
-        /// </value>
-        //public MobileServiceUser MobileServiceUser { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether Active Directory connection is authenticated
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [aad authenticated]; otherwise, <c>false</c>.
-        /// </value>
-        public bool AADAuthenticated { get; set; }
-
-
-        /// <summary>
-        /// Gets or sets the azure BLOB storage.
-        /// </summary>
-        /// <value>
-        /// The azure BLOB storage.
-        /// </value>
-        public string AzureBlobStorageString { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:PCATablet.Core.Services.UserService"/> class.
-        /// </summary>
-
+        public User? CurrentUser { get; set; }
         /// <summary>
         /// Log into the Azure backend system.
         /// </summary>
         /// <returns>The async.</returns>
-        public async Task LoginAsync()
+        public async Task LoginAsync(string mobileAzureServiceUrl)
         {
             try
             {
-                //await dataManager.LoginAsync();
-                AADAuthenticated = true;
-
+                await dataManager.LoginAsync(mobileAzureServiceUrl);
             }
             catch (Exception ex)
             {
                 var error = ex.Message;
-                AADAuthenticated = false;
-                //MobileServiceUser = null;
-
-
             }
-
-
         }
 
 

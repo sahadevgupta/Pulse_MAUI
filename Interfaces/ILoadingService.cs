@@ -7,6 +7,6 @@ namespace Pulse_MAUI.Interfaces
     public interface ILoadingService
     {
         void HideLoading();
-        void ShowLoading();
+        void ShowLoading(string message);
     }
 }

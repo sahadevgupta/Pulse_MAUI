@@ -5,35 +5,26 @@
              xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
              xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers">
 
-    <Grid Padding="10,10,10,10"
-	VerticalOptions="FillAndExpand"
-	HorizontalOptions="FillAndExpand">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackLayout>
 
-            <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
+    <VerticalStackLayout Padding="10" Spacing="4">
+
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
 			HorizontalOptions="Start"
 			Text="{Binding AppName}"
 			TextColor="White" />
 
-            <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
 			HorizontalOptions="Start"
-			Text="{Binding AppVersion}"
+			Text="{Binding AppVersion,TargetNullValue=yyyy,FallbackValue=uuuuuuu}"
 			TextColor="White" />
-            <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
 			HorizontalOptions="Start"
 			Text="{Binding ProfileName}"
 			TextColor="White" />
-            <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
+        <controls:CustomLabel FontSize="{x:Static helpers:FontSizes.Small}"
 			HorizontalOptions="Start"
-			Text="{Binding CurrentDate}"
+			Text="{Binding CurrentDate,TargetNullValue=yyyy,FallbackValue=uuuuuuu}"
 			TextColor="White" />
-        </StackLayout>
-    </Grid>
+    </VerticalStackLayout>
 
 </ContentView>

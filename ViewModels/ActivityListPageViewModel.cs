@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Pulse_MAUI.ViewModels
 {
-    public partial class ActivityListPageViewModel(IActivityService activityService,IDialogService dialogService) : BaseViewModel(dialogService)
+    public partial class ActivityListPageViewModel(IActivityService activityService, IViewModelParameters viewModelParameters) : BaseViewModel(viewModelParameters)
     {
         #region [ Properties ]
 

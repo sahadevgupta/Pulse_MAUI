@@ -13,12 +13,6 @@
     Shell.TitleColor="White"
     Shell.ForegroundColor="White">
 
-    <!--<Shell.Resources>
-        <ResourceDictionary>
-            <Style TargetType="Shell.Nav
-        </ResourceDictionary>
-    </Shell.Resources>-->
-
     <Shell.FlyoutContentTemplate>
         <DataTemplate>
             <views:MenuPage />

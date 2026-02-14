@@ -44,7 +44,7 @@ namespace Pulse_MAUI.ViewModels
 
         #endregion
 
-        public ActivitySearchViewModel(IActivitySearchService activitySearchService, IDialogService dialogService) : base(dialogService)
+        public ActivitySearchViewModel(IActivitySearchService activitySearchService, IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _activitySearchService = activitySearchService;
             InitializeData();

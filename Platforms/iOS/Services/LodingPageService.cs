@@ -13,33 +13,29 @@ namespace Pulse_MAUI.Platforms.iOS.Services
     {
         private UIView _nativeView;
         private bool _isInitialized;
-        public LodingPageService()
-        {
-            InitLoadingPage();
-        }
+
         public void HideLoading()
         {
             // Hide the page
             _nativeView.RemoveFromSuperview();
         }
 
-        public void ShowLoading()
+        public void ShowLoading(string message)
         {
-            // check if the user has set the page or not
-            if (!_isInitialized)
-                InitLoadingPage(); // set the default page
+            InitLoadingPage(message); // set the default page
 
             // showing the native loading page
             UIApplication.SharedApplication.KeyWindow?.AddSubview(_nativeView);
         }
 
-        private void InitLoadingPage()
+        private void InitLoadingPage(string message)
         {
             if (Application.Current?.Windows.Any() == false)
                 return;
 
             var page = Application.Current?.Windows[0].Page;
             var loadingView = new LoadingIndicatorView();
+            loadingView.Text = message;
             if (page?.Handler != null)
             {
                 loadingView.Arrange(new Rect(0,0, page.Width, page.Height));

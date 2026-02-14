@@ -11,11 +11,11 @@ namespace Pulse_MAUI.Controls
 		CustomLabel name, date;
 		Color fontColor;
 
-		public ProfileView(IDialogService dialogService,Color fontColor)
+		public ProfileView(ProfilePageViewModel viewModel, Color fontColor)
 		{
 			this.fontColor = fontColor;
 
-			BindingContext = new ProfilePageViewModel(dialogService);
+			BindingContext = viewModel;
 
 			SetupUserInterface();
 			SetupBindings();

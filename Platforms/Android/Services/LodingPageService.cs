@@ -17,16 +17,16 @@ namespace Pulse_MAUI.Platforms.Android.Services
         private bool _isInitialized;
         public LodingPageService()
         {
-            InitLoadingPage();
         }
 
-        private void InitLoadingPage()
+        private void InitLoadingPage(string message)
         {
             if(Application.Current?.Windows.Any() == false)
                 return;
 
             var page = Application.Current?.Windows[0].Page;
             var loadingView = new LoadingIndicatorView();
+            loadingView.Text = message;
             if (page?.Handler != null)
             {
                 _nativeView = loadingView.ToHandler(page.Handler?.MauiContext!)?.PlatformView;
@@ -50,10 +50,9 @@ namespace Pulse_MAUI.Platforms.Android.Services
             _dialog?.Hide();
         }
 
-        public void ShowLoading()
+        public void ShowLoading(string message)
         {
-            if (!_isInitialized)
-                InitLoadingPage(); // set the default page
+            InitLoadingPage(message); 
 
             // showing the native loading page
             _dialog?.Show();

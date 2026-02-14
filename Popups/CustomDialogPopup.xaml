@@ -20,6 +20,8 @@
 
     <Border VerticalOptions="End" Padding="20" BackgroundColor="White" StrokeShape="RoundRectangle 20,20,0,0">
         <VerticalStackLayout Spacing="20">
+            <Label Text="{Binding AlertTitle,Source={x:Reference customDialog}}"
+                   Style="{DynamicResource PopupLabelStyle}"/>
             <Image HorizontalOptions="Center" VerticalOptions="Center">
                 <Image.Source>
                     <FontImageSource

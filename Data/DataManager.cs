@@ -67,7 +67,7 @@ namespace Pulse_MAUI.Data
             };
 
             //Create client with options
-            client = new DatasyncClient(Keys.AzureService, options);
+            client = new DatasyncClient(AppHelpers.AzureServiceUrl, options);
 
             // setup the local store for each of the DataTables
             localStore.DefineTable<Activity>();
@@ -673,7 +673,7 @@ namespace Pulse_MAUI.Data
             try
             {
 
-                var output = await projectServices.GetAzureConnectionAsync().ConfigureAwait(false);
+                result = await projectServices.GetAzureConnectionAsync().ConfigureAwait(false);
                 //result = output.Value<string>();
             }
             catch (Exception ex)

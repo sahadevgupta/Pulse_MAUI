@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using PCATablet.Core.Data;
 using Pulse_MAUI.Constants;
+using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Models.Request;
@@ -27,6 +28,7 @@ namespace Pulse_MAUI.Services
                     user.UserId = authResult?.ZumoUserId;
                     user.UserName = authResult?.UserId;
 
+                    AppHelpers.IsLoggedIn = true;
                 }
             }
             catch (Exception ex)

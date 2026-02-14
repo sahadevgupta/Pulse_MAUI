@@ -8,10 +8,12 @@ namespace Pulse_MAUI.Services
 {
     public class ConnectivityService : IConnectivityService
     {
+        public bool IsConnected { get; set; }
         public Task CheckConnected()
         {
             if (IsInternetAvailable())
             {
+                IsConnected = true;
                 return Task.CompletedTask;
             }
 
