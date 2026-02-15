@@ -8,7 +8,6 @@ using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Resources.Languages;
-using Pulse_MAUI.Services;
 using Pulse_MAUI.Views;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -67,7 +66,9 @@ namespace Pulse_MAUI.ViewModels
                 this.OnPropertyChanged("CurrentDate");
                 return true;
             });
-            
+
+            FetchDataCommand.Execute(null);
+
         }
 
         #region [ Methods && Service Calls ]
@@ -83,6 +84,7 @@ namespace Pulse_MAUI.ViewModels
                 {
                     new MenuOption{
                     Title = "Import Settings",
+                    Route = nameof(ImportSettingsPage),
                     TargetType = typeof(ImportSettingsPage),
                     Index = 2
                     }
@@ -94,18 +96,18 @@ namespace Pulse_MAUI.ViewModels
                 {
                   new MenuOption{
                       Title = "Activities",
+                      Route = nameof(ActivityListPage),
                       TargetType = typeof(ActivityListPage),
                       Index = 0
                   }
                   ,new MenuOption{
                       Title = "Punch List",
+                      Route = nameof(PunchListPage),
                       TargetType = typeof(PunchListPage),
                       Index = 1
                   }
                 };
             }
-
-
         }
 
         #endregion
@@ -127,15 +129,23 @@ namespace Pulse_MAUI.ViewModels
         }
 
         [RelayCommand]
+        private async Task MenuSelected(MenuOption selectedMenu)
+        {
+            await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
+            Shell.Current.FlyoutIsPresented = false;
+        }
+
+        [RelayCommand]
         private async Task SynchroniseData()
         {
+            Shell.Current.FlyoutIsPresented = false;
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
                 await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
                 return;
             }
 
-            ViewModelParameters.DialogService.ShowLoading();
+            ViewModelParameters.DialogService.ShowLoading("Authenticating User");
             await _appWorkflowManager.UserService.LoginAsync(AppHelpers.AzureServiceUrl);
 
             if (AppHelpers.IsLoggedIn)
@@ -243,38 +253,38 @@ namespace Pulse_MAUI.ViewModels
                 await _appWorkflowManager.UserService.FetchCurrentUser();
                 var currentUser = _appWorkflowManager.UserService.CurrentUser;
 
-                if (currentUser != null)
-                {
+                //if (currentUser != null)
+                //{
 
-                    try
-                    {
+                //    try
+                //    {
 
-                        await Task.Delay(2000);
-                        // implement the required lists
-                        await _activityService.FetchActivityListAsync();
-                        await _appWorkflowManager.PunchService.FetchPunchListAsync();
-                        await _appWorkflowManager.UserService.FetchCurrentUser();
-                        await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
-                        await Task.Delay(2000);
+                //        await Task.Delay(2000);
+                //        // implement the required lists
+                //        await _activityService.FetchActivityListAsync();
+                //        await _appWorkflowManager.PunchService.FetchPunchListAsync();
+                //        await _appWorkflowManager.UserService.FetchCurrentUser();
+                //        await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
+                //        await Task.Delay(2000);
 
-                        await _activitySearchService.FetchSearchItems(_activityService.Activities);
-                        await _punchSearchService.FetchSearchItems();
+                //        await _activitySearchService.FetchSearchItems(_activityService.Activities);
+                //        await _punchSearchService.FetchSearchItems();
 
-                        this.OnPropertyChanged("ProfileName");
-                        this.OnPropertyChanged("CurrentDate");
-                    }
+                //        this.OnPropertyChanged("ProfileName");
+                //        this.OnPropertyChanged("CurrentDate");
+                //    }
 
-                    catch (Exception ex)
-                    {
-                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error",ex.Message,AlertType.Error);
-                    }
-                }
-                else
-                {
-                    // Display warning and force user logout
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Warning","You are not a registered user" );
-                    await _appWorkflowManager.UserService.LogoutAsync();
-                }
+                //    catch (Exception ex)
+                //    {
+                //        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error",ex.Message,AlertType.Error);
+                //    }
+                //}
+                //else
+                //{
+                //    // Display warning and force user logout
+                //    await ViewModelParameters.DialogService.ShowAlertDialog("Warning","You are not a registered user" );
+                //    await _appWorkflowManager.UserService.LogoutAsync();
+                //}
 
                 if (!System.Diagnostics.Debugger.IsAttached)
                 {

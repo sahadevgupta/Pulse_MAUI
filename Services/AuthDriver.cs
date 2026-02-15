@@ -232,21 +232,29 @@ namespace Pulse_MAUI.Services
             var accounts = await PCA.GetAccountsAsync();
             var existingUser = accounts?
                                .FirstOrDefault(a => a.HomeAccountId?.ObjectId?.Contains(objectId) == true);
-            try
+
+            if (existingUser != null)
             {
-                return await PCA
-                    .AcquireTokenSilent(_configuration.Scopes, existingUser)
-                    .WithForceRefresh(true)
-                    .ExecuteAsync();
+                try
+                {
+                    return await PCA
+                        .AcquireTokenSilent(_configuration.Scopes, existingUser)
+                        .WithForceRefresh(true)
+                        .ExecuteAsync();
+                }
+                catch (MsalUiRequiredException)
+                {
+                    return await AcquireTokenInteractiveAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"MSAL Silent Error: {ex.Message}");
+                    return null;
+                }
             }
-            catch (MsalUiRequiredException)
+            else
             {
                 return await AcquireTokenInteractiveAsync();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"MSAL Silent Error: {ex.Message}");
-                return null;
             }
         }
 

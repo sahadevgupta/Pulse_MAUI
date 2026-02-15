@@ -1,6 +1,8 @@
 ﻿using Microsoft.Datasync.Client;
 using Microsoft.Datasync.Client.SQLiteStore;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Pulse_MAUI.Constants;
 using Pulse_MAUI.Data;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
@@ -12,10 +14,12 @@ using Activity = Pulse_MAUI.Models.Activity;
 
 namespace Pulse_MAUI.Data
 {
-    public partial class DataManager(IProjectServices projectServices) : IDataManager
+    public partial class DataManager : IDataManager
     {
+        readonly IProjectServices projectServices;
+
         private DatasyncClient client;
-        private readonly OfflineSQLiteStore localStore;
+        private OfflineSQLiteStore localStore;
         private readonly ILoginProvider? loginProvider = IPlatformApplication.Current?.Services.GetRequiredService<ILoginProvider>();
 
         private IOfflineTable<ActivityTask> activityTaskTable;
@@ -32,6 +36,12 @@ namespace Pulse_MAUI.Data
         private IOfflineTable<Equipment> equipmentTable;
         private IOfflineTable<Priority> priorityTable;
         private IOfflineTable<Discipline> disciplineTable;
+
+        public DataManager(IProjectServices projectServices)
+        {
+            this.projectServices = projectServices;
+            InitDataManager();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataManager"/> class.
@@ -53,8 +63,18 @@ namespace Pulse_MAUI.Data
         /// <summary>
         /// Initializes a new instance of the <see cref="T:PCATablet.Core.Data.DataManager"/> class.
         /// </summary>
-        public void InitDataManager()
+        public async void InitDataManager()
         {
+            var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            var dbPath = Path.Combine(folderPath, "PCAOfflineCache.db");
+            var sqliteUri = $"file:{dbPath}";
+            localStore = new OfflineSQLiteStore(sqliteUri);
+
+
 
             // Configure options
             var options = new DatasyncClientOptions
@@ -63,8 +83,11 @@ namespace Pulse_MAUI.Data
                 {
                     new AuthHeaderHandler()
                 },
-                OfflineStore = new OfflineSQLiteStore("PCAOfflineCache.db")
+                OfflineStore = localStore
             };
+
+            
+
 
             //Create client with options
             client = new DatasyncClient(AppHelpers.AzureServiceUrl, options);
@@ -85,6 +108,9 @@ namespace Pulse_MAUI.Data
             localStore.DefineTable<Priority>();
             localStore.DefineTable<Discipline>();
 
+            // *** FIX: MUST AWAIT THIS ***
+            await client.InitializeOfflineStoreAsync();
+
             // Return each Table type
             this.activityTable = client.GetOfflineTable<Activity>();
             this.activityTaskTable = client.GetOfflineTable<ActivityTask>();
@@ -102,7 +128,6 @@ namespace Pulse_MAUI.Data
             this.disciplineTable = client.GetOfflineTable<Discipline>();
 
 
-            _ = client.InitializeOfflineStoreAsync(CancellationToken.None);
 
         }
 
@@ -147,7 +172,7 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Discipline>> GetAllDisciplines()
         {
-            InitDataManager();
+            
             return await disciplineTable.ToListAsync();
         }
 
@@ -169,7 +194,7 @@ namespace Pulse_MAUI.Data
         /// <param name="activity">Activity to get activity tasks for.</param>
         public async Task<IEnumerable<ActivityTask>> GetAllActivityTasksForActivityAsync(Activity activity)
         {
-            InitDataManager();
+            
             return await activityTaskTable
                 .Where(p => p.ActivityId == activity.PCAId)
                 .ToListAsync();
@@ -182,7 +207,7 @@ namespace Pulse_MAUI.Data
         /// <param name="id">Identifier.</param>
         public async Task<ActivityTask> GetActivityTaskById(string id)
         {
-            InitDataManager();
+            
             var activityTask = await activityTaskTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -198,7 +223,7 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<Activity> GetActivityById(string id)
         {
-            InitDataManager();
+            
             var activity = await activityTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -212,7 +237,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All punch items async.</returns>
         public async Task<IEnumerable<PunchItem>> GetAllPunchItemsAsync()
         {
-            InitDataManager();
+            
             return await punchItemTable
                 .ToListAsync();
         }
@@ -224,7 +249,7 @@ namespace Pulse_MAUI.Data
         /// <param name="id">Identifier.</param>
         public async Task<PunchItem> GetPunchItemById(string id)
         {
-            InitDataManager();
+            
             var punchItem = await punchItemTable
                 .Where(p => p.Id == id)
                 .ToListAsync();
@@ -238,7 +263,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All Engineers async.</returns>
         public async Task<IEnumerable<Engineer>> GetAllEngineersAsync()
         {
-            InitDataManager();
+            
             return await engineerTable
                 .ToListAsync();
         }
@@ -249,7 +274,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All Users async.</returns>
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            InitDataManager();
+            
             return await userTable
                 .ToListAsync();
         }
@@ -260,9 +285,11 @@ namespace Pulse_MAUI.Data
         /// <returns>The all projects async.</returns>
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            InitDataManager();
-            return await projectTable
+            
+            var a = await projectTable
                 .ToListAsync();
+
+            return a;
         }
 
         /// <summary>
@@ -271,7 +298,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All units async.</returns>
         public async Task<IEnumerable<Unit>> GetAllUnitsAsync()
         {
-            InitDataManager();
+            
             return await unitTable
                 .ToListAsync();
         }
@@ -282,7 +309,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All commissioning systems async.</returns>
         public async Task<IEnumerable<CommissioningSystem>> GetAllCommissioningSystemsAsync()
         {
-            InitDataManager();
+            
             return await commissioningSystemTable
                 .ToListAsync();
         }
@@ -293,7 +320,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All components async.</returns>
         public async Task<IEnumerable<Component>> GetAllComponentsAsync()
         {
-            InitDataManager();
+            
             return await componentTable
                 .ToListAsync();
         }
@@ -304,7 +331,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All lookups async.</returns>
         public async Task<IEnumerable<Lookup>> GetAllLookupsAsync()
         {
-            InitDataManager();
+            
             return await lookupTable
                 .ToListAsync();
         }
@@ -315,7 +342,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All lookups async.</returns>
         public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
-            InitDataManager();
+            
             return await itemTable
                 .ToListAsync();
         }
@@ -326,7 +353,7 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Equipment>> GetAllEquipmentAsync()
         {
-            InitDataManager();
+            
             return await equipmentTable
                  .ToListAsync();
 
@@ -339,7 +366,7 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Priority>> GetAllPriority()
         {
-            InitDataManager();
+            
             return await priorityTable
                  .ToListAsync();
         }
@@ -354,7 +381,7 @@ namespace Pulse_MAUI.Data
         /// <param name="activityTask">Activity task to save.</param>
         public async Task SaveActivityTaskAsync(ActivityTask activityTask)
         {
-            InitDataManager();
+            
             await activityTaskTable.ReplaceItemAsync(activityTask);
         }
 
@@ -365,7 +392,7 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task SaveActivityAsync(Activity activity)
         {
-            InitDataManager();
+            
             await activityTable.ReplaceItemAsync(activity);
         }
 
@@ -376,7 +403,7 @@ namespace Pulse_MAUI.Data
         /// <param name="punchItem">Punch item to save.</param>
         public async Task SavePunchItemAsync(PunchItem punchItem)
         {
-            InitDataManager();
+            
             if (string.IsNullOrEmpty(punchItem.Id))
             {
                 await punchItemTable.InsertItemAsync(punchItem);
@@ -394,7 +421,7 @@ namespace Pulse_MAUI.Data
 		/// <param name="Item">Item to save.</param>
         public async Task SaveItemAsync(Item item)
         {
-            InitDataManager();
+            
             if (string.IsNullOrEmpty(item.Id))
             {
                 try
@@ -426,7 +453,7 @@ namespace Pulse_MAUI.Data
         /// <param name="Item">Item to delete.</param>
         public async Task DeleteItemAsync(Item item)
         {
-            InitDataManager();
+            
             if (item != null)
             {
                 await itemTable.DeleteItemAsync(item);
@@ -443,7 +470,7 @@ namespace Pulse_MAUI.Data
         /// <param name="incremental">Do an incremental or full pull of the data</param>
         public async Task<List<string>> SyncPushAndPullItemsAsync(bool incremental, bool secondPass)
         {
-            InitDataManager();
+            
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
             List<string> Errors = new List<string>();
 
@@ -457,64 +484,66 @@ namespace Pulse_MAUI.Data
 
 
                 //await this.itemTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                await this.itemTable.PullItemsAsync(
-                    this.itemTable.CreateQuery());
+                await  itemTable.PullItemsAsync(
+    query: itemTable.CreateQuery(),
+    cancellationToken: CancellationToken.None
+);
 
                 if (!secondPass)
                 {
 
 
-                    await this.activityTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.activityTable.PullItemsAsync(
                              this.activityTable.CreateQuery());
 
-                    await this.punchItemTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.punchItemTable.PullItemsAsync(
                         this.punchItemTable.CreateQuery());
 
-                    await this.engineerTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.engineerTable.PullItemsAsync(
                         this.engineerTable.CreateQuery());
 
-                    await this.userTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.userTable.PullItemsAsync(
                         this.userTable.CreateQuery());
 
-                    await this.projectTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.projectTable.PullItemsAsync(
                         this.projectTable.CreateQuery());
 
-                    await this.commissioningSystemTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.commissioningSystemTable.PullItemsAsync(
                         this.commissioningSystemTable.CreateQuery());
 
-                    await this.unitTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.unitTable.PullItemsAsync(
                        this.unitTable.CreateQuery());
 
-                    await this.componentTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.componentTable.PullItemsAsync(
                        this.componentTable.CreateQuery());
 
-                    await this.lookupTable.PullItemsAsync(this.componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
+                    await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
                     {
                         QueryId = incremental ? "LookupDataIncremental" : null
                     });
 
-                    await this.priorityTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.priorityTable.PullItemsAsync(
                         this.priorityTable.CreateQuery());
 
-                    await this.activityTaskTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.activityTaskTable.PullItemsAsync(
                         this.activityTaskTable.CreateQuery());
 
-                    await this.equipmentTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.equipmentTable.PullItemsAsync(
                         this.equipmentTable.CreateQuery());
 
 
-                    await this.disciplineTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                    await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.disciplineTable.PullItemsAsync(
                         this.disciplineTable.CreateQuery());
 
@@ -595,7 +624,7 @@ namespace Pulse_MAUI.Data
         /// <returns>async task.</returns>
         public async Task SyncPushAndPurgeAsync()
         {
-            InitDataManager();
+            
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
 
             try
@@ -731,6 +760,8 @@ namespace Pulse_MAUI.Data
                 SyncMode = SyncMode,
                 TransactionBatchId = TransactionBatchId
             };
+
+            var a = JsonConvert.SerializeObject(myEntry);
 
 
             try

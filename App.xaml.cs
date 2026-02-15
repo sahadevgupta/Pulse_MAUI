@@ -22,6 +22,19 @@ namespace Pulse_MAUI
             return new Window(new AppShell());
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var locationPermission = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+                if(locationPermission != PermissionStatus.Granted)
+                {
+                    await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                }
+            });
+        }
+
         public static void SetSizeFormula(double topMultiplier, float xdpi)
         {
 

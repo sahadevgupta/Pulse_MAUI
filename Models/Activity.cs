@@ -17,49 +17,57 @@ namespace Pulse_MAUI.Models
         /// Gets or sets the ProjectId.
         /// </summary>
         /// <value>The tag identifier.</value>
+        [JsonProperty("projectId")]
         public int? ProjectId { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-		/// <summary>
-		/// Gets or sets the PCAId.
-		/// </summary>
-		/// <value>The PCAId.</value>
-		public int PCAId { get; set; }
+        /// <summary>
+        /// Gets or sets the PCAId.
+        /// </summary>
+        /// <value>The PCAId.</value>
+        [JsonProperty("pcaId")]
+        public int PCAId { get; set; }
 
-		/// <summary>
-		/// Gets or sets the PCCId.
-		/// </summary>
-		/// <value>The PCCId.</value>
-		public int? PCCId { get; set; }
+        /// <summary>
+        /// Gets or sets the PCCId.
+        /// </summary>
+        /// <value>The PCCId.</value>
+        [JsonProperty("pccId")]
+        public int? PCCId { get; set; }
 
-		/// <summary>
-		/// Gets or sets the assigned engineer identifier.
-		/// </summary>
-		/// <value>The assigned engineer identifier.</value>
-		public int? AssignedEngineerId { get; set; }
+        /// <summary>
+        /// Gets or sets the assigned engineer identifier.
+        /// </summary>
+        /// <value>The assigned engineer identifier.</value>
+        [JsonProperty("assignedEngineerId")]
+        public int? AssignedEngineerId { get; set; }
 
-		/// <summary>
-		/// Gets or sets the assigned engineer date.
-		/// </summary>
-		/// <value>The assigned engineer date.</value>
-		public DateTime? AssignedEngineerDate { get; set; }
+        /// <summary>
+        /// Gets or sets the assigned engineer date.
+        /// </summary>
+        /// <value>The assigned engineer date.</value>
+        [JsonProperty("assignedEngineerDate")]
+        public DateTime? AssignedEngineerDate { get; set; }
 
-		/// <summary>
-		/// Gets or sets the tag identifier.
-		/// </summary>
-		/// <value>The tag identifier.</value>
-		public string TagId { get; set; }
+        /// <summary>
+        /// Gets or sets the tag identifier.
+        /// </summary>
+        /// <value>The tag identifier.</value>
+        [JsonProperty("tagId")]
+        public string? TagId { get; set; }
 
-		/// <summary>
-		/// Gets or sets the type of the component.
-		/// </summary>
-		/// <value>The type of the component.</value>
-		public string ComponentType { get; set; }
+        /// <summary>
+        /// Gets or sets the type of the component.
+        /// </summary>
+        /// <value>The type of the component.</value>
+        [JsonProperty("componentType")]
+        public string? ComponentType { get; set; }
 
 
 
@@ -70,7 +78,8 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The commissioning system.
         /// </value>
-        public string CommissioningSystem { get; set; }
+        [JsonProperty("commissioningSystem")]
+        public string? CommissioningSystem { get; set; }
 
 
         /// <summary>
@@ -79,7 +88,8 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The unit.
         /// </value>
-        public string Unit { get; set; }
+        [JsonProperty("unit")]
+        public string? Unit { get; set; }
 
         /// <summary>
         /// Gets or sets the number of tasks for this activity
@@ -93,6 +103,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The status identifier.
         /// </value>
+        [JsonProperty("statusId")]
         public int StatusId { get; set; }
 
         /// <summary>
@@ -101,7 +112,8 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The status.
         /// </value>
-        public string Status { get; set; }
+        [JsonProperty("status")]
+        public string? Status { get; set; }
 
 
         /// <summary>
@@ -110,7 +122,8 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The modfied by.
         /// </value>
-        public string ModifiedBy { get; set; }
+        [JsonProperty("modifiedBy")]
+        public string? ModifiedBy { get; set; }
 
         /// <summary>
         /// Gets or sets the date recorded.
@@ -118,6 +131,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The date recorded.
         /// </value>
+        [JsonProperty("dateRecorded")]
         public DateTime? DateRecorded { get; set; }
 
         /// <summary>
@@ -126,6 +140,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The date completed.
         /// </value>
+        [JsonProperty("dateCompleted")]
         public DateTime? DateCompleted { get; set; }
 
         /// <summary>
@@ -134,6 +149,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The pu identifier.
         /// </value>
+        [JsonProperty("puId")]
         public int PUId { get; set; }
 
         /// <summary>
@@ -142,6 +158,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The puc identifier.
         /// </value>
+        [JsonProperty("pucId")]
         public int PUCId { get; set; }
 
 
@@ -151,6 +168,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The lead discipline identifier.
         /// </value>
+        [JsonProperty("leadDisciplineId")]
         public int? LeadDisciplineId { get; set; }
 
 
@@ -160,6 +178,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The last latitude.
         /// </value>
+        [JsonProperty("lastLatitude")]
         public float? LastLatitude { get; set; }
 
         /// <summary>
@@ -168,6 +187,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The last longitude.
         /// </value>
+        [JsonProperty("lastLongitude")]
         public float? LastLongitude { get; set; }
 
 

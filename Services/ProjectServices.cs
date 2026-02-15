@@ -44,7 +44,7 @@ namespace Pulse_MAUI.Services
             try
             {
                 var headers = await GetHeader();
-               var result = await projectBackendService.PostSyncLogAsync(headers, syncLogRequest).ConfigureAwait(false);
+                await projectBackendService.PostSyncLogAsync(headers, syncLogRequest).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

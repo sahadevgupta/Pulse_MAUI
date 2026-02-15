@@ -46,6 +46,10 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MenuOption">
                     <VerticalStackLayout Padding="10">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.MenuSelectedCommand,Source={x:Reference optionsList}}"
+                                                  CommandParameter="{Binding .}"/>
+                        </VerticalStackLayout.GestureRecognizers>
                         <Label Text="{Binding Title}"
                                Style="{StaticResource LabelLargeSignikaRegularStockLightBlueStyle}"/>
                         

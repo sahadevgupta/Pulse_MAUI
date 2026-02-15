@@ -37,7 +37,10 @@ namespace Pulse_MAUI.Extensions
                             .AddSingleton<IPunchSearchService,PunchSearchService>()
                             .AddSingleton<ISecureStorageService,SecureStorageService>()
                             .AddSingleton<IShellNavigationService, ShellNavigationService>()
+                            .AddSingleton<ISynchroniseService,SynchroniseService>()
+                            .AddSingleton<ISyncLogService,SyncLogService>()
                             .AddSingleton<ITokenService, TokenService>()
+                            .AddSingleton<IUserService,UserService>()
                             .AddSingleton<IPopupNavigation>(MopupService.Instance)
 #if ANDROID
                             .AddSingleton<ILoadingService, Pulse_MAUI.Platforms.Android.Services.LodingPageService>();

@@ -13,15 +13,15 @@
             <toolkit:Expander.Header>
                 <HorizontalStackLayout Padding="12"
                                        BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
-                    <Image Source="{x:Static helpers:Images.Filter }"/>
+                    <Image Source="{x:Static helpers:Images.Filter }" Scale="0.7"/>
 
-                    <Label Text="{resources:Translate Hide}"
+                    <Label Text="{resources:Translate Show}"
                            Style="{StaticResource LabelDefaultSignikaRegular}">
                         <Label.Triggers>
                             <DataTrigger TargetType="Label"
                                          Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
                                          Value="True">
-                                <Setter Property="Text" Value="{resources:Translate Show}"/>
+                                <Setter Property="Text" Value="{resources:Translate Hide}"/>
                             </DataTrigger>
                         </Label.Triggers>
                     </Label>

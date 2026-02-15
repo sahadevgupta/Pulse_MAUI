@@ -26,7 +26,7 @@ namespace Pulse_MAUI.Interfaces
         Task<MobileServiceLoginDto> LoginAsync([Body(BodySerializationMethod.Serialized)] LoginRequest payload);
 
         [Post("/SyncLog")]
-        Task<object> PostSyncLogAsync([HeaderCollection] IDictionary<string, string> headers,[Body(BodySerializationMethod.Serialized)] SyncLogRequest request);
+        Task PostSyncLogAsync([HeaderCollection] IDictionary<string, string> headers,[Body(BodySerializationMethod.Serialized)] SyncLogRequest request);
 
         [Post("/api/{tableName}")]
         Task<JsonDocument> InsertAsync(string tableName, [Body] JsonDocument item);

@@ -25,7 +25,7 @@ namespace Pulse_MAUI.Services
 
                 IconTintColor = alertType == AlertType.Warning ?
                        (Color)Application.Current!.Resources["StandardOrange"] :
-                      (alertType == AlertType.Success ? (Color)Application.Current!.Resources["Green"] : (Color)Application.Current!.Resources["Red"]),
+                      (alertType == AlertType.Success ? (Color)Application.Current!.Resources["Green"] : Colors.Red),
             };
 
             bool isMyPopupOpen = popupNavigation.PopupStack
@@ -45,8 +45,9 @@ namespace Pulse_MAUI.Services
                 
             }
         }
-        public void ShowLoading(string message = "Loading")
+        public void ShowLoading(string message = "Loading...")
         {
+            HideLoading();
             lodingService.ShowLoading(message);
         }
 
