@@ -36,7 +36,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\applogo.png"/>
+		<MauiIcon Include="Resources\AppIcon\applogo.png" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\appsplash.png" Color="#ffffff" Resize="True" />
@@ -53,6 +53,12 @@
 
 	<ItemGroup>
 	  <Compile Remove="Data\DataManagerItems.cs" />
+	  <Compile Remove="Repository\AppDataRepository+Activity.cs" />
+	  <Compile Remove="Repository\AppDataRepository+ActivityTask.cs" />
+	  <Compile Remove="Repository\AppDataRepository.cs" />
+	  <Compile Remove="Repository\DBAccessRepository.cs" />
+	  <Compile Remove="Repository\IAppDataRepository.cs" />
+	  <Compile Remove="Repository\IDBAccessRepository.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -68,6 +74,7 @@
 		<PackageReference Include="Mopups" Version="1.3.4" />
 		<PackageReference Include="Refit.HttpClientFactory" Version="9.0.2" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="9.0.2" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 	</ItemGroup>
@@ -95,6 +102,10 @@
 		<EmbeddedResource Include="Assets/appsettings.TST.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Repository\" />
 	</ItemGroup>
 
 </Project>

@@ -27,7 +27,7 @@ namespace Pulse_MAUI.Interfaces
         Task<string> GetAzureBlobConnection();
         Task<PunchItem> GetPunchItemById(string id);
         Task<string> GetSettings();
-        void InitDataManager();
+        Task InitDataManager();
         void InitDataManager(string url);
         bool IsUserValid();
         Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl);

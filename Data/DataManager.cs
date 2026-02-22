@@ -40,7 +40,11 @@ namespace Pulse_MAUI.Data
         public DataManager(IProjectServices projectServices)
         {
             this.projectServices = projectServices;
-            InitDataManager();
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await InitDataManager();
+
+            });
         }
 
         /// <summary>
@@ -63,7 +67,7 @@ namespace Pulse_MAUI.Data
         /// <summary>
         /// Initializes a new instance of the <see cref="T:PCATablet.Core.Data.DataManager"/> class.
         /// </summary>
-        public async void InitDataManager()
+        public async Task InitDataManager()
         {
             var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
             if (!Directory.Exists(folderPath))
@@ -182,7 +186,7 @@ namespace Pulse_MAUI.Data
         /// <returns>All activities async.</returns>
         public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
         {
-            InitDataManager();
+            //InitDataManager();
             return await activityTable
                 .ToListAsync();
         }
@@ -196,7 +200,7 @@ namespace Pulse_MAUI.Data
         {
             
             return await activityTaskTable
-                .Where(p => p.ActivityId == activity.PCAId)
+                .Where(p => p.ActivityId == activity.pcaId)
                 .ToListAsync();
         }
 
@@ -225,7 +229,7 @@ namespace Pulse_MAUI.Data
         {
             
             var activity = await activityTable
-                .Where(p => p.Id == id)
+                .Where(p => p.id == id)
                 .ToListAsync();
 
             return activity.FirstOrDefault();
@@ -470,7 +474,7 @@ namespace Pulse_MAUI.Data
         /// <param name="incremental">Do an incremental or full pull of the data</param>
         public async Task<List<string>> SyncPushAndPullItemsAsync(bool incremental, bool secondPass)
         {
-            
+             //InitDataManager();
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
             List<string> Errors = new List<string>();
 
@@ -496,6 +500,10 @@ namespace Pulse_MAUI.Data
                     await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.activityTable.PullItemsAsync(
                              this.activityTable.CreateQuery());
+
+                    await Task.Delay(500);
+
+                    var a =  await this.activityTable.ToListAsync();
 
                     await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
                     await this.punchItemTable.PullItemsAsync(

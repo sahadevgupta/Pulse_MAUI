@@ -66,8 +66,6 @@ namespace Pulse_MAUI.Services
 
                 var availableComponentTags = FetchComponentTags();
                 ComponentTags = availableComponentTags;
-
-
             });
 
             return true;
@@ -86,14 +84,14 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
             var availablePunchActivities = (from activites in activityService.Activities
                                             join punches in punchService
-                                             .Punches on activites.PCAId equals punches.PCAId
+                                             .Punches on activites.pcaId equals punches.PCAId
                                             select (activites)).ToList();
 
             availableActivities = availablePunchActivities
                 .ToList()
-                .Where(p => p.Name != null)
-                .OrderBy(p => p.Name)
-                .Select(p => p.Name)
+                .Where(p => p.name != null)
+                .OrderBy(p => p.name)
+                .Select(p => p.name)
                 .Distinct();
 
 
@@ -294,14 +292,14 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
             var availablePunchActivities = from activites in activityService.Activities
                                            join punches in punchService
-                                            .Punches on activites.PCAId equals punches.PCAId
+                                            .Punches on activites.pcaId equals punches.PCAId
                                            select (activites);
 
             var filteredActivities = availablePunchActivities
                 .ToList()
-                .Where(p => p.TagId == selectedComponentTag && p.Name != null)
-                .OrderBy(p => p.Name)
-                .Select(p => p.Name)
+                .Where(p => p.tagId == selectedComponentTag && p.name != null)
+                .OrderBy(p => p.name)
+                .Select(p => p.name)
                 .Distinct();
 
 

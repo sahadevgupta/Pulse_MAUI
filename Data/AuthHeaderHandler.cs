@@ -31,7 +31,7 @@ namespace Pulse_MAUI.Data
 
             if (request.RequestUri.AbsoluteUri.Contains("&$count=true"))
             {
-               var newUri = request.RequestUri.AbsoluteUri.Replace("&$count=true", "");
+               var newUri = request.RequestUri.AbsoluteUri.Replace("&$count=true", "&$skip=0&$top=50&__includeDeleted=true");
                 request.RequestUri = new Uri(newUri);
             }
 

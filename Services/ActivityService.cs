@@ -43,7 +43,7 @@ namespace Pulse_MAUI.Services
             {
 
                 IEnumerable<Activity> availableActivitiesMain = await dataManager.GetAllActivitiesAsync();
-                var availableActivities = availableActivitiesMain.OrderByDescending(o => o.Status).ToList();
+                var availableActivities = availableActivitiesMain.OrderByDescending(o => o.status).ToList();
 
                 //TODO: Need to check this logic
 
