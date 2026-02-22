@@ -17,24 +17,29 @@ namespace Pulse_MAUI.Models
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        public string Id { get; set; }
+        [JsonProperty("id")]
+        [PrimaryKey]
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the updated at.
         /// </summary>
         /// <value>The updated at.</value>
+        [JsonProperty("updatedAt")]
         public DateTimeOffset? UpdatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the created at.
         /// </summary>
         /// <value>The created at.</value>
+        [JsonProperty("createdAt")]
         public DateTimeOffset? CreatedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the version.
         /// </summary>
         /// <value>The version.</value>
+        [JsonProperty("version")]
         public string? Version { get; set; }
 
         

@@ -33,6 +33,7 @@
         </toolkit:Expander>
 
         <controls:CustomListView x:Name="activitiesList"
+                                 Grid.Row="1"
                                  IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
 				HasUnevenRows="true"
 				ItemsSource="{Binding Activities}">

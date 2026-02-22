@@ -4,7 +4,4 @@ using System.Text;
 
 namespace Pulse_MAUI.Repository
 {
-    public partial class AppDataRepository
-    {
-    }
 }

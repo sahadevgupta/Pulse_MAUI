@@ -1,21 +1,14 @@
 ﻿using Microsoft.Datasync.Client;
-using Newtonsoft.Json.Linq;
-using PCATablet.Core.Data;
-using Pulse_MAUI.Constants;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
-using Pulse_MAUI.Models.Request;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 
 namespace Pulse_MAUI.Services
 {
     public class LoginProvider(IAuthService authService) : ILoginProvider
     {
-        public async Task<MobileServiceUser> LoginAsync(DatasyncClient client, IDataManager dataManager,string azureMobileServiceUrl)
+        public async Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl)
         {
             MobileServiceUser user = new();
             try

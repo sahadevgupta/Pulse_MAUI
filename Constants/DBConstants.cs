@@ -4,7 +4,7 @@ namespace Pulse_MAUI.Constants;
 
 public static class DBConstants
 {
-    public const string DatabaseFilename = "PCAOfflineCache.db3";
+    public const string DatabaseFilename = "PCAOfflineCache.db";
 
     public const SQLite.SQLiteOpenFlags Flags =
         // open the database in read/write mode

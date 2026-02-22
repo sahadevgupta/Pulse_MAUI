@@ -35,7 +35,20 @@ namespace Pulse_MAUI
 
                     //fontawesome
                     fonts.AddFont("fa-solid-900.ttf", "MyFont");
-                });
+                })
+                .UseSentry(options =>
+                {
+                    // The DSN is the only required setting.
+                    options.Dsn = "https://708db823deb7dd72073f5ac2149694b4@o4510259879673856.ingest.de.sentry.io/4510930203574352";
+
+                    // Use debug mode if you want to see what the SDK is doing.
+                    // Debug messages are written to stdout with Console.Writeline,
+                    // and are viewable in your IDE's debug console or with 'adb logcat', etc.
+                    // This option is not recommended when deploying your application.
+                    options.Debug = true;
+
+                    // Other Sentry options can be set here.
+                }); ;
 
 #if DEBUG
     		builder.Logging.AddDebug();

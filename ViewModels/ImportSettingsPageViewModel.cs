@@ -91,8 +91,6 @@ namespace Pulse_MAUI.ViewModels
                 {
                     customUrl = Url + @"/Mobile/ServiceSetting.xml";
                 }
-
-                _dataManager.InitDataManager(customUrl);
                 var user = await _dataManager.LoginAsync(Url);
 
                 if (user is object)

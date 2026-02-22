@@ -85,8 +85,8 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> commSystem = new ObservableRangeCollection<string>();
 
             var availableCommSystem = Activities
-                .Where(p => p.unit == selectedUnit)
-                .Select(p => p.commissioningSystem)
+                .Where(p => p.Unit == selectedUnit)
+                .Select(p => p.CommissioningSystem)
                 .Distinct();
 
             commSystem.Add(UserInterface.SearchView_All);
@@ -119,8 +119,8 @@ namespace Pulse_MAUI.Services
 
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
 
-            var availableActivities = Activities.OrderBy(p => p.name)
-                                                .Select(p => p.name)
+            var availableActivities = Activities.OrderBy(p => p.Name)
+                                                .Select(p => p.Name)
                                                 .Distinct();
 
             activities.Add(UserInterface.SearchView_All);
@@ -135,8 +135,8 @@ namespace Pulse_MAUI.Services
         public ObservableRangeCollection<string> FetchComponentTypes()
         {
             ObservableRangeCollection<string> component = new ObservableRangeCollection<string>();
-            var availableComponents = Activities.OrderBy(p => p.componentType)
-                                                .Select(p => p.componentType)
+            var availableComponents = Activities.OrderBy(p => p.ComponentType)
+                                                .Select(p => p.ComponentType)
                                                 .Distinct();
 
             component.Add(UserInterface.SearchView_All);
@@ -153,9 +153,9 @@ namespace Pulse_MAUI.Services
         {
             ObservableRangeCollection<string> component = new ObservableRangeCollection<string>();
             var availableComponents = Activities
-                .Where(p => p.commissioningSystem == selectedCommSystem)
-                .OrderBy(p => p.componentType)
-                .Select(p => p.componentType)
+                .Where(p => p.CommissioningSystem == selectedCommSystem)
+                .OrderBy(p => p.ComponentType)
+                .Select(p => p.ComponentType)
                 .Distinct();
 
             component.Add(UserInterface.SearchView_All);
@@ -175,7 +175,7 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> componentTags = new ObservableRangeCollection<string>();
 
             var availableComponentTags = Activities
-                .Select(p => p.tagId)
+                .Select(p => p.TagId)
                 .Distinct();
 
             componentTags.Add(UserInterface.SearchView_All);
@@ -194,8 +194,8 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> componentTags = new ObservableRangeCollection<string>();
 
             var availableComponentTags = Activities
-                .Where(p => p.componentType == selectedCompType)
-                .Select(p => p.tagId)
+                .Where(p => p.ComponentType == selectedCompType)
+                .Select(p => p.TagId)
                 .Distinct();
 
             componentTags.Add(UserInterface.SearchView_All);
@@ -213,7 +213,7 @@ namespace Pulse_MAUI.Services
 
             ObservableRangeCollection<string> unit = new ObservableRangeCollection<string>();
             var availableUnits = Activities
-                .Select(p => p.unit)
+                .Select(p => p.Unit)
                 .Distinct();
 
             unit.Add(UserInterface.SearchView_All);
@@ -230,7 +230,7 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> commSystem = new ObservableRangeCollection<string>();
 
             var availableCommSystem = Activities
-                .Select(p => p.commissioningSystem)
+                .Select(p => p.CommissioningSystem)
                 .Distinct();
 
             commSystem.Add(UserInterface.SearchView_All);
@@ -249,10 +249,10 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
 
             var availableActivities = Activities
-                .Where(p => p.tagId == selectedComponentTag)
+                .Where(p => p.TagId == selectedComponentTag)
                 .ToList()
-                .OrderBy(p => p.name)
-                .Select(p => p.name)
+                .OrderBy(p => p.Name)
+                .Select(p => p.Name)
                 .Distinct();
 
             activities.Add(UserInterface.SearchView_All);

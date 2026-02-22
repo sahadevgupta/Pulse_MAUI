@@ -15,11 +15,11 @@ public class DBAccessRepository<T> : IDBAccessRepository<T> where T : new()
         if (SQLiteAsyncConnection is not null)
             return;
 
-        string? key = await SecureStorage.Default.GetAsync("databse_token");
+        string? key = await SecureStorage.Default.GetAsync(PreferenceConstants.DatabaseToken);
         if (string.IsNullOrWhiteSpace(key))
         {
-            await SecureStorage.Default.SetAsync("databse_token", Guid.NewGuid().ToString());
-            key = await SecureStorage.Default.GetAsync("databse_token");
+            await SecureStorage.Default.SetAsync(PreferenceConstants.DatabaseToken, Guid.NewGuid().ToString());
+            key = await SecureStorage.Default.GetAsync(PreferenceConstants.DatabaseToken);
         }
         var options = new SQLiteConnectionString(DBConstants.DatabasePath, DBConstants.Flags, true, key, postKeyAction: c =>
         {

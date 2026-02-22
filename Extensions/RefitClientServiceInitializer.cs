@@ -36,6 +36,27 @@ namespace Pulse_MAUI.Extensions
 #endif
             ;
 
+            builder.Services.AddRefitClient<ISyncServiceApi>(new RefitSettings
+            {
+                ExceptionFactory = async (response) =>
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        return new UnAuthorizedException($"Unauthorized: {content}");
+                    }
+                    return null; // Default for other status codes            
+                }
+            })
+            .ConfigureHttpClient(j =>
+            {
+                j.BaseAddress = defaultUri;
+            })
+#if DEBUG
+            .AddHttpMessageHandler<HttpMessageLogHandler>()
+#endif
+            ;
+
             return builder;
         }
         public class HttpMessageLogHandler : DelegatingHandler

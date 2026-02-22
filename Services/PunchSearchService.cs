@@ -84,14 +84,14 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
             var availablePunchActivities = (from activites in activityService.Activities
                                             join punches in punchService
-                                             .Punches on activites.pcaId equals punches.PCAId
+                                             .Punches on activites.PCAId equals punches.PCAId
                                             select (activites)).ToList();
 
             availableActivities = availablePunchActivities
                 .ToList()
-                .Where(p => p.name != null)
-                .OrderBy(p => p.name)
-                .Select(p => p.name)
+                .Where(p => p.Name != null)
+                .OrderBy(p => p.Name)
+                .Select(p => p.Name)
                 .Distinct();
 
 
@@ -292,14 +292,14 @@ namespace Pulse_MAUI.Services
             ObservableRangeCollection<string> activities = new ObservableRangeCollection<string>();
             var availablePunchActivities = from activites in activityService.Activities
                                            join punches in punchService
-                                            .Punches on activites.pcaId equals punches.PCAId
+                                            .Punches on activites.PCAId equals punches.PCAId
                                            select (activites);
 
             var filteredActivities = availablePunchActivities
                 .ToList()
-                .Where(p => p.tagId == selectedComponentTag && p.name != null)
-                .OrderBy(p => p.name)
-                .Select(p => p.name)
+                .Where(p => p.TagId == selectedComponentTag && p.Name != null)
+                .OrderBy(p => p.Name)
+                .Select(p => p.Name)
                 .Distinct();
 
 

@@ -53,12 +53,9 @@
 
 	<ItemGroup>
 	  <Compile Remove="Data\DataManagerItems.cs" />
-	  <Compile Remove="Repository\AppDataRepository+Activity.cs" />
 	  <Compile Remove="Repository\AppDataRepository+ActivityTask.cs" />
 	  <Compile Remove="Repository\AppDataRepository.cs" />
-	  <Compile Remove="Repository\DBAccessRepository.cs" />
 	  <Compile Remove="Repository\IAppDataRepository.cs" />
-	  <Compile Remove="Repository\IDBAccessRepository.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -77,6 +74,7 @@
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+		<PackageReference Include="Sentry.Maui" Version="5.16.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -102,10 +100,6 @@
 		<EmbeddedResource Include="Assets/appsettings.TST.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Repository\" />
 	</ItemGroup>
 
 </Project>
