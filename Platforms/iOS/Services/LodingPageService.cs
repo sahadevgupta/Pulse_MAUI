@@ -11,13 +11,13 @@ namespace Pulse_MAUI.Platforms.iOS.Services
 {
     public class LodingPageService : ILoadingService
     {
-        private UIView _nativeView;
+        private UIView? _nativeView;
         private bool _isInitialized;
 
         public void HideLoading()
         {
             // Hide the page
-            _nativeView.RemoveFromSuperview();
+            _nativeView?.RemoveFromSuperview();
         }
 
         public void ShowLoading(string message)
@@ -38,7 +38,7 @@ namespace Pulse_MAUI.Platforms.iOS.Services
             loadingView.Text = message;
             if (page?.Handler != null)
             {
-                loadingView.Arrange(new Rect(0,0, page.Width, page.Height));
+                loadingView.Arrange(new Rect(0, 0, page.Width, page.Height));
                 _nativeView = loadingView.ToHandler(page.Handler?.MauiContext!)?.PlatformView;
 
                 _isInitialized = true;

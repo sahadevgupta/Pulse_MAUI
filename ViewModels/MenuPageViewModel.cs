@@ -45,7 +45,7 @@ namespace Pulse_MAUI.ViewModels
             }
 
         }
-        public string AppName =>Preferences.Get("AppTitle", "Pulse Mobile");
+        public string AppName => Preferences.Get("AppTitle", "Pulse Mobile");
         public string AppVersion => string.Format("Version {0}", VersionTracking.CurrentVersion);
 
         #endregion
@@ -117,13 +117,16 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task FetchData()
         {
+            if (string.IsNullOrWhiteSpace(AppHelpers.AzureServiceUrl) || AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
+                return;
+
             if (_appWorkflowManager.EngineerService.CurrentEngineer == null)
                 await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
 
             if (_appWorkflowManager.UserService.CurrentUser == null)
                 await _appWorkflowManager.UserService.FetchCurrentUser();
 
-            
+
             this.OnPropertyChanged(nameof(ProfileName));
             this.OnPropertyChanged(nameof(CurrentDate));
         }
@@ -141,7 +144,7 @@ namespace Pulse_MAUI.ViewModels
             Shell.Current.FlyoutIsPresented = false;
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
-                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                 return;
             }
 
@@ -187,7 +190,7 @@ namespace Pulse_MAUI.ViewModels
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex.Message);
-                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error","Unable to complete data sync",AlertType.Error );
+                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
                     }
 
 
@@ -199,14 +202,14 @@ namespace Pulse_MAUI.ViewModels
                             sb.AppendLine(err);
                         }
 
-                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(),AlertType.Error);
+                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
                     }
 
 
                 }
                 else
                 {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                     return;
                 }
 
@@ -218,7 +221,7 @@ namespace Pulse_MAUI.ViewModels
                 }
                 else
                 {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                     return;
                 }
 
@@ -229,7 +232,7 @@ namespace Pulse_MAUI.ViewModels
                 }
                 else
                 {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!","No Internet Connection Available");
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                     return;
                 }
 
@@ -304,9 +307,11 @@ namespace Pulse_MAUI.ViewModels
             }
 
             ViewModelParameters.DialogService.HideLoading();
-            WeakReferenceMessenger.Default.Send(new NotificationMessageEvent( NotifyType.PostSyncRefresh));
+            WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.PostSyncRefresh));
+
+            PopulateOptionsMenu();
         }
-       
+
         #endregion
     }
 }

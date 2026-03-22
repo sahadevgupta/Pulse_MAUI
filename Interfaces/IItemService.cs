@@ -4,7 +4,7 @@ namespace Pulse_MAUI.Interfaces
 {
     public interface IItemService
     {
-        Task<IEnumerable<Item>> GetItemListAsync();
-        Task SaveItem(Item itemToSave);
+        Task<IEnumerable<Models.Database.Item>> GetItemListAsync();
+        Task SaveItem(Models.Database.Item itemToSave);
     }
 }

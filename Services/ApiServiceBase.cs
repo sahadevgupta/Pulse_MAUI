@@ -29,7 +29,10 @@ namespace Pulse_MAUI.Services
                 var authInfo = await AuthService.ValidateAuth("https://pulseargwebappmobile.azurewebsites.net");
                 if (authInfo != null)
                 {
-                    header.Add("X-ZUMO-AUTH", authInfo.ZumoAuthToken);
+                    Console.WriteLine("b2c access Token :" + authInfo.AccessToken);
+                    Console.WriteLine("b2c access IdToken :" + authInfo.IdToken);
+                    //header.Add("X-ZUMO-AUTH", authInfo.ZumoAuthToken);
+                    header.Add("Authorization", "Bearer " + authInfo?.AccessToken);
                 }
             }
             catch (Exception exception)

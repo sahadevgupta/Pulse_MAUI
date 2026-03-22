@@ -13,16 +13,16 @@ namespace Pulse_MAUI.Models
 	public class PunchItem : BaseModel
 	{
 		int? punchId;
-        Guid? deviceReferenceID;
+		Guid? deviceReferenceID;
 
-        const int PunchDescriptionMax = 100;
+		const int PunchDescriptionMax = 100;
 
-        /// <summary>
-        /// Gets or sets the punch identifier.
-        /// </summary>
-        /// <value>The punch identifier.</value>
-        [JsonProperty(PropertyName = "punchId")]
-        public int? PunchId
+		/// <summary>
+		/// Gets or sets the punch identifier.
+		/// </summary>
+		/// <value>The punch identifier.</value>
+		[JsonProperty(PropertyName = "punchId")]
+		public int? PunchId
 		{
 			get
 			{
@@ -30,24 +30,24 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-                    SetPropertyChanged(ref punchId, value);
+				SetProperty(ref punchId, value);
 			}
 		}
 
 
-        /// <summary>
-        /// Gets the mobile identifier.
-        /// </summary>
-        /// <value>
-        /// The mobile identifier.
-        /// </value>
-        public string MobileId
-        {
-            get
-            {
-                return Id;
-            }
-        }
+		/// <summary>
+		/// Gets the mobile identifier.
+		/// </summary>
+		/// <value>
+		/// The mobile identifier.
+		/// </value>
+		public string MobileId
+		{
+			get
+			{
+				return Id;
+			}
+		}
 
 		string description;
 
@@ -64,7 +64,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref description, value);
+				SetProperty(ref description, value);
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref projectId, value);
+				SetProperty(ref projectId, value);
 			}
 		}
 
@@ -102,7 +102,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref pUId, value);
+				SetProperty(ref pUId, value);
 			}
 		}
 
@@ -121,7 +121,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref pUCId, value);
+				SetProperty(ref pUCId, value);
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref tagId, value);
+				SetProperty(ref tagId, value);
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref componentType, value);
+				SetProperty(ref componentType, value);
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref pIdReference, value);
+				SetProperty(ref pIdReference, value);
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref createdOn, value);
+				SetProperty(ref createdOn, value);
 			}
 		}
 
@@ -216,7 +216,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref createdBy, value);
+				SetProperty(ref createdBy, value);
 			}
 		}
 
@@ -235,7 +235,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref updatedOn, value);
+				SetProperty(ref updatedOn, value);
 			}
 		}
 
@@ -254,7 +254,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref updatedBy, value);
+				SetProperty(ref updatedBy, value);
 			}
 		}
 
@@ -274,27 +274,27 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref status, value);
+				SetProperty(ref status, value);
 			}
 		}
 
 
-        string statusString;
-        [JsonIgnore] // doesnt get passed in the sync
-        public string StatusString
-        {
+		string statusString;
+		[JsonIgnore] // doesnt get passed in the sync
+		public string StatusString
+		{
 
-            get
-            {
-                return statusString;
-            }
+			get
+			{
+				return statusString;
+			}
 
-            set
-            {
-                value = statusString;
-            }
+			set
+			{
+				value = statusString;
+			}
 
-        }
+		}
 
 
 		string comments;
@@ -311,7 +311,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref comments, value);
+				SetProperty(ref comments, value);
 			}
 		}
 
@@ -330,7 +330,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref pCCId, value);
+				SetProperty(ref pCCId, value);
 			}
 		}
 
@@ -349,7 +349,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref pCAId, value);
+				SetProperty(ref pCAId, value);
 			}
 		}
 
@@ -368,7 +368,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref controltype, value);
+				SetProperty(ref controltype, value);
 			}
 		}
 
@@ -387,7 +387,7 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref targetCompleteBy, value);
+				SetProperty(ref targetCompleteBy, value);
 			}
 		}
 
@@ -406,16 +406,16 @@ namespace Pulse_MAUI.Models
 			}
 			set
 			{
-				SetPropertyChanged(ref priority, value);
+				SetProperty(ref priority, value);
 			}
 		}
 
 
-        /// <summary>
-        /// Gets or sets the assigned engineer identifier.
-        /// </summary>
-        /// <value>The assigned to  engineer identifier.</value>
-        public int? AssignedToEngineer { get; set; }
+		/// <summary>
+		/// Gets or sets the assigned engineer identifier.
+		/// </summary>
+		/// <value>The assigned to  engineer identifier.</value>
+		public int? AssignedToEngineer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the assigned engineer date.
@@ -423,79 +423,79 @@ namespace Pulse_MAUI.Models
 		/// <value>The assigned engineer date.</value>
 		public DateTime? AssignedEngineerDate { get; set; }
 
-        /// <summary>
-        /// Gets the title.
-        /// </summary>
-        /// <value>The title.</value>
-        [JsonIgnore] // doesnt get passed in the sync
-        public string Title
-        {
-            get
-            {
+		/// <summary>
+		/// Gets the title.
+		/// </summary>
+		/// <value>The title.</value>
+		[JsonIgnore] // doesnt get passed in the sync
+		public string Title
+		{
+			get
+			{
 
-                if (description.Length > PunchDescriptionMax)
-                {
-                    return string.Format("{0}. {1}, {2}",
-                                       ComponentType,
-                                       TagId,
-                                       Description.Substring(0, 100) + "...");
-                }
-                else
-                {
+				if (description.Length > PunchDescriptionMax)
+				{
+					return string.Format("{0}. {1}, {2}",
+									   ComponentType,
+									   TagId,
+									   Description.Substring(0, 100) + "...");
+				}
+				else
+				{
 
-                    return string.Format("{0}. {1}, {2}",
-                                         ComponentType,
-                                         TagId,
-                                         Description);
-                }
-            }
-        }
+					return string.Format("{0}. {1}, {2}",
+										 ComponentType,
+										 TagId,
+										 Description);
+				}
+			}
+		}
 
-        /// <summary>
-        /// Gets the sub title.
-        /// </summary>
-        /// <value>The sub title.</value>
-        [JsonIgnore] // doesnt get passed in the sync
-        public string SubTitle
+		/// <summary>
+		/// Gets the sub title.
+		/// </summary>
+		/// <value>The sub title.</value>
+		[JsonIgnore] // doesnt get passed in the sync
+		public string SubTitle
 		{
 			get
 			{
 				return string.Format("{0}, {1}",
-				                     CreatedOn.ToString("R"),
+									 CreatedOn.ToString("R"),
 									 StatusString);
 			}
 		}
 
-        /// <summary>
-        /// Gets or sets the unit.
-        /// </summary>
-        /// <value>
-        /// The unit.
-        /// </value>
-        [JsonIgnore] // doesnt get passed in the sync
-        public string Unit { get; set; }
+		/// <summary>
+		/// Gets or sets the unit.
+		/// </summary>
+		/// <value>
+		/// The unit.
+		/// </value>
+		[JsonIgnore] // doesnt get passed in the sync
+		public string Unit { get; set; }
 
 
-        /// <summary>
-        /// Gets or sets the commissioning system.
-        /// </summary>
-        /// <value>
-        /// The commissioning system.
-        /// </value>
-        /// 
-        [JsonIgnore] // doesnt get passed in the sync
-        public string CommissioningSystem { get; set; }
+		/// <summary>
+		/// Gets or sets the commissioning system.
+		/// </summary>
+		/// <value>
+		/// The commissioning system.
+		/// </value>
+		/// 
+		[JsonIgnore] // doesnt get passed in the sync
+		public string CommissioningSystem { get; set; }
 
 
-        /// <summary>
-        /// Gets or sets the discipine identifier.
-        /// </summary>
-        /// <value>
-        /// The discipine identifier.
-        /// </value>
-        public int? DisciplineId { get; set; }
+		/// <summary>
+		/// Gets or sets the discipine identifier.
+		/// </summary>
+		/// <value>
+		/// The discipine identifier.
+		/// </value>
+		public int? DisciplineId { get; set; }
 
 
 
-    }
+	}
 }

@@ -3,6 +3,7 @@ using Pulse_MAUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Item = Pulse_MAUI.Models.Database.Item;
 
 namespace Pulse_MAUI.Services
 {
@@ -78,7 +79,7 @@ namespace Pulse_MAUI.Services
 
             //BlobStorageService.Instance.BlobConnectionString = ConnectionString;
 
-             blobStorageService.ClearLocalStorage();
+            blobStorageService.ClearLocalStorage();
 
             var itemData = await itemService.GetItemListAsync();
 
@@ -86,13 +87,13 @@ namespace Pulse_MAUI.Services
             if (itemData != null)
             {
 
-                var newItems = itemData.Where(i => i.AzurePath == null && i.LocalPath != null && i.ControlType == ControlType);
+                var newItems = itemData.Where(i => i.azurePath == null && i.localPath != null && i.controlType == ControlType);
 
-                foreach (Models.Item item in newItems)
+                foreach (Item item in newItems)
                 {
 
                     // only upload records with non-null RecordID's
-                    if (item.RecordID != null)
+                    if (item.recordID != null)
                     {
                         await blobStorageService.PushLocalToBlob(item);
                     }
@@ -120,16 +121,16 @@ namespace Pulse_MAUI.Services
                 if (items != null)
                 {
 
-                    var nullItems = items.Where(i => i.RecordID == null && i.LocalReferenceID != null);
+                    var nullItems = items.Where(i => i.recordID == null && i.localReferenceID != null);
 
                     foreach (Item item in nullItems)
                     {
 
-                        var PunchItem = punches.FirstOrDefault(p => p.MobileId == item.LocalReferenceID);
+                        var PunchItem = punches.FirstOrDefault(p => p.MobileId == item.localReferenceID);
 
                         if (PunchItem != null)
                         {
-                            item.RecordID = PunchItem.PunchId;
+                            item.recordID = PunchItem.PunchId.GetValueOrDefault();
                             await itemService.SaveItem(item);
                         }
                     }
@@ -154,7 +155,7 @@ namespace Pulse_MAUI.Services
             //itemData.FirstOrDefault(x => x.)
 
 
-            foreach (Models.Item item in itemData)
+            foreach (Item item in itemData)
             {
                 await blobStorageService.RetrieveBlobToLocal(item);
             }

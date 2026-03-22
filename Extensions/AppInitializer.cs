@@ -15,7 +15,6 @@ namespace Pulse_MAUI.Extensions
         {
             builder
                 .RegisterAppServices()
-                .RegisterDBRepositories()
                 .ViewModelInit();
 
             IAppConfiguration Configuration = builder.Services.BuildServiceProvider().GetRequiredService<IAppConfiguration>();

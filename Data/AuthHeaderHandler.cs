@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Pulse_MAUI.Constants;
+using Pulse_MAUI.Models;
 using Pulse_MAUI.Models.Response;
 using System;
 using System.Collections.Generic;
@@ -21,19 +22,20 @@ namespace Pulse_MAUI.Data
         /// <param name="cancellationToken">Cancellation token.</param>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = await SecureStorage.GetAsync(ADConstants.AuthResultKey);
+            var authResultDtoJson = await SecureStorage.GetAsync(ADConstants.AuthResultKey);
+            Debug.WriteLine($"AuthHeaderHandler: Auth token found: {!string.IsNullOrEmpty(authResultDtoJson)}");
 
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(authResultDtoJson))
             {
-                var details = JsonConvert.DeserializeObject<AuthResultDto>(token);
-                request.Headers.Add("X-ZUMO-AUTH", details.ZumoAuthToken);
+                var authInfo = JsonConvert.DeserializeObject<AuthResultDto>(authResultDtoJson);
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authInfo?.AccessToken);
+                Debug.WriteLine($"AuthHeaderHandler: Added Bearer token to request: {request.RequestUri}");
+            }
+            else
+            {
+                Debug.WriteLine($"AuthHeaderHandler: No auth token found for request: {request.RequestUri}");
             }
 
-            if (request.RequestUri.AbsoluteUri.Contains("&$count=true"))
-            {
-               var newUri = request.RequestUri.AbsoluteUri.Replace("&$count=true", "&$skip=0&$top=50&__includeDeleted=true");
-                request.RequestUri = new Uri(newUri);
-            }
 
             var req = request;
             var id = Guid.NewGuid().ToString();
@@ -110,6 +112,9 @@ namespace Pulse_MAUI.Data
                 {
                     var result = await resp.Content.ReadAsStringAsync(cancellationToken);
                     start = DateTime.Now;
+                    Debug.WriteLine($"{msg} Content:{result.ToString()}");
+                    var a1 = JsonConvert.DeserializeObject<List<Item>>(result);
+
                     Debug.WriteLine($"{msg} Content:{result.ToString()}");
                     apiDetails.Append($"{"Content "}{result.ToString()}");
                     end = DateTime.Now;

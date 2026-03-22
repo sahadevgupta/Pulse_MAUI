@@ -4,6 +4,7 @@ using PCATablet.Core.Data;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
+using Pulse_MAUI.Services;
 using System.Xml.Linq;
 
 namespace Pulse_MAUI.ViewModels
@@ -11,6 +12,8 @@ namespace Pulse_MAUI.ViewModels
     public partial class ImportSettingsPageViewModel : BaseViewModel
     {
         #region [ Properties ]
+
+        readonly IDialogService _dialogService;
 
         readonly IDataManager _dataManager;
 
@@ -26,6 +29,7 @@ namespace Pulse_MAUI.ViewModels
             IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _dataManager = dataManager;
+            _dialogService = viewModelParameters.DialogService;
         }
 
         #region [ Methods & Service Calls ]
@@ -79,49 +83,62 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task ImportSettings()
         {
-            if (Url?.Length > 0 || Url != @"http://")
+            _dialogService.ShowLoading("Importing Service Settings..");
+
+            try
             {
-                string customUrl = string.Empty;
-                var lastCharacter = Url.Last();
-                if (Url.EndsWith("/"))
+                if (Url?.Length > 0 || Url != @"http://")
                 {
-                    customUrl = Url + @"Mobile/ServiceSetting.xml";
-                }
-                else
-                {
-                    customUrl = Url + @"/Mobile/ServiceSetting.xml";
-                }
-                var user = await _dataManager.LoginAsync(Url);
-
-                if (user is object)
-                {
-                    var setting = await _dataManager.GetSettings();
-                    ServiceInfo info = ReadSettingData(setting);
-                    var x = 1;
-
-                    if (info.ServiceError.Length == 0)
+                    string customUrl = string.Empty;
+                    var lastCharacter = Url.Last();
+                    if (Url.EndsWith("/"))
                     {
-                        AppHelpers.AppTitle = info.ServiceTitle;
-                        AppHelpers.AzureServiceUrl = info.ServiceURL;
-                        AppHelpers.BlobStorageName = info.StorageName;
-
-                        ServiceName = "Found Service: " + info.ServiceTitle;
-                        // Please restart the application
+                        customUrl = Url + @"Mobile/ServiceSetting.xml";
                     }
                     else
                     {
-                        ServiceName = "No Service Found";
+                        customUrl = Url + @"/Mobile/ServiceSetting.xml";
                     }
+                    var user = await _dataManager.LoginAsync(Url);
+
+                    if (user is object)
+                    {
+                        var setting = await _dataManager.GetSettings();
+                        ServiceInfo info = ReadSettingData(setting);
+                        var x = 1;
+
+                        if (info.ServiceError.Length == 0)
+                        {
+                            AppHelpers.AppTitle = info.ServiceTitle;
+                            AppHelpers.AzureServiceUrl = info.ServiceURL;
+                            AppHelpers.BlobStorageName = info.StorageName;
+
+                            ServiceName = "Found Service: " + info.ServiceTitle;
+                            // Please restart the application
+                        }
+                        else
+                        {
+                            ServiceName = "No Service Found";
+                        }
+                    }
+                    else
+                    {
+                        ServiceName = "Unable to Authenticate User";
+                    }
+
                 }
                 else
                 {
-                    ServiceName = "Unable to Authenticate User";
+                    ServiceName = "Please enter the provided address";
                 }
-
             }
-            else
+            catch (Exception ex)
             {
-                ServiceName = "Please enter the provided address";
+                ServiceName = "Error: " + ex.Message;
+            }
+            finally
+            {
+                _dialogService.HideLoading();
             }
         }
 
@@ -131,8 +148,8 @@ namespace Pulse_MAUI.ViewModels
 #if ANDROID
             Java.Lang.JavaSystem.Exit(2);
 #endif
-        }  
-        
-#endregion
+        }
+
+        #endregion
     }
 }

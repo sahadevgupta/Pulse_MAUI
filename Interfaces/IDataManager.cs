@@ -6,7 +6,7 @@ namespace Pulse_MAUI.Interfaces
     public interface IDataManager
     {
 
-        Task DeleteItemAsync(Item item);
+        Task DeleteItemAsync(Models.Database.Item item);
         Task<Activity> GetActivityById(string id);
         Task<ActivityTask> GetActivityTaskById(string id);
         Task<IEnumerable<Activity>> GetAllActivitiesAsync();
@@ -16,7 +16,7 @@ namespace Pulse_MAUI.Interfaces
         Task<IEnumerable<Discipline>> GetAllDisciplines();
         Task<IEnumerable<Engineer>> GetAllEngineersAsync();
         Task<IEnumerable<Equipment>> GetAllEquipmentAsync();
-        Task<IEnumerable<Item>> GetAllItemsAsync();
+        Task<IEnumerable<Models.Database.Item>> GetAllItemsAsync();
         Task<IEnumerable<Lookup>> GetAllLookupsAsync();
         Task<IEnumerable<Priority>> GetAllPriority();
         Task<IEnumerable<Project>> GetAllProjectsAsync();
@@ -32,7 +32,7 @@ namespace Pulse_MAUI.Interfaces
         Task PostSyncLog(string SyncMode, Guid TransactionBatchId);
         Task SaveActivityAsync(Activity activity);
         Task SaveActivityTaskAsync(ActivityTask activityTask);
-        Task SaveItemAsync(Item item);
+        Task SaveItemAsync(Models.Database.Item item);
         Task SavePunchItemAsync(PunchItem punchItem);
         Task<List<string>> SyncPushAndPullItemsAsync(bool incremental, bool secondPass);
         Task SyncPushAndPurgeAsync();

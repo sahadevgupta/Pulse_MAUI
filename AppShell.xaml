@@ -13,15 +13,19 @@
     Shell.TitleColor="White"
     Shell.ForegroundColor="White">
 
+    <Shell.FlyoutBackdrop>
+        <SolidColorBrush Color="#66000000"/>
+    </Shell.FlyoutBackdrop>
+
     <Shell.FlyoutContentTemplate>
         <DataTemplate>
-            <views:MenuPage />
+            <views:MenuPage/>
             <!-- FULL SCREEN FLYOUT -->
         </DataTemplate>
     </Shell.FlyoutContentTemplate>
 
     <FlyoutItem>
-        <ShellContent 
-               ContentTemplate="{DataTemplate views:ActivityListPage}" />
+        <ShellContent
+            ContentTemplate="{DataTemplate views:ActivityListPage}"/>
     </FlyoutItem>
 </Shell>

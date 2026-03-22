@@ -9,20 +9,20 @@ namespace Pulse_MAUI.Models
         /// Gets or sets the punch identifier.
         /// </summary>
         /// <value>The punch identifier.</value>
-              int? disciplineId;
-              public int? DisciplineId
-              {
-                  get
-                  {
-                      return disciplineId;
-                  }
-                  set
-                  {
-                      SetPropertyChanged(ref disciplineId, value);
-                  }
+        int? disciplineId;
+        public int? DisciplineId
+        {
+            get
+            {
+                return disciplineId;
             }
+            set
+            {
+                SetProperty(ref disciplineId, value);
+            }
+        }
 
-        
+
 
         /// <summary>
         /// Gets or sets the description.
@@ -37,7 +37,7 @@ namespace Pulse_MAUI.Models
             }
             set
             {
-                SetPropertyChanged(ref description, value);
+                SetProperty(ref description, value);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Pulse_MAUI.Models
             }
             set
             {
-                SetPropertyChanged(ref status, value);
+                SetProperty(ref status, value);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Pulse_MAUI.Models
             }
             set
             {
-                SetPropertyChanged(ref name, value);
+                SetProperty(ref name, value);
             }
         }
     }

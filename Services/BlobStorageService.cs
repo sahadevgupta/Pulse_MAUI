@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using Item = Pulse_MAUI.Models.Database.Item;
+
 
 namespace Pulse_MAUI.Services
 {
-    public class BlobStorageService(IDataManager dataManager,ILookupService lookupService, IItemService itemService) : IBlobStorageService
+    public class BlobStorageService(IDataManager dataManager, ILookupService lookupService, IItemService itemService) : IBlobStorageService
     {
         /// <summary>
         /// Removes all the data (images etc) stored in local storage
@@ -48,7 +50,7 @@ namespace Pulse_MAUI.Services
 
             try
             {
-                string BlobPath = item.AzurePath;
+                string BlobPath = item.azurePath;
 
                 if (BlobPath.Contains("\\"))
                 {
@@ -76,12 +78,12 @@ namespace Pulse_MAUI.Services
                             if (!Directory.Exists(folderPath))
                                 Directory.CreateDirectory(folderPath);
 
-                            
+
                             string fileName = Helpers.FileUtility.GetFileName(BlobPath);
                             IList<string> folders = Helpers.FileUtility.GetFoldersFromPath(BlobPath);
 
                             foreach (string folder in folders)
-                            { 
+                            {
                                 if (folder.Length == 0)
                                 {
                                     //throw new Exception("Invalid Folder Path");
@@ -135,51 +137,51 @@ namespace Pulse_MAUI.Services
         /// </summary>
         /// <param name="item">The item.</param>
         /// <returns></returns>
-        public async Task PushLocalToBlob(Models.Item item)
+        public async Task PushLocalToBlob(Item item)
         {
             var controlTypes = await lookupService.GetControlTypeLookups();
             int ActivityValue = controlTypes.FirstOrDefault(c => c.Value == "Activity")?.LookupId ?? 0;
             int PunchValue = controlTypes.FirstOrDefault(c => c.Value == "Punch")?.LookupId ?? 0;
 
             string blobStorageRef = AppHelpers.BlobStorageName;
-            string filename = Helpers.FileUtility.GetFileName(item.LocalPath);
+            string filename = Helpers.FileUtility.GetFileName(item.localPath);
 
-            string blobPath = "Storage_Projects" + @"\" + "Project_" + item.ProjectId.ToString();
+            string blobPath = "Storage_Projects" + @"\" + "Project_" + item.projectId.ToString();
 
             // setup a base record Id
             string RecordId = "";
 
-            if (item.RecordID != null)
+            if (item.recordID != null)
             {
-                RecordId = item.RecordID.ToString();
+                RecordId = item.recordID.ToString();
             }
 
             if (RecordId.Length > 0)
             {
-                if (item.ControlType == ActivityValue)
+                if (item.controlType == ActivityValue)
                 {
                     blobPath = blobPath + @"\Activity\" + RecordId + @"\" + filename;
                 }
 
-                if (item.ControlType == PunchValue)
+                if (item.controlType == PunchValue)
                 {
                     blobPath = blobPath + @"\Punch\" + RecordId + @"\" + filename;
                 }
 
-                if (item.ControlType != null)
+                if (item.controlType != null)
                 {
                     CloudBlockBlob blob = GetBlobContainer().GetBlockBlobReference(blobPath);
 
-                    var imgByte = System.IO.File.ReadAllBytes(item.LocalPath);
+                    var imgByte = System.IO.File.ReadAllBytes(item.localPath);
 
                     if (imgByte != null)
                     {
-                        blob.Properties.ContentType = item.MimeType;
+                        blob.Properties.ContentType = item.mimeType;
                         await blob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
 
-                        item.AzurePath = blobPath;
-                        item.LocalPath = null;
-                        item.Size = imgByte.Length;
+                        item.azurePath = blobPath;
+                        item.localPath = null;
+                        item.size = imgByte.Length;
 
                         await itemService.SaveItem(item);
                     }

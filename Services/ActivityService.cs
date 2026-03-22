@@ -32,6 +32,8 @@ namespace Pulse_MAUI.Services
         /// </summary>
         public async Task<ObservableRangeCollection<Activity>> FetchFilteredActivitiesList()
         {
+            if (AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
+                return new();
 
             var AFiltered = new ObservableRangeCollection<Activity>();
 

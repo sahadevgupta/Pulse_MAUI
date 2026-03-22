@@ -21,7 +21,8 @@
 		<ApplicationTitle>Pulse_MAUI</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.pulse_maui</ApplicationId>
+		<!-- <ApplicationId>com.companyname.pulse_maui</ApplicationId> -->
+		<ApplicationId>com.liscr.Seafarer.STG</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -71,7 +72,6 @@
 		<PackageReference Include="Mopups" Version="1.3.4" />
 		<PackageReference Include="Refit.HttpClientFactory" Version="9.0.2" />
 		<PackageReference Include="Refit.Newtonsoft.Json" Version="9.0.2" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
 		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 		<PackageReference Include="Sentry.Maui" Version="5.16.2" />
@@ -101,5 +101,24 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Models/Database/" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
+        <!-- Point to Entitlements.plist for keychain access -->
+        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+
+        <!-- Manual provisioning and code signing -->
+        <ProvisioningType>manual</ProvisioningType>
+        <CodesignKey>Apple Distribution: LISCR, LLC. (AR76G6RJX7)</CodesignKey>
+		<CodesignProvision>Seafarer STG Distribution</CodesignProvision>
+        <EnableCodeSigning>true</EnableCodeSigning>
+        <CodesignRequireProvisioningProfile>true</CodesignRequireProvisioningProfile>
+
+        <!-- Debugging -->
+        <MtouchDebug>true</MtouchDebug>
+    </PropertyGroup>
 
 </Project>

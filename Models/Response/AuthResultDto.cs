@@ -11,7 +11,7 @@ namespace Pulse_MAUI.Models.Response
         public string? AccessToken { get; set; }
         public string? IdToken { get; set; }
         public string? ExpiresIn { get; set; }
-        public string? ExpiresOn { get; set; }
+        public DateTimeOffset? ExpiresOn { get; set; }
         public string? ExtExpiresIn { get; set; }
         public string? NotBefore { get; set; }
         public string? RefreshToken { get; set; }

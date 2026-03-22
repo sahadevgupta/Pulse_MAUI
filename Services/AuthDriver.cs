@@ -37,7 +37,7 @@ namespace Pulse_MAUI.Services
                 })
                 .WithAuthority(config.Authority)
 #if IOS
-                .WithIosKeychainSecurityGroup("com.liscr.Seafarer")
+                           .WithIosKeychainSecurityGroup("AR76G6RJX7.com.microsoft.adalcache")
 #endif
 #if ANDROID
                .WithParentActivityOrWindow(() => Platform.CurrentActivity)
@@ -54,11 +54,11 @@ namespace Pulse_MAUI.Services
             InitializeHttpClient(azureMobileAppsBackendUrl);
             var result = Preferences.Get(ADConstants.ObjectId, string.Empty);
             var authResult = await AcquireTokenAsync(result);
-            var authInfo =  GetAuthResultDto(authResult);
-            var response =  await ExchangeTokenForZumoAsync(authResult.IdToken, authInfo);
-            if (response.Item1)
-                return response.Item2;
-            return null;
+            var authInfo = GetAuthResultDto(authResult);
+            //var response = await ExchangeTokenForZumoAsync(authResult.IdToken, authInfo);
+            // if (response.Item1)
+            //     return response.Item2;
+            return authInfo;
         }
 
         private void InitializeHttpClient(string azureMobileAppsBackendUrl)
@@ -100,7 +100,7 @@ namespace Pulse_MAUI.Services
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     System.Diagnostics.Debug.WriteLine($"ZUMO token exchange failed: {response.StatusCode} - {errorContent}");
-                    return (false,null);
+                    return (false, null);
                 }
 
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -167,11 +167,12 @@ namespace Pulse_MAUI.Services
 
             return new AuthResultDto()
             {
+
                 UserId = result?.Account?.Username,
                 DisplayName = result?.Account?.Username,
                 AccessToken = result?.AccessToken,
                 ExpiresIn = string.Empty,
-                ExpiresOn = result?.ExpiresOn.ToString(),
+                ExpiresOn = result?.ExpiresOn,
                 NotBefore = string.Empty,
                 RefreshToken = string.Empty,
                 Resource = string.Empty,

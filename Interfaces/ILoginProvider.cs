@@ -3,8 +3,9 @@ using Pulse_MAUI.Models;
 
 namespace Pulse_MAUI.Interfaces
 {
-	public interface ILoginProvider
-	{
+    public interface ILoginProvider
+    {
+        Task<MobileServiceUser> LoginAsync(DatasyncClient client, IDataManager dataManager, string azureMobileServiceUrl);
         Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl);
         Task LogoutAsync(DatasyncClient client);
     }

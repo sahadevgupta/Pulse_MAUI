@@ -1,4 +1,6 @@
-﻿using Microsoft.Datasync.Client;
+using Microsoft.Datasync.Client;
+using Microsoft.Datasync.Client.Offline;
+using Microsoft.Datasync.Client.Serialization;
 using Microsoft.Datasync.Client.SQLiteStore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,7 +10,7 @@ using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Models.Request;
-using Pulse_MAUI.Repository;
+using Pulse_MAUI.Models.Response;
 using Pulse_MAUI.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -16,9 +18,177 @@ using Activity = Pulse_MAUI.Models.Activity;
 
 namespace Pulse_MAUI.Data
 {
-    public partial class DataManager(IProjectServices projectServices,ISyncService syncService) : IDataManager
+    public partial class DataManager : IDataManager
     {
-        private readonly ILoginProvider? loginProvider = ServiceHelper.GetService<ILoginProvider>();
+        readonly IProjectServices projectServices;
+        private bool isInitialized = false;
+
+        private DatasyncClient client;
+        private OfflineSQLiteStore localStore;
+        private readonly ILoginProvider? loginProvider = IPlatformApplication.Current?.Services.GetRequiredService<ILoginProvider>();
+
+        private IOfflineTable<ActivityTask> activityTaskTable;
+        private IOfflineTable<PunchItem> punchItemTable;
+        private IOfflineTable<Component> componentTable;
+        private IOfflineTable<CommissioningSystem> commissioningSystemTable;
+        private IOfflineTable<Project> projectTable;
+        private IOfflineTable<Unit> unitTable;
+        private IOfflineTable<Activity> activityTable;
+        private IOfflineTable<Engineer> engineerTable;
+        private IOfflineTable<User> userTable;
+        private IOfflineTable<Lookup> lookupTable;
+        private IOfflineTable<Models.Database.Item> itemTable;
+        private IOfflineTable<Equipment> equipmentTable;
+        private IOfflineTable<Priority> priorityTable;
+        private IOfflineTable<Discipline> disciplineTable;
+
+        public DataManager(IProjectServices projectServices)
+        {
+            this.projectServices = projectServices;
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await InitDataManager();
+
+            });
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataManager"/> class.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        public void InitDataManager(string url)
+        {
+            // var uri = new Uri(url);
+            // var host = "https://" + uri.Host;
+
+            // // implement the mobile service client
+            // this.client = new DatasyncClient(host, new DatasyncClientOptions
+            // {
+            //     HttpPipeline = new HttpMessageHandler[] { new AuthHeaderHandler() }
+
+            // });
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:PCATablet.Core.Data.DataManager"/> class.
+        /// </summary>
+        public async Task InitDataManager()
+        {
+            if (isInitialized || AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
+                return;
+
+            isInitialized = false;
+            var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+                Debug.WriteLine($"Created database folder: {folderPath}");
+            }
+            var dbPath = Path.Combine(folderPath, DBConstants.DatabaseFilename);
+            Debug.WriteLine($"Database path: {dbPath}");
+            var sqliteUri = $"file:{dbPath}";
+            localStore = new OfflineSQLiteStore(sqliteUri);
+            Debug.WriteLine("OfflineSQLiteStore created successfully");
+
+            // Configure options
+            var options = new DatasyncClientOptions
+            {
+                HttpPipeline = new HttpMessageHandler[]
+                {
+
+                    new AuthHeaderHandler(),
+                },
+                SerializerSettings = new DatasyncSerializerSettings
+                {
+                    // CamelCasePropertyNames = true,  // Commented out - models use explicit JsonProperty attributes
+                },
+                OfflineStore = localStore
+            };
+
+            //Create client with options
+            client = new DatasyncClient(AppHelpers.AzureServiceUrl, options);
+
+            // setup the local store for each of the DataTables
+            Debug.WriteLine("Defining tables in local store...");
+            localStore.DefineTable<Activity>();
+            localStore.DefineTable<PunchItem>();
+            localStore.DefineTable<ActivityTask>();
+            localStore.DefineTable<Component>();
+            localStore.DefineTable<Lookup>();
+            localStore.DefineTable<CommissioningSystem>();
+            localStore.DefineTable<Project>();
+            localStore.DefineTable<Unit>();
+            localStore.DefineTable<Discipline>();
+            localStore.DefineTable<User>();
+            localStore.DefineTable<Models.Database.Item>();
+            localStore.DefineTable<Equipment>();
+            localStore.DefineTable<Priority>();
+            localStore.DefineTable<Engineer>();
+            Debug.WriteLine("All tables defined successfully");
+
+
+            // *** FIX: MUST AWAIT THIS ***
+            Debug.WriteLine("Initializing offline store...");
+            try
+            {
+                await client.InitializeOfflineStoreAsync();
+                Debug.WriteLine("Offline store initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Offline store initialization failed: {ex.Message}");
+                throw;
+            }
+
+            // Return each Table type
+            this.activityTable = client.GetOfflineTable<Activity>("activity");
+            Console.WriteLine("Data sync client initialixed : " + activityTable.GetType().FullName);
+            this.activityTaskTable = client.GetOfflineTable<ActivityTask>("activitytask");
+            this.punchItemTable = client.GetOfflineTable<PunchItem>("punchitem");
+            this.componentTable = client.GetOfflineTable<Component>("component");
+            this.commissioningSystemTable = client.GetOfflineTable<CommissioningSystem>("commissioningsystem");
+            this.projectTable = client.GetOfflineTable<Project>("project");
+            this.unitTable = client.GetOfflineTable<Unit>("unit");
+            this.engineerTable = client.GetOfflineTable<Engineer>("engineer");
+            this.userTable = client.GetOfflineTable<User>("user");
+            this.lookupTable = client.GetOfflineTable<Lookup>("lookup");
+            this.itemTable = client.GetOfflineTable<Models.Database.Item>("item");
+            this.equipmentTable = client.GetOfflineTable<Equipment>("equipment");
+            this.priorityTable = client.GetOfflineTable<Priority>("priority");
+            this.disciplineTable = client.GetOfflineTable<Discipline>("discipline");
+
+            isInitialized = true;
+
+        }
+
+        private async Task<AuthenticationToken> TokenRequestor()
+        {
+            AuthResultDto authResultDto = new();
+            var jsonResult = await SecureStorage.GetAsync(ADConstants.AuthResultKey);
+
+            if (!string.IsNullOrWhiteSpace(jsonResult))
+            {
+                authResultDto = JsonConvert.DeserializeObject<AuthResultDto>(jsonResult)!;
+            }
+
+            return new AuthenticationToken
+            {
+                DisplayName = authResultDto.DisplayName,
+                UserId = authResultDto.UserId,
+                Token = authResultDto.AccessToken,
+                ExpiresOn = authResultDto.ExpiresOn.GetValueOrDefault()
+            };
+        }
+
+        /// <summary>
+        /// Gets the current client.
+        /// </summary>
+        /// <value>The current client.</value>
+        public DatasyncClient CurrentClient
+        {
+            get { return client; }
+            set { client = value; }
+        }
 
         #region Authentication
         /// <summary>
@@ -27,18 +197,16 @@ namespace Pulse_MAUI.Data
         /// <returns>async task.</returns>
         public async Task<MobileServiceUser> LoginAsync(string azureMobileServiceUrl)
         {
-            return await loginProvider?.LoginAsync(azureMobileServiceUrl)!;
+            return await loginProvider?.LoginAsync(client, this, azureMobileServiceUrl)!;
         }
 
         /// <summary>
         /// Logout from AD asynchronously.
         /// </summary>
         /// <returns></returns>
-        public async Task? LogoutAsync()
+        public Task? LogoutAsync()
         {
-            //return loginProvider?.LogoutAsync(client);
-
-            await Task.CompletedTask;
+            return loginProvider?.LogoutAsync(client);
         }
 
         #endregion
@@ -51,8 +219,8 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Discipline>> GetAllDisciplines()
         {
-            var disciplineRepo = AppHelpers.GetRepository<Discipline>();
-            return await disciplineRepo.GetAllItemAsync();
+            await InitDataManager();
+            return await disciplineTable.ToListAsync();
         }
 
         /// <summary>
@@ -61,8 +229,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All activities async.</returns>
         public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
         {
-            var activityRepo = AppHelpers.GetRepository<Activity>();
-            return await activityRepo.GetAllItemAsync();
+            await InitDataManager();
+            return await activityTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -72,8 +241,10 @@ namespace Pulse_MAUI.Data
         /// <param name="activity">Activity to get activity tasks for.</param>
         public async Task<IEnumerable<ActivityTask>> GetAllActivityTasksForActivityAsync(Activity activity)
         {
-            var activityTaskRepo = AppHelpers.GetRepository<ActivityTask>();
-            return await activityTaskRepo.GetFilteredItemAsync<ActivityTask>(p => p.ActivityId == activity.PCAId);
+            await InitDataManager();
+            return await activityTaskTable
+                .Where(p => p.ActivityId == activity.PCAId)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -83,11 +254,12 @@ namespace Pulse_MAUI.Data
         /// <param name="id">Identifier.</param>
         public async Task<ActivityTask> GetActivityTaskById(string id)
         {
-            var activityTaskRepo = AppHelpers.GetRepository<ActivityTask>();
+            await InitDataManager();
+            var activityTask = await activityTaskTable
+                .Where(p => p.Id == id)
+                .ToListAsync();
 
-            var activityTask = await activityTaskRepo.GetFilteredItemAsync<ActivityTask>(p => p.Id == id);
-
-            return activityTask.FirstOrDefault() ?? new();
+            return activityTask.FirstOrDefault();
         }
 
 
@@ -98,11 +270,12 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<Activity> GetActivityById(string id)
         {
-            var activityRepo = AppHelpers.GetRepository<Activity>();
+            await InitDataManager();
+            var activity = await activityTable
+                .Where(p => p.Id == id)
+                .ToListAsync();
 
-            var activity = await activityRepo.GetFilteredItemAsync<Activity>(p => p.Id == id);
-
-            return activity.FirstOrDefault() ?? new();
+            return activity.FirstOrDefault();
         }
 
         /// <summary>
@@ -111,9 +284,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All punch items async.</returns>
         public async Task<IEnumerable<PunchItem>> GetAllPunchItemsAsync()
         {
-            var punchItemRepo = AppHelpers.GetRepository<PunchItem>();
-
-            return await punchItemRepo.GetAllItemAsync();
+            await InitDataManager();
+            return await punchItemTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -123,11 +296,12 @@ namespace Pulse_MAUI.Data
         /// <param name="id">Identifier.</param>
         public async Task<PunchItem> GetPunchItemById(string id)
         {
-            var punchItemRepo = AppHelpers.GetRepository<PunchItem>();
+            await InitDataManager();
+            var punchItem = await punchItemTable
+                .Where(p => p.Id == id)
+                .ToListAsync();
 
-            var punchItem = await punchItemRepo.GetFilteredItemAsync<PunchItem>(p => p.Id == id);
-
-            return punchItem.FirstOrDefault() ?? new();
+            return punchItem.FirstOrDefault();
         }
 
         /// <summary>
@@ -136,10 +310,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All Engineers async.</returns>
         public async Task<IEnumerable<Engineer>> GetAllEngineersAsync()
         {
-            var engineerRepo = AppHelpers.GetRepository<Engineer>();
-
-            return await engineerRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await engineerTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -148,9 +321,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All Users async.</returns>
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            var userRepo = AppHelpers.GetRepository<User>();
-            return await userRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await userTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -159,9 +332,11 @@ namespace Pulse_MAUI.Data
         /// <returns>The all projects async.</returns>
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            var projectRepo = AppHelpers.GetRepository<Project>();
-            return await projectRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            var a = await projectTable
+                .ToListAsync();
+
+            return a;
         }
 
         /// <summary>
@@ -170,9 +345,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All units async.</returns>
         public async Task<IEnumerable<Unit>> GetAllUnitsAsync()
         {
-            var unitRepo = AppHelpers.GetRepository<Unit>();
-            return await unitRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await unitTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -181,9 +356,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All commissioning systems async.</returns>
         public async Task<IEnumerable<CommissioningSystem>> GetAllCommissioningSystemsAsync()
         {
-            var commissioningSystemRepo = AppHelpers.GetRepository<CommissioningSystem>();
-            return await commissioningSystemRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await commissioningSystemTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -192,10 +367,9 @@ namespace Pulse_MAUI.Data
         /// <returns>All components async.</returns>
         public async Task<IEnumerable<Component>> GetAllComponentsAsync()
         {
-            var componentRepo = AppHelpers.GetRepository<Component>();
-
-            return await componentRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await componentTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -204,22 +378,20 @@ namespace Pulse_MAUI.Data
         /// <returns>All lookups async.</returns>
         public async Task<IEnumerable<Lookup>> GetAllLookupsAsync()
         {
-            var lookupRepo = AppHelpers.GetRepository<Lookup>();
-
-            return await lookupRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await lookupTable
+                .ToListAsync();
         }
 
         /// <summary>
         /// Gets all items async.
         /// </summary>
         /// <returns>All lookups async.</returns>
-        public async Task<IEnumerable<Item>> GetAllItemsAsync()
+        public async Task<IEnumerable<Models.Database.Item>> GetAllItemsAsync()
         {
-            var itempRepo = AppHelpers.GetRepository<Item>();
-
-            return await itempRepo
-                .GetAllItemAsync();
+            await InitDataManager();
+            return await itemTable
+                .ToListAsync();
         }
 
         /// <summary>
@@ -228,10 +400,9 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Equipment>> GetAllEquipmentAsync()
         {
-            var equipmentRepo = AppHelpers.GetRepository<Equipment>();
-
-            return await equipmentRepo
-                 .GetAllItemAsync();
+            await InitDataManager();
+            return await equipmentTable
+                 .ToListAsync();
 
         }
 
@@ -242,10 +413,9 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task<IEnumerable<Priority>> GetAllPriority()
         {
-            var priorityRepo = AppHelpers.GetRepository<Priority>();
-
-            return await priorityRepo
-                 .GetAllItemAsync();
+            await InitDataManager();
+            return await priorityTable
+                 .ToListAsync();
         }
 
         #endregion
@@ -258,9 +428,8 @@ namespace Pulse_MAUI.Data
         /// <param name="activityTask">Activity task to save.</param>
         public async Task SaveActivityTaskAsync(ActivityTask activityTask)
         {
-            var activityTaskRepo = AppHelpers.GetRepository<ActivityTask>();
-
-            await activityTaskRepo.InsertOrReplaceAsync(activityTask);
+            await InitDataManager();
+            await activityTaskTable.ReplaceItemAsync(activityTask);
         }
 
         /// <summary>
@@ -270,20 +439,26 @@ namespace Pulse_MAUI.Data
         /// <returns></returns>
         public async Task SaveActivityAsync(Activity activity)
         {
-            var activityRepo = AppHelpers.GetRepository<Activity>();
-
-            await activityRepo.InsertOrReplaceAsync(activity);
+            await InitDataManager();
+            await activityTable.ReplaceItemAsync(activity);
         }
 
-        /// <summary>
-        /// Saves the punch item async.
-        /// </summary>
-        /// <returns>async task.</returns>
-        /// <param name="punchItem">Punch item to save.</param>
         public async Task SavePunchItemAsync(PunchItem punchItem)
         {
-            var punchItemRepo = AppHelpers.GetRepository<PunchItem>();
-            await punchItemRepo.InsertOrReplaceAsync(punchItem);
+            await InitDataManager();
+            Debug.WriteLine($"Saving punch item. Table initialized: {punchItemTable != null}, Item ID: {punchItem.Id}");
+            if (string.IsNullOrEmpty(punchItem.Id))
+            {
+                Debug.WriteLine("Inserting new punch item...");
+                await punchItemTable.InsertItemAsync(punchItem);
+                Debug.WriteLine("Punch item inserted successfully");
+            }
+            else
+            {
+                Debug.WriteLine("Updating existing punch item...");
+                await punchItemTable.ReplaceItemAsync(punchItem);
+                Debug.WriteLine("Punch item updated successfully");
+            }
         }
 
         /// <summary>
@@ -291,11 +466,24 @@ namespace Pulse_MAUI.Data
 		/// </summary>
 		/// <returns>async task.</returns>
 		/// <param name="Item">Item to save.</param>
-        public async Task SaveItemAsync(Item item)
+        public async Task SaveItemAsync(Models.Database.Item item)
         {
-
-            var itemRepo = AppHelpers.GetRepository<Item>();
-            await itemRepo.InsertOrReplaceAsync(item);
+            await InitDataManager();
+            if (string.IsNullOrEmpty(item.Id))
+            {
+                try
+                {
+                    await itemTable.InsertItemAsync(item);
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.ToString();
+                }
+            }
+            else
+            {
+                await itemTable.ReplaceItemAsync(item);
+            }
         }
 
         #endregion
@@ -307,13 +495,12 @@ namespace Pulse_MAUI.Data
         /// </summary>
         /// <returns>async task.</returns>
         /// <param name="Item">Item to delete.</param>
-        public async Task DeleteItemAsync(Item item)
+        public async Task DeleteItemAsync(Models.Database.Item item)
         {
-            
+            await InitDataManager();
             if (item != null)
             {
-                var itemRepo = AppHelpers.GetRepository<Item>();
-                await itemRepo.DeleteAsync(item);
+                await itemTable.DeleteItemAsync(item);
             }
         }
 
@@ -327,7 +514,8 @@ namespace Pulse_MAUI.Data
         /// <param name="incremental">Do an incremental or full pull of the data</param>
         public async Task<List<string>> SyncPushAndPullItemsAsync(bool incremental, bool secondPass)
         {
-             //InitDataManager();
+            await InitDataManager();
+            Debug.WriteLine($"Starting sync - Incremental: {incremental}, SecondPass: {secondPass}, Client initialized: {client != null}");
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
             List<string> Errors = new List<string>();
 
@@ -335,80 +523,203 @@ namespace Pulse_MAUI.Data
             {
 
                 //First do a push
-                //long? _pendingOperations = this.client.PendingOperations;
+                long? _pendingOperations = this.client.PendingOperations;
+                Debug.WriteLine($"Pending operations before push: {_pendingOperations}");
 
-                //await this.client.PushTablesAsync();
+                if (_pendingOperations > 0)
+                {
+                    Debug.WriteLine("Executing push operation...");
+                    try
+                    {
+                        await this.client.PushTablesAsync();
+                        Debug.WriteLine("Push completed successfully");
+                    }
+                    catch (Exception pushEx)
+                    {
+                        Debug.WriteLine($"Push failed: {pushEx.Message}");
+                        Errors.Add($"Push failed: {pushEx.Message}");
+                        // Continue with pull even if push fails
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("No pending operations to push");
+                }
+
+
+                var query = engineerTable.CreateQuery();
+                Debug.WriteLine($"Engineer table initialized: {engineerTable != null}");
+
+                Debug.WriteLine("Starting engineer table pull...");
+                try
+                {
+                    await engineerTable.PullItemsAsync(
+                        query,
+                        new PullOptions
+                        {
+                            QueryId = incremental ? "EngineerDataIncremental" : "EngineerData"
+                        }
+                    );
+                    var engineerCount = await engineerTable.CountItemsAsync();
+                    Debug.WriteLine($"Engineer table pull completed successfully. Items: {engineerCount}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Engineer table pull failed: {ex.Message}");
+                    Errors.Add($"Engineer pull failed: {ex.Message}");
+                }
+
+
+
+                var b1 = await this.engineerTable.ToListAsync();
 
 
                 //await this.itemTable.PurgeItemsAsync(null, null, CancellationToken.None);
-    //            await  itemTable.PullItemsAsync(
-    //query: itemTable.CreateQuery(),
-    //cancellationToken: CancellationToken.None
-//);
+                Debug.WriteLine("Starting item table pull...");
+                var itemQuery = itemTable.CreateQuery();
+                Debug.WriteLine($"Item table query created: {itemQuery != null}");
+                await itemTable.PullItemsAsync(
+    query: itemQuery,
+    cancellationToken: CancellationToken.None
+);
+                var itemCount = await itemTable.CountItemsAsync();
+                Debug.WriteLine($"Item table pull completed. Items: {itemCount}");
 
-                if (!secondPass)
+                // Debug: List some items to see if data was stored
+                var items = await itemTable.ToListAsync();
+                Debug.WriteLine($"First few items in local table:");
+                foreach (var item in items.Take(3))
                 {
-                    await syncService.SyncAsync();
-                    var activiRepo = AppHelpers.GetRepository<Activity>();
-                    //await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.activityTable.PullItemsAsync(
-                    //         this.activityTable.CreateQuery());
-
-                    await Task.Delay(500);
-
-                    var a =  await activiRepo.GetAllItemAsync();
-
-                    //await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.punchItemTable.PullItemsAsync(
-                    //    this.punchItemTable.CreateQuery());
-
-                    //await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.engineerTable.PullItemsAsync(
-                    //    this.engineerTable.CreateQuery());
-
-                    //await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.userTable.PullItemsAsync(
-                    //    this.userTable.CreateQuery());
-
-                    //await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.projectTable.PullItemsAsync(
-                    //    this.projectTable.CreateQuery());
-
-                    //await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.commissioningSystemTable.PullItemsAsync(
-                    //    this.commissioningSystemTable.CreateQuery());
-
-                    //await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.unitTable.PullItemsAsync(
-                    //   this.unitTable.CreateQuery());
-
-                    //await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.componentTable.PullItemsAsync(
-                    //   this.componentTable.CreateQuery());
-
-                    //await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
-                    //{
-                    //    QueryId = incremental ? "LookupDataIncremental" : null
-                    //});
-
-                    //await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.priorityTable.PullItemsAsync(
-                    //    this.priorityTable.CreateQuery());
-
-                    //await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.activityTaskTable.PullItemsAsync(
-                    //    this.activityTaskTable.CreateQuery());
-
-                    //await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.equipmentTable.PullItemsAsync(
-                    //    this.equipmentTable.CreateQuery());
-
-
-                    //await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    //await this.disciplineTable.PullItemsAsync(
-                    //    this.disciplineTable.CreateQuery());
-
+                    Debug.WriteLine($"  Item ID: {item.Id}, Name: {(item as dynamic)?.Name ?? "N/A"}");
                 }
+                Debug.WriteLine("Starting full table sync (first pass)...");
+
+                // Only purge if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging activity table...");
+                    await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.activityTable.PullItemsAsync(
+                         this.activityTable.CreateQuery());
+
+                var activityCount = await this.activityTable.CountItemsAsync();
+                Debug.WriteLine($"Activity table sync completed. Items: {activityCount}");
+
+                await Task.Delay(500);
+                //var b = await this.itemTable.ToListAsync();
+
+
+                // Only purge punch item table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging punch item table...");
+                    await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.punchItemTable.PullItemsAsync(
+                    this.punchItemTable.CreateQuery());
+
+                var punchItemCount = await this.punchItemTable.CountItemsAsync();
+                Debug.WriteLine($"Punch item table sync completed. Items: {punchItemCount}");
+
+                // Only purge engineer table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging engineer table...");
+                    await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.engineerTable.PullItemsAsync(
+                    this.engineerTable.CreateQuery(),
+                    new PullOptions
+                    {
+                        QueryId = incremental ? "EngineerDataIncremental" : "EngineerData"
+                    });
+
+                // Only purge user table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging user table...");
+                    await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.userTable.PullItemsAsync(
+                    this.userTable.CreateQuery());
+
+                // Only purge project table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging project table...");
+                    await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.projectTable.PullItemsAsync(
+                    this.projectTable.CreateQuery());
+
+                // Only purge commissioning system table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging commissioning system table...");
+                    await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.commissioningSystemTable.PullItemsAsync(
+                    this.commissioningSystemTable.CreateQuery());
+
+                // Only purge unit table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging unit table...");
+                    await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.unitTable.PullItemsAsync(
+                   this.unitTable.CreateQuery());
+
+                // Only purge component table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging component table...");
+                    await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.componentTable.PullItemsAsync(
+                   this.componentTable.CreateQuery());
+
+                await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
+                {
+                    QueryId = incremental ? "LookupDataIncremental" : null
+                });
+
+                // Only purge priority table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging priority table...");
+                    await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.priorityTable.PullItemsAsync(
+                    this.priorityTable.CreateQuery());
+
+                // Only purge activity task table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging activity task table...");
+                    await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.activityTaskTable.PullItemsAsync(
+                    this.activityTaskTable.CreateQuery());
+
+                // Only purge equipment table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging equipment table...");
+                    await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.equipmentTable.PullItemsAsync(
+                    this.equipmentTable.CreateQuery());
+
+                // Only purge discipline table if doing a full sync (not incremental)
+                if (!incremental)
+                {
+                    Debug.WriteLine("Purging discipline table...");
+                    await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                }
+                await this.disciplineTable.PullItemsAsync(
+                    this.disciplineTable.CreateQuery());
 
             }
             catch (DatasyncConflictException exc)
@@ -447,35 +758,6 @@ namespace Pulse_MAUI.Data
                 Errors.Add("Error on Sync (Exception) " + ex.ToString());
             }
 
-            // Simple error/conflict handling. A real application would handle the various errors like network conditions,
-            // server conflicts and others via the IMobileServiceSyncHandler.
-            //if (syncErrors != null)
-            {
-                //foreach (MobileServiceTableOperationError error in syncErrors)
-                //{
-
-                //    if (error.OperationKind == MobileServiceTableOperationKind.Update && error.Result != null)
-                //    {
-                //        //Update failed, reverting to server's copy.
-                //        await error.CancelAndUpdateItemAsync(error.Result);
-                //        Errors.Add("Error" + " updating record " + error.TableName.ToString() + " record");
-                //    }
-                //    else if (error.OperationKind == MobileServiceTableOperationKind.Insert && error.Result != null)
-                //    {
-                //        // dont do anything, i.e leave the current record on the device!
-                //        Errors.Add("Error" + " inserting new " + error.TableName.ToString() + " record");
-                //    }
-                //    else
-                //    {
-                //        Errors.Add("Unknown error of " + error.OperationKind.ToString() + " on table " + error.TableName.ToString());
-
-                //        // Discard local change.
-                //        // await error.CancelAndDiscardItemAsync();
-                //    }
-                //}
-
-            }
-
             return Errors;
         }
 
@@ -485,21 +767,21 @@ namespace Pulse_MAUI.Data
         /// <returns>async task.</returns>
         public async Task SyncPushAndPurgeAsync()
         {
-            
-            //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
+
+            await InitDataManager();
 
             try
             {
                 //First do a push
-                //await this.client.PushTablesAsync();
+                await this.client.PushTablesAsync();
 
-                //await activityTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await punchItemTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await activityTaskTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await projectTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await commissioningSystemTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await unitTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                //await componentTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await activityTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await punchItemTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await activityTaskTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await projectTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await commissioningSystemTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await unitTable.PurgeItemsAsync(null, null, CancellationToken.None);
+                await componentTable.PurgeItemsAsync(null, null, CancellationToken.None);
                 //await disciplineTable.PurgeItemsAsync(null, null, CancellationToken.None);
                 //await itemTable.PurgeItemsAsync(null, null, CancellationToken.None);
             }
@@ -638,9 +920,5 @@ namespace Pulse_MAUI.Data
         }
 
         #endregion
-
-        
     }
-
-   
 }
