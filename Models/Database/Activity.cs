@@ -1,10 +1,11 @@
 ﻿using System;
 
 using Newtonsoft.Json;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
-    public class Activity : BaseModel
+    public class Activity : BaseSyncModel
     {
 
         /// <summary>

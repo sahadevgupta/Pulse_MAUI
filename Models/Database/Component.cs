@@ -1,14 +1,9 @@
 ﻿using System;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
-	/// <summary>
-	/// Component model class.
-	/// Fogbugz Case:
-	/// Author: Manuel Dambrine
-	/// Created: 29/03/2013
-	/// </summary>
-	public class Component : BaseModel
+	public class Component : BaseSyncModel
 	{
 		/// <summary>
 		/// Gets or sets the project identifier.
@@ -32,13 +27,13 @@ namespace Pulse_MAUI.Models
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the tag identifier.
 		/// </summary>
 		/// <value>The tag identifier.</value>
-		public string TagId { get; set; }
+		public string? TagId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the PCCId.
@@ -52,13 +47,13 @@ namespace Pulse_MAUI.Models
 		/// <value>The PUCId.</value>
 		public int? PUCId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the PNID identifier reference.
-        /// </summary>
-        /// <value>
-        /// The p identifier reference.
-        /// </value>
-        public string PIdReference { get; set; }
+		/// <summary>
+		/// Gets or sets the PNID identifier reference.
+		/// </summary>
+		/// <value>
+		/// The p identifier reference.
+		/// </value>
+		public string? PIdReference { get; set; }
 
-    }
+	}
 }

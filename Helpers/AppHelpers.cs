@@ -19,18 +19,18 @@ namespace Pulse_MAUI.Helpers
         public static string AppTitle
         {
             get => Preferences.Get(nameof(AppTitle), "Pulse");
-            set => Preferences.Get(nameof(AppTitle), value);
+            set => Preferences.Set(nameof(AppTitle), value);
         }
 
         public static string BlobStorageName
         {
             get => Preferences.Get(nameof(BlobStorageName), string.Empty);
-            set => Preferences.Get(nameof(BlobStorageName), value);
+            set => Preferences.Set(nameof(BlobStorageName), value);
         }
         public static string SyncDate
         {
             get => Preferences.Get(nameof(SyncDate), string.Empty);
-            set => Preferences.Get(nameof(SyncDate), value);
+            set => Preferences.Set(nameof(SyncDate), value);
         }
 
         public static bool UseLocationServices

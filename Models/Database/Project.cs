@@ -1,4 +1,5 @@
 ﻿using System;
+using Pulse_MAUI.Models.Database;
 namespace Pulse_MAUI.Models
 {
 	/// <summary>
@@ -7,7 +8,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class Project : BaseModel
+	public class Project : BaseSyncModel
 	{
 		/// <summary>
 		/// Gets or sets the project identifier.
@@ -19,13 +20,13 @@ namespace Pulse_MAUI.Models
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description.
 		/// </summary>
 		/// <value>The description.</value>
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="T:Pulse_MAUI.Models.Project"/> is enabled.

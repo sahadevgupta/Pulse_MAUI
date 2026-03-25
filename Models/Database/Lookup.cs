@@ -1,4 +1,5 @@
 ﻿using System;
+using Pulse_MAUI.Models.Database;
 namespace Pulse_MAUI.Models
 {
 	/// <summary>
@@ -7,7 +8,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class Lookup : BaseModel
+	public class Lookup : BaseSyncModel
 	{
 		/// <summary>
 		/// Gets or sets the lookup identifier.
@@ -19,13 +20,13 @@ namespace Pulse_MAUI.Models
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		public string Value { get; set; }
+		public string? Value { get; set; }
 
 		/// <summary>
 		/// Gets or sets the list order.

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Newtonsoft.Json;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
@@ -10,7 +11,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class PunchItem : BaseModel
+	public class PunchItem : BaseSyncModel
 	{
 		int? punchId;
 		Guid? deviceReferenceID;
@@ -49,14 +50,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string description;
+		string? description;
 
 		/// <summary>
 		/// Gets or sets the description.
 		/// </summary>
 		/// <value>The description.</value>
 		[JsonProperty(PropertyName = "description")]
-		public string Description
+		public string? Description
 		{
 			get
 			{
@@ -125,14 +126,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string tagId;
+		string? tagId;
 
 		/// <summary>
 		/// Gets or sets the tag identifier.
 		/// </summary>
 		/// <value>The tag identifier.</value>
 		[JsonProperty(PropertyName = "tagId")]
-		public string TagId
+		public string? TagId
 		{
 			get
 			{
@@ -144,14 +145,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string componentType;
+		string? componentType;
 
 		/// <summary>
 		/// Gets or sets the type of the component.
 		/// </summary>
 		/// <value>The type of the component.</value>
 		[JsonProperty(PropertyName = "componentType")]
-		public string ComponentType
+		public string? ComponentType
 		{
 			get
 			{
@@ -163,14 +164,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string pIdReference;
+		string? pIdReference;
 
 		/// <summary>
 		/// Gets or sets the PId reference.
 		/// </summary>
 		/// <value>The PId reference.</value>
 		[JsonProperty(PropertyName = "pIdReference")]
-		public string PIdReference
+		public string? PIdReference
 		{
 			get
 			{
@@ -201,14 +202,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string createdBy;
+		string? createdBy;
 
 		/// <summary>
 		/// Gets or sets the created by.
 		/// </summary>
 		/// <value>The created by.</value>
 		[JsonProperty(PropertyName = "createdBy")]
-		public string CreatedBy
+		public string? CreatedBy
 		{
 			get
 			{
@@ -239,14 +240,14 @@ namespace Pulse_MAUI.Models
 			}
 		}
 
-		string updatedBy;
+		string? updatedBy;
 
 		/// <summary>
 		/// Gets or sets the updated by.
 		/// </summary>
 		/// <value>The updated by.</value>
 		[JsonProperty(PropertyName = "updatedBy")]
-		public string UpdatedBy
+		public string? UpdatedBy
 		{
 			get
 			{
@@ -279,9 +280,9 @@ namespace Pulse_MAUI.Models
 		}
 
 
-		string statusString;
+		string? statusString;
 		[JsonIgnore] // doesnt get passed in the sync
-		public string StatusString
+		public string? StatusString
 		{
 
 			get
@@ -297,13 +298,13 @@ namespace Pulse_MAUI.Models
 		}
 
 
-		string comments;
+		string? comments;
 		/// <summary>
 		/// Gets or sets the comments.
 		/// </summary>
 		/// <value>The comments.</value>
 		[JsonProperty(PropertyName = "comments")]
-		public string Comments
+		public string? Comments
 		{
 			get
 			{

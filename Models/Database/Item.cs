@@ -1,27 +1,54 @@
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Datasync.Client;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using Pulse_MAUI.Models.Database;
 
-namespace Pulse_MAUI.Models.Database;
-
-public class Item : DatasyncClientData
+namespace Pulse_MAUI.Models
 {
+    public partial class Item : BaseSyncModel
+    {
+        [ObservableProperty]
+        private string? _mimeType;
 
-    public string name { get; set; }
-    public int controlType { get; set; }
-    public int recordID { get; set; }
-    public string mimeType { get; set; }
-    public int size { get; set; }
-    public DateTime uploadTime { get; set; }
-    public string uploadedBy { get; set; }
-    public DateTime? lastUpdateTime { get; set; }
-    public int? checkListStep { get; set; }
-    public string description { get; set; }
-    public string lastUpdatedBy { get; set; }
-    public int projectId { get; set; }
-    public string azurePath { get; set; }
-    public string localPath { get; set; }
-    public string localReferenceID { get; set; }
+        [ObservableProperty]
+        private string? _name;
 
+        [ObservableProperty]
+        private int? _controlType;
+
+        [ObservableProperty]
+        private int? _recordId;
+
+        [ObservableProperty]
+        private int? _size;
+
+        [ObservableProperty]
+        private DateTime? _uploadTime;
+
+        [ObservableProperty]
+        private string? _uploadedBy;
+
+        [ObservableProperty]
+        private DateTime? _lastUpdateTime;
+
+        [ObservableProperty]
+        private int? _checkListStep;
+
+        [ObservableProperty]
+        private string? _lastUpdatedBy;
+
+        [ObservableProperty]
+        private string? _description;
+
+        [ObservableProperty]
+        private int? _projectId;
+
+        [ObservableProperty]
+        private string? _azurePath;
+
+        [ObservableProperty]
+        private string? _localPath;
+
+        [ObservableProperty]
+        private string? _localReferenceID;
+    }
 }

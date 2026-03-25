@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
@@ -9,7 +10,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class User : BaseModel
+	public class User : BaseSyncModel
 	{
 		/// <summary>
 		/// Gets or sets the user identifier.
@@ -21,36 +22,36 @@ namespace Pulse_MAUI.Models
 		/// Gets or sets the first name.
 		/// </summary>
 		/// <value>The first name.</value>
-		public string FirstName { get; set; }
+		public string? FirstName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the last name.
 		/// </summary>
 		/// <value>The last name.</value>
-		public string LastName { get; set; }
+		public string? LastName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the apex identifier.
 		/// </summary>
 		/// <value>The apex identifier.</value>
-		public string ApexId { get; set; }
+		public string? ApexId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the email address.
 		/// </summary>
 		/// <value>The email address.</value>
-		public string EmailAddress { get; set; }
+		public string? EmailAddress { get; set; }
 
 		/// <summary>
 		/// Gets or sets the status.
 		/// </summary>
 		/// <value>The status.</value>
-		public string Status { get; set; }
+		public string? Status { get; set; }
 
 		/// <summary>
 		/// Gets or sets the default time zone identifier.
 		/// </summary>
 		/// <value>The default time zone identifier.</value>
-		public string DefaultTimeZoneId { get; set; }
+		public string? DefaultTimeZoneId { get; set; }
 	}
 }

@@ -1,16 +1,12 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using System.Diagnostics;
+
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+
 using Pulse_MAUI.Constants;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using Item = Pulse_MAUI.Models.Database.Item;
-
 
 namespace Pulse_MAUI.Services
 {
@@ -50,7 +46,7 @@ namespace Pulse_MAUI.Services
 
             try
             {
-                string BlobPath = item.azurePath;
+                string BlobPath = item.AzurePath;
 
                 if (BlobPath.Contains("\\"))
                 {
@@ -144,44 +140,44 @@ namespace Pulse_MAUI.Services
             int PunchValue = controlTypes.FirstOrDefault(c => c.Value == "Punch")?.LookupId ?? 0;
 
             string blobStorageRef = AppHelpers.BlobStorageName;
-            string filename = Helpers.FileUtility.GetFileName(item.localPath);
+            string filename = Helpers.FileUtility.GetFileName(item.LocalPath);
 
-            string blobPath = "Storage_Projects" + @"\" + "Project_" + item.projectId.ToString();
+            string blobPath = "Storage_Projects" + @"\" + "Project_" + item.ProjectId.ToString();
 
             // setup a base record Id
             string RecordId = "";
 
-            if (item.recordID != null)
+            if (item.RecordId != null)
             {
-                RecordId = item.recordID.ToString();
+                RecordId = item.RecordId.ToString();
             }
 
             if (RecordId.Length > 0)
             {
-                if (item.controlType == ActivityValue)
+                if (item.ControlType == ActivityValue)
                 {
                     blobPath = blobPath + @"\Activity\" + RecordId + @"\" + filename;
                 }
 
-                if (item.controlType == PunchValue)
+                if (item.ControlType == PunchValue)
                 {
                     blobPath = blobPath + @"\Punch\" + RecordId + @"\" + filename;
                 }
 
-                if (item.controlType != null)
+                if (item.ControlType != null)
                 {
                     CloudBlockBlob blob = GetBlobContainer().GetBlockBlobReference(blobPath);
 
-                    var imgByte = System.IO.File.ReadAllBytes(item.localPath);
+                    var imgByte = System.IO.File.ReadAllBytes(item.LocalPath);
 
                     if (imgByte != null)
                     {
-                        blob.Properties.ContentType = item.mimeType;
+                        blob.Properties.ContentType = item.MimeType;
                         await blob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
 
-                        item.azurePath = blobPath;
-                        item.localPath = null;
-                        item.size = imgByte.Length;
+                        item.AzurePath = blobPath;
+                        item.LocalPath = null;
+                        item.Size = imgByte.Length;
 
                         await itemService.SaveItem(item);
                     }

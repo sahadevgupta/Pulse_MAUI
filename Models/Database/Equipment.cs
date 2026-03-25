@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
-    public class Equipment : BaseModel
+    public class Equipment : BaseSyncModel
     {
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The name.
         /// </value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
@@ -31,7 +32,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The description.
         /// </value>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the manufacturer.
@@ -39,7 +40,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The manufacturer.
         /// </value>
-        public string Manufacturer { get; set; }
+        public string? Manufacturer { get; set; }
 
         /// <summary>
         /// Gets or sets the unique serial number.
@@ -47,7 +48,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The unique serial number.
         /// </value>
-        public string UniqueSerialNumber { get; set; }
+        public string? UniqueSerialNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the location.
@@ -55,7 +56,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The location.
         /// </value>
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         /// <summary>
         /// Gets or sets the last maintained.
@@ -71,7 +72,7 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The status.
         /// </value>
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
         /// <summary>
         /// Gets or sets the active project.

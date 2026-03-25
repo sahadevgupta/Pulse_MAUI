@@ -1,10 +1,8 @@
-﻿using Pulse_MAUI.Helpers;
+﻿using System.Diagnostics;
+
+using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Pulse_MAUI.Services
 {
@@ -36,7 +34,7 @@ namespace Pulse_MAUI.Services
                 availablePunchItem.Unit = availableUnits.Where(u => u.PUId == availablePunchItem.PUId).Select(u => u.Name).FirstOrDefault() ?? string.Empty;
                 availablePunchItem.StatusString = statusList.Where(s => s.LookupId == availablePunchItem.Status).Select(s => s.Value).FirstOrDefault() ?? string.Empty;
 
-                availablePunchItem.IsDirty = false;
+                //availablePunchItem.IsDirty = false;
 
 
                 try

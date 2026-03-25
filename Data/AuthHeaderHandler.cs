@@ -113,7 +113,6 @@ namespace Pulse_MAUI.Data
                     var result = await resp.Content.ReadAsStringAsync(cancellationToken);
                     start = DateTime.Now;
                     Debug.WriteLine($"{msg} Content:{result.ToString()}");
-                    var a1 = JsonConvert.DeserializeObject<List<Item>>(result);
 
                     Debug.WriteLine($"{msg} Content:{result.ToString()}");
                     apiDetails.Append($"{"Content "}{result.ToString()}");

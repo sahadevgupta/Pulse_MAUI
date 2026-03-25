@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Datasync.Client;
 using Newtonsoft.Json;
+using Pulse_MAUI.Models.Database;
 namespace Pulse_MAUI.Models
 {
 #nullable disable
@@ -10,20 +11,8 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class Engineer
+	public class Engineer : BaseSyncModel
 	{
-		[JsonProperty("id")]
-		public string Id { get; set; }
-
-		[JsonProperty("deleted")]
-		public bool Deleted { get; set; }
-
-		[JsonProperty("updatedAt")]
-		public DateTimeOffset UpdatedAt { get; set; }
-
-		[JsonProperty("version")]
-		public byte[] Version { get; set; }
-
 		[JsonProperty("engineerId")]
 		public int EngineerId { get; set; }
 

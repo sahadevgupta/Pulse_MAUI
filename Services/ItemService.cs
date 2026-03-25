@@ -12,7 +12,7 @@ namespace Pulse_MAUI.Services
 		/// Get the values from the look up table async.
 		/// </summary>
 		/// <returns>The lookup list async.</returns>
-		public async Task<IEnumerable<Models.Database.Item>> GetItemListAsync()
+		public async Task<IEnumerable<Item>> GetItemListAsync()
         {
             return await dataManager
                 .GetAllItemsAsync();
@@ -23,7 +23,7 @@ namespace Pulse_MAUI.Services
 		/// </summary>
 		/// <returns>Task.</returns>
 		/// <param name="itemsToSave">Activity Tasks to save.</param>
-		public async Task SaveItem(Models.Database.Item itemToSave)
+		public async Task SaveItem(Item itemToSave)
         {
 
             //itemToSave.createdAt = DateTime.Now;

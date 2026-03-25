@@ -1,19 +1,17 @@
+using System.Diagnostics;
+
 using Microsoft.Datasync.Client;
-using Microsoft.Datasync.Client.Offline;
 using Microsoft.Datasync.Client.Serialization;
 using Microsoft.Datasync.Client.SQLiteStore;
+
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
 using Pulse_MAUI.Constants;
-using Pulse_MAUI.Data;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Models.Request;
 using Pulse_MAUI.Models.Response;
-using Pulse_MAUI.Services;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Activity = Pulse_MAUI.Models.Activity;
 
 namespace Pulse_MAUI.Data
@@ -37,7 +35,7 @@ namespace Pulse_MAUI.Data
         private IOfflineTable<Engineer> engineerTable;
         private IOfflineTable<User> userTable;
         private IOfflineTable<Lookup> lookupTable;
-        private IOfflineTable<Models.Database.Item> itemTable;
+        private IOfflineTable<Item> itemTable;
         private IOfflineTable<Equipment> equipmentTable;
         private IOfflineTable<Priority> priorityTable;
         private IOfflineTable<Discipline> disciplineTable;
@@ -74,21 +72,39 @@ namespace Pulse_MAUI.Data
         /// </summary>
         public async Task InitDataManager()
         {
-            if (isInitialized || AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
+            if (isInitialized)
                 return;
 
             isInitialized = false;
-            var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-                Debug.WriteLine($"Created database folder: {folderPath}");
-            }
-            var dbPath = Path.Combine(folderPath, DBConstants.DatabaseFilename);
+            // var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
+            // if (!Directory.Exists(folderPath))
+            // {
+            //     Directory.CreateDirectory(folderPath);
+            //     Debug.WriteLine($"Created database folder: {folderPath}");
+            // }
+            var dbPath = Path.Combine(AppConstants.AppRootFolder, DBConstants.DatabaseFilename);
             Debug.WriteLine($"Database path: {dbPath}");
             var sqliteUri = $"file:{dbPath}";
             localStore = new OfflineSQLiteStore(sqliteUri);
             Debug.WriteLine("OfflineSQLiteStore created successfully");
+
+            // setup the local store for each of the DataTables
+            Debug.WriteLine("Defining tables in local store...");
+            localStore.DefineTable<Activity>();
+            localStore.DefineTable<PunchItem>();
+            localStore.DefineTable<ActivityTask>();
+            localStore.DefineTable<Component>();
+            localStore.DefineTable<Lookup>();
+            localStore.DefineTable<CommissioningSystem>();
+            localStore.DefineTable<Project>();
+            localStore.DefineTable<Unit>();
+            localStore.DefineTable<Discipline>();
+            localStore.DefineTable<User>();
+            localStore.DefineTable<Item>();
+            localStore.DefineTable<Equipment>();
+            localStore.DefineTable<Priority>();
+            localStore.DefineTable<Engineer>();
+            Debug.WriteLine("All tables defined successfully");
 
             // Configure options
             var options = new DatasyncClientOptions
@@ -107,25 +123,6 @@ namespace Pulse_MAUI.Data
 
             //Create client with options
             client = new DatasyncClient(AppHelpers.AzureServiceUrl, options);
-
-            // setup the local store for each of the DataTables
-            Debug.WriteLine("Defining tables in local store...");
-            localStore.DefineTable<Activity>();
-            localStore.DefineTable<PunchItem>();
-            localStore.DefineTable<ActivityTask>();
-            localStore.DefineTable<Component>();
-            localStore.DefineTable<Lookup>();
-            localStore.DefineTable<CommissioningSystem>();
-            localStore.DefineTable<Project>();
-            localStore.DefineTable<Unit>();
-            localStore.DefineTable<Discipline>();
-            localStore.DefineTable<User>();
-            localStore.DefineTable<Models.Database.Item>();
-            localStore.DefineTable<Equipment>();
-            localStore.DefineTable<Priority>();
-            localStore.DefineTable<Engineer>();
-            Debug.WriteLine("All tables defined successfully");
-
 
             // *** FIX: MUST AWAIT THIS ***
             Debug.WriteLine("Initializing offline store...");
@@ -152,7 +149,7 @@ namespace Pulse_MAUI.Data
             this.engineerTable = client.GetOfflineTable<Engineer>("engineer");
             this.userTable = client.GetOfflineTable<User>("user");
             this.lookupTable = client.GetOfflineTable<Lookup>("lookup");
-            this.itemTable = client.GetOfflineTable<Models.Database.Item>("item");
+            this.itemTable = client.GetOfflineTable<Item>("item");
             this.equipmentTable = client.GetOfflineTable<Equipment>("equipment");
             this.priorityTable = client.GetOfflineTable<Priority>("priority");
             this.disciplineTable = client.GetOfflineTable<Discipline>("discipline");
@@ -387,7 +384,7 @@ namespace Pulse_MAUI.Data
         /// Gets all items async.
         /// </summary>
         /// <returns>All lookups async.</returns>
-        public async Task<IEnumerable<Models.Database.Item>> GetAllItemsAsync()
+        public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
             await InitDataManager();
             return await itemTable
@@ -466,7 +463,7 @@ namespace Pulse_MAUI.Data
 		/// </summary>
 		/// <returns>async task.</returns>
 		/// <param name="Item">Item to save.</param>
-        public async Task SaveItemAsync(Models.Database.Item item)
+        public async Task SaveItemAsync(Item item)
         {
             await InitDataManager();
             if (string.IsNullOrEmpty(item.Id))
@@ -495,7 +492,7 @@ namespace Pulse_MAUI.Data
         /// </summary>
         /// <returns>async task.</returns>
         /// <param name="Item">Item to delete.</param>
-        public async Task DeleteItemAsync(Models.Database.Item item)
+        public async Task DeleteItemAsync(Item item)
         {
             await InitDataManager();
             if (item != null)
@@ -546,180 +543,59 @@ namespace Pulse_MAUI.Data
                     Debug.WriteLine("No pending operations to push");
                 }
 
+                //await this.itemTable.PurgeAsync();
+                await this.itemTable.PullItemsAsync(this.itemTable.CreateQuery());
 
-                var query = engineerTable.CreateQuery();
-                Debug.WriteLine($"Engineer table initialized: {engineerTable != null}");
+                var a = await this.itemTable.ToListAsync();
 
-                Debug.WriteLine("Starting engineer table pull...");
-                try
+
+                if (!secondPass)
                 {
-                    await engineerTable.PullItemsAsync(
-                        query,
-                        new PullOptions
-                        {
-                            QueryId = incremental ? "EngineerDataIncremental" : "EngineerData"
-                        }
-                    );
-                    var engineerCount = await engineerTable.CountItemsAsync();
-                    Debug.WriteLine($"Engineer table pull completed successfully. Items: {engineerCount}");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Engineer table pull failed: {ex.Message}");
-                    Errors.Add($"Engineer pull failed: {ex.Message}");
-                }
-
-
-
-                var b1 = await this.engineerTable.ToListAsync();
-
-
-                //await this.itemTable.PurgeItemsAsync(null, null, CancellationToken.None);
-                Debug.WriteLine("Starting item table pull...");
-                var itemQuery = itemTable.CreateQuery();
-                Debug.WriteLine($"Item table query created: {itemQuery != null}");
-                await itemTable.PullItemsAsync(
-    query: itemQuery,
-    cancellationToken: CancellationToken.None
-);
-                var itemCount = await itemTable.CountItemsAsync();
-                Debug.WriteLine($"Item table pull completed. Items: {itemCount}");
-
-                // Debug: List some items to see if data was stored
-                var items = await itemTable.ToListAsync();
-                Debug.WriteLine($"First few items in local table:");
-                foreach (var item in items.Take(3))
-                {
-                    Debug.WriteLine($"  Item ID: {item.Id}, Name: {(item as dynamic)?.Name ?? "N/A"}");
-                }
-                Debug.WriteLine("Starting full table sync (first pass)...");
-
-                // Only purge if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging activity table...");
                     await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.activityTable.PullItemsAsync(
-                         this.activityTable.CreateQuery());
+                    await this.activityTable.PullItemsAsync(this.activityTable.CreateQuery());
 
-                var activityCount = await this.activityTable.CountItemsAsync();
-                Debug.WriteLine($"Activity table sync completed. Items: {activityCount}");
-
-                await Task.Delay(500);
-                //var b = await this.itemTable.ToListAsync();
-
-
-                // Only purge punch item table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging punch item table...");
                     await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.punchItemTable.PullItemsAsync(
-                    this.punchItemTable.CreateQuery());
+                    await this.punchItemTable.PullItemsAsync(this.punchItemTable.CreateQuery());
 
-                var punchItemCount = await this.punchItemTable.CountItemsAsync();
-                Debug.WriteLine($"Punch item table sync completed. Items: {punchItemCount}");
-
-                // Only purge engineer table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging engineer table...");
                     await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.engineerTable.PullItemsAsync(
-                    this.engineerTable.CreateQuery(),
-                    new PullOptions
+                    await this.engineerTable.PullItemsAsync(this.engineerTable.CreateQuery());
+
+                    await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.userTable.PullItemsAsync(this.userTable.CreateQuery());
+
+                    await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.projectTable.PullItemsAsync(this.projectTable.CreateQuery());
+
+                    await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.commissioningSystemTable.PullItemsAsync(this.commissioningSystemTable.CreateQuery());
+
+                    await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.unitTable.PullItemsAsync(this.unitTable.CreateQuery());
+
+                    await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.componentTable.PullItemsAsync(this.componentTable.CreateQuery());
+
+
+                    await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
                     {
-                        QueryId = incremental ? "EngineerDataIncremental" : "EngineerData"
+                        QueryId = incremental ? "LookupDataIncremental" : null
                     });
 
-                // Only purge user table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging user table...");
-                    await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.userTable.PullItemsAsync(
-                    this.userTable.CreateQuery());
 
-                // Only purge project table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging project table...");
-                    await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.projectTable.PullItemsAsync(
-                    this.projectTable.CreateQuery());
-
-                // Only purge commissioning system table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging commissioning system table...");
-                    await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.commissioningSystemTable.PullItemsAsync(
-                    this.commissioningSystemTable.CreateQuery());
-
-                // Only purge unit table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging unit table...");
-                    await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.unitTable.PullItemsAsync(
-                   this.unitTable.CreateQuery());
-
-                // Only purge component table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging component table...");
-                    await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.componentTable.PullItemsAsync(
-                   this.componentTable.CreateQuery());
-
-                await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
-                {
-                    QueryId = incremental ? "LookupDataIncremental" : null
-                });
-
-                // Only purge priority table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging priority table...");
                     await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.priorityTable.PullItemsAsync(
-                    this.priorityTable.CreateQuery());
+                    await this.priorityTable.PullItemsAsync(this.priorityTable.CreateQuery());
 
-                // Only purge activity task table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging activity task table...");
                     await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.activityTaskTable.PullItemsAsync(
-                    this.activityTaskTable.CreateQuery());
+                    await this.activityTaskTable.PullItemsAsync(this.activityTaskTable.CreateQuery());
 
-                // Only purge equipment table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging equipment table...");
                     await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                }
-                await this.equipmentTable.PullItemsAsync(
-                    this.equipmentTable.CreateQuery());
+                    await this.equipmentTable.PullItemsAsync(this.equipmentTable.CreateQuery());
 
-                // Only purge discipline table if doing a full sync (not incremental)
-                if (!incremental)
-                {
-                    Debug.WriteLine("Purging discipline table...");
+
                     await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                    await this.disciplineTable.PullItemsAsync(this.disciplineTable.CreateQuery());
+
                 }
-                await this.disciplineTable.PullItemsAsync(
-                    this.disciplineTable.CreateQuery());
 
             }
             catch (DatasyncConflictException exc)

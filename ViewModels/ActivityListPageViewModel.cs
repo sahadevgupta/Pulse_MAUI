@@ -23,8 +23,6 @@ namespace Pulse_MAUI.ViewModels
         public ActivityListPageViewModel(IActivityService activityService, IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _activityService = activityService;
-
-            RefreshActivityListCommand.Execute(null);
         }
 
         #region [ Commands ]

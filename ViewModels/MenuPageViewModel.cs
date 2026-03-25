@@ -110,6 +110,108 @@ namespace Pulse_MAUI.ViewModels
             }
         }
 
+        private async Task PerformFullSyncAsync()
+        {
+            if (!AppHelpers.IsLoggedIn)
+            {
+                await ViewModelParameters.DialogService.ShowAlertDialog("Login Error", "Invalid User Login", AlertType.Error);
+                return;
+            }
+
+            Guid transactionBatchId = Guid.NewGuid();
+            await _appWorkflowManager.SyncLogService.PostSyncLogStart(transactionBatchId);
+
+            try
+            {
+                if (!await EnsureInternetAsync()) return;
+
+                var blobConnectionString = await _appWorkflowManager.UserService.GetAzureBlobStorageString();
+
+                // 1. Standing data sync (full or incremental)
+                await SyncStandingDataAsync();
+
+                // 2. Upload blobs
+                if (!await EnsureInternetAsync()) return;
+                ViewModelParameters.DialogService.ShowLoading("Uploading Image Items");
+                await _appWorkflowManager.SynchroniseService.UploadBlobData(blobConnectionString);
+
+                // 3. Push/Pull data after images uploaded
+                // if (!await EnsureInternetAsync()) return;
+                // ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
+                // await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
+
+                // 4. Download blobs
+                // if (!await EnsureInternetAsync()) return;
+                // ViewModelParameters.DialogService.ShowLoading("Downloading Image Items");
+                // await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
+
+                // 5. Finish sync
+                //await _appWorkflowManager.SyncLogService.PostSyncLogFinish(transactionBatchId);
+                var a = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
+
+                AppHelpers.SyncDate = a;
+
+                // Refresh user
+                await _appWorkflowManager.UserService.FetchCurrentUser();
+            }
+            catch (DatasyncInvalidOperationException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", ex.Message, AlertType.Error);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
+            }
+        }
+
+        private async Task<bool> EnsureInternetAsync()
+        {
+            if (!ViewModelParameters.ConnectivityService.IsConnected)
+            {
+                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
+                return false;
+            }
+            return true;
+        }
+
+        private async Task SyncStandingDataAsync()
+        {
+            try
+            {
+                if (!await EnsureInternetAsync()) return;
+
+                var projectData = await _appWorkflowManager.LookupService.GetProjectListAsync();
+
+                bool isIncremental = projectData != null && projectData.Any();
+
+                string loadingMsg = isIncremental
+                    ? UserInterface.MenuPage_Synchronising
+                    : UserInterface.MenuPage_Synchronising + " (Full)";
+
+                ViewModelParameters.DialogService.ShowLoading(loadingMsg);
+
+                var syncResult = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(isIncremental, false);
+
+                if (syncResult?.Count > 0)
+                {
+                    var sb = new StringBuilder();
+                    syncResult.ForEach(e => sb.AppendLine(e));
+                    await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
+                }
+            }
+            catch (DatasyncInvalidOperationException ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
+            }
+        }
+
         #endregion
 
         #region [ Commands ]
@@ -148,168 +250,21 @@ namespace Pulse_MAUI.ViewModels
                 return;
             }
 
-            ViewModelParameters.DialogService.ShowLoading("Authenticating User");
-            await _appWorkflowManager.UserService.LoginAsync(AppHelpers.AzureServiceUrl);
-
-            if (AppHelpers.IsLoggedIn)
+            try
             {
-                // Create and display the value of two GUIDs.
-                Guid TransactionBatchId = Guid.NewGuid();
+                ViewModelParameters.DialogService.ShowLoading("Authenticating User");
+                await _appWorkflowManager.UserService.LoginAsync(AppHelpers.AzureServiceUrl);
 
-                await _appWorkflowManager.SyncLogService.PostSyncLogStart(TransactionBatchId);
+                await PerformFullSyncAsync();
 
-                var blobConnectionString = await _appWorkflowManager.UserService.GetAzureBlobStorageString();
+                ViewModelParameters.DialogService.HideLoading();
+                WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.PostSyncRefresh));
 
-                if (ViewModelParameters.ConnectivityService.IsConnected)
-                {
-
-                    List<string> result = new List<string>();
-                    // Service failure handling here!
-                    try
-                    {
-                        //Do a full or incremental pull of the standing data
-                        IEnumerable<Project> projectData = await _appWorkflowManager.LookupService.GetProjectListAsync();
-
-                        if (projectData != null && projectData.Count() > 0)
-                        {
-                            ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
-                            result = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, false);
-                        }
-                        else
-                        {
-                            ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising + " (Full)");
-                            result = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(false, false);
-                        }
-
-                    }
-                    catch (DatasyncInvalidOperationException ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                    }
-
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
-                    }
-
-
-                    if (result.Count > 0)
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        foreach (String err in result)
-                        {
-                            sb.AppendLine(err);
-                        }
-
-                        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
-                    }
-
-
-                }
-                else
-                {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
-                    return;
-                }
-
-
-                if (ViewModelParameters.ConnectivityService.IsConnected)
-                {
-                    ViewModelParameters.DialogService.ShowLoading("Uploading Image Items");
-                    await _appWorkflowManager.SynchroniseService.UploadBlobData(blobConnectionString);
-                }
-                else
-                {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
-                    return;
-                }
-
-                if (ViewModelParameters.ConnectivityService.IsConnected)
-                {
-                    ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
-                    await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
-                }
-                else
-                {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
-                    return;
-                }
-
-
-                if (ViewModelParameters.ConnectivityService.IsConnected)
-                {
-                    ViewModelParameters.DialogService.ShowLoading("Downloading Image Items");
-                    await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
-                }
-                else
-                {
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
-                    return;
-                }
-
-                await _appWorkflowManager.SyncLogService.PostSyncLogFinish(TransactionBatchId);
-                // store the last sync date
-                AppHelpers.SyncDate = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
-
-
-                await _appWorkflowManager.UserService.FetchCurrentUser();
-                var currentUser = _appWorkflowManager.UserService.CurrentUser;
-
-                //if (currentUser != null)
-                //{
-
-                //    try
-                //    {
-
-                //        await Task.Delay(2000);
-                //        // implement the required lists
-                //        await _activityService.FetchActivityListAsync();
-                //        await _appWorkflowManager.PunchService.FetchPunchListAsync();
-                //        await _appWorkflowManager.UserService.FetchCurrentUser();
-                //        await _appWorkflowManager.EngineerService.FetchCurrentEngineer();
-                //        await Task.Delay(2000);
-
-                //        await _activitySearchService.FetchSearchItems(_activityService.Activities);
-                //        await _punchSearchService.FetchSearchItems();
-
-                //        this.OnPropertyChanged("ProfileName");
-                //        this.OnPropertyChanged("CurrentDate");
-                //    }
-
-                //    catch (Exception ex)
-                //    {
-                //        await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error",ex.Message,AlertType.Error);
-                //    }
-                //}
-                //else
-                //{
-                //    // Display warning and force user logout
-                //    await ViewModelParameters.DialogService.ShowAlertDialog("Warning","You are not a registered user" );
-                //    await _appWorkflowManager.UserService.LogoutAsync();
-                //}
-
-                if (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    //if (ViewModelParameters.ConnectivityService.IsConnected)
-                    // {
-                    //   await UserService.Instance.LogoutAsync();
-                    // }
-                }
-
-
-
+                PopulateOptionsMenu();
             }
-            else
+            catch (Exception ex)
             {
-                // invalid user
-                await ViewModelParameters.DialogService.ShowAlertDialog("Login Error", "Invalid User Login", AlertType.Error);
             }
-
-            ViewModelParameters.DialogService.HideLoading();
-            WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.PostSyncRefresh));
-
-            PopulateOptionsMenu();
         }
 
         #endregion
