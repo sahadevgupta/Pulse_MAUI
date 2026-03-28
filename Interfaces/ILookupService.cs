@@ -10,5 +10,10 @@ namespace Pulse_MAUI.Interfaces
         Task<IEnumerable<Project>> GetProjectListAsync();
         Task<IEnumerable<Lookup>> GetStatusLookups();
         Task<IEnumerable<Unit>> GetUnitListAsync();
+        Task<IEnumerable<Lookup>> GetActivityStatusLookups();
+        Task<IEnumerable<Lookup>> GetActivityTaskStatusLookups();
+        Task<int> GetStatusLookupId(string value);
+        Task<int> GetActivityTaskStatusLookupId(string value);
+        Task<int> GetActivityStatusLookupId(string value);
     }
 }

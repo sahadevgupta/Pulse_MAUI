@@ -64,6 +64,21 @@ namespace Pulse_MAUI.Services
         }
 
         /// <summary>
+        /// Gets the specific lookup values for Status.
+        /// </summary>
+        /// <returns>The status lookups.</returns>
+        public async Task<IEnumerable<Lookup>> GetActivityStatusLookups()
+        {
+            var availableLookups = await GetLookupListAsync();
+
+            var activitystatusLookups = availableLookups
+                .ToList()
+                .Where(p => p.Name == activityStatus);
+
+            return activitystatusLookups;
+        }
+
+        /// <summary>
         /// Gets the unit list async.
         /// </summary>
         /// <returns>The unit list async.</returns>
@@ -81,6 +96,105 @@ namespace Pulse_MAUI.Services
         {
             return await dataManager
                 .GetAllCommissioningSystemsAsync();
+        }
+
+        /// <summary>
+        /// Gets the activity status lookups.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Lookup>> GetActivityTaskStatusLookups()
+        {
+            var StatusList = new List<Lookup>();
+
+            await Task.Run(() =>
+             {
+                 var NotSet = new Lookup();
+                 NotSet.LookupId = 0;
+                 NotSet.ListOrder = 0;
+                 NotSet.Value = "---";
+
+                 var Pass = new Lookup();
+                 Pass.LookupId = 1;
+                 Pass.ListOrder = 1;
+                 Pass.Value = "Pass";
+
+                 var Fail = new Lookup();
+                 Fail.LookupId = 2;
+                 Fail.ListOrder = 2;
+                 Fail.Value = "Fail";
+
+                 var NA = new Lookup();
+                 NA.LookupId = 3;
+                 NA.ListOrder = 3;
+                 NA.Value = "N/A";
+
+                 var PL = new Lookup();
+                 PL.LookupId = 4;
+                 PL.ListOrder = 4;
+                 PL.Value = "P/L";
+
+                 StatusList.Add(NotSet);
+                 StatusList.Add(Pass);
+                 // Dont Add Fail to the options list
+                 //StatusList.Add(Fail);
+                 StatusList.Add(NA);
+                 StatusList.Add(PL);
+
+             });
+
+            return StatusList;
+
+        }
+
+        /// <summary>
+		/// Returns the Identifier of a lookup.
+		/// </summary>
+		/// <returns>The status lookup identifier.</returns>
+		/// <param name="value">Value.</param>
+		public async Task<int> GetStatusLookupId(string value)
+        {
+            var availableLookups = await GetLookupListAsync();
+
+            var lookup = availableLookups
+                .ToList()
+                .Where(p => p.Name == statusLookupName)
+                .FirstOrDefault(p => p.Value == value);
+
+            return lookup != null ? lookup.LookupId : 0;
+        }
+
+        /// <summary>
+		/// Returns the Identifier of a lookup.
+		/// </summary>
+		/// <returns>The status lookup identifier.</returns>
+		/// <param name="value">Value.</param>
+		public async Task<int> GetActivityTaskStatusLookupId(string value)
+        {
+
+            IEnumerable<Lookup> availableLookups = await GetActivityTaskStatusLookups();
+
+            Lookup lookup = availableLookups
+                .ToList()
+                .Where(p => p.Value == value).FirstOrDefault();
+
+            return lookup != null ? lookup.LookupId : 0;
+        }
+
+        /// <summary>
+        /// Gets the activity status lookup identifier.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public async Task<int> GetActivityStatusLookupId(string value)
+        {
+            var availableLookups = await GetLookupListAsync();
+
+            var lookup = availableLookups
+                .ToList()
+                .Where(p => p.Name == activityStatus)
+                .FirstOrDefault(p => p.Value == value);
+
+            return lookup != null ? lookup.LookupId : 0;
         }
     }
 }

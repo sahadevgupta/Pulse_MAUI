@@ -13,7 +13,6 @@ namespace Pulse_MAUI.ViewModels
     {
         #region [ Properties ]
 
-        readonly IDialogService _dialogService;
 
         readonly IDataManager _dataManager;
 
@@ -29,7 +28,6 @@ namespace Pulse_MAUI.ViewModels
             IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _dataManager = dataManager;
-            _dialogService = viewModelParameters.DialogService;
         }
 
         #region [ Methods & Service Calls ]
@@ -83,7 +81,7 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task ImportSettings()
         {
-            _dialogService.ShowLoading("Importing Service Settings..");
+            DialogService.ShowLoading("Importing Service Settings..");
 
             try
             {
@@ -138,7 +136,7 @@ namespace Pulse_MAUI.ViewModels
             }
             finally
             {
-                _dialogService.HideLoading();
+                DialogService.HideLoading();
             }
         }
 

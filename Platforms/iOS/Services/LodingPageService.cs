@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using UIKit;
 using WebKit;
+using CoreGraphics;
 
 namespace Pulse_MAUI.Platforms.iOS.Services
 {
@@ -40,6 +41,8 @@ namespace Pulse_MAUI.Platforms.iOS.Services
             {
                 loadingView.Arrange(new Rect(0, 0, page.Width, page.Height));
                 _nativeView = loadingView.ToHandler(page.Handler?.MauiContext!)?.PlatformView;
+
+                _nativeView.Frame = new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height);
 
                 _isInitialized = true;
             }

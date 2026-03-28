@@ -6,7 +6,9 @@ using Pulse_MAUI.Models;
 
 namespace Pulse_MAUI.Services
 {
-    public class PunchService(IDataManager dataManager, ILookupService lookupService) : IPunchService
+    public class PunchService(IDataManager dataManager,
+        ILookupService lookupService,
+        IProjectServices projectServices) : IPunchService
     {
         /// <summary>
 		/// The punches.
@@ -57,6 +59,22 @@ namespace Pulse_MAUI.Services
         {
             return await dataManager
                 .GetAllPunchItemsAsync();
+        }
+
+        /// <summary>
+		/// Creates a new punchitem.
+		/// </summary>
+		/// <returns>The created punchitem.</returns>
+		public async Task<PunchItem> CreatePunchItem()
+        {
+            var punchItem = new PunchItem();
+
+            var defaultProject = await projectServices.GetDefaultProject();
+
+            punchItem.ProjectId = defaultProject != null ? defaultProject.ProjectId : 0;
+            punchItem.PunchId = null;
+
+            return punchItem;
         }
     }
 }

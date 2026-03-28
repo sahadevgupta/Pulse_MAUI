@@ -13,7 +13,7 @@ namespace Pulse_MAUI
         public static MauiApp CreateMauiApp()
         {
 #if DEBUG
-        string environment = "DEV";
+            string environment = "DEV";
 #else
 		string environment = "PROD";
 #endif
@@ -32,6 +32,7 @@ namespace Pulse_MAUI
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("Signika-Regular.ttf", "SignikaRegular");
                     fonts.AddFont("Signika-Bold.ttf", "SignikaSemibold");
+                    fonts.AddFont("Signika-Medium.ttf", "SignikaMedium");
 
                     //fontawesome
                     fonts.AddFont("fa-solid-900.ttf", "MyFont");
@@ -51,7 +52,7 @@ namespace Pulse_MAUI
                 }); ;
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

@@ -6,6 +6,7 @@ using Pulse_MAUI.Data;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Services;
+using Pulse_MAUI.Services.Navigation;
 using Pulse_MAUI.ViewModels.Common;
 
 namespace Pulse_MAUI.Extensions
@@ -24,17 +25,19 @@ namespace Pulse_MAUI.Extensions
                             .AddSingleton<IBlobStorageService, BlobStorageService>()
                             .AddSingleton<IConnectivityService, ConnectivityService>()
                             .AddSingleton<IDialogService, DialogService>()
+                            .AddSingleton<IDisciplineService, DisciplineService>()
                             .AddSingleton<IEngineerService, EngineerService>()
                             .AddSingleton<IItemService, ItemService>()
                             .AddSingleton<ILoginProvider, LoginProvider>()
                             .AddSingleton<ILookupService, LookupService>()
                             .AddSingleton<IDataManager, DataManager>()
+                            .AddSingleton<INavigationService, NavigationService>()
                             .AddSingleton<IProjectServices, ProjectServices>()
                             .AddSingleton<IPullServices, PullServices>()
                             .AddSingleton<IPunchService, PunchService>()
                             .AddSingleton<IPunchSearchService, PunchSearchService>()
+                            .AddSingleton<IPriorityService, PriorityService>()
                             .AddSingleton<ISecureStorageService, SecureStorageService>()
-                            .AddSingleton<IShellNavigationService, ShellNavigationService>()
                             .AddSingleton<ISynchroniseService, SynchroniseService>()
                             .AddSingleton<ISyncLogService, SyncLogService>()
                             .AddSingleton<ISyncService, SyncService>()

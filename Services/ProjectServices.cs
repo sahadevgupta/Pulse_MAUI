@@ -1,4 +1,5 @@
 ﻿using Pulse_MAUI.Interfaces;
+using Pulse_MAUI.Models;
 using Pulse_MAUI.Models.Request;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,9 @@ using System.Text;
 namespace Pulse_MAUI.Services
 {
     public class ProjectServices(IAuthService authService,
-        IProjectBackendService projectBackendService) : ApiServiceBase(authService), IProjectServices 
-    { 
+        IProjectBackendService projectBackendService,
+        ILookupService lookupService) : ApiServiceBase(authService), IProjectServices
+    {
 
         public async Task<string> GetAppConfigAsync()
         {
@@ -50,6 +52,20 @@ namespace Pulse_MAUI.Services
             {
                 var error = ex.Message;
             }
+        }
+
+        /// <summary>
+		/// Works out the default project for a given engineer.
+		/// </summary>
+		/// <returns>The default project.</returns>
+		public async Task<Project?> GetDefaultProject()
+        {
+            var projects = await lookupService.GetProjectListAsync();
+
+            if (projects != null && projects.Count() > 0)
+                return projects.ToList()[0];
+            else
+                return null;
         }
 
     }

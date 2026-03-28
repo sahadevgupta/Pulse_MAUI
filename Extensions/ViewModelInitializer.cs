@@ -11,6 +11,7 @@ namespace Pulse_MAUI.Extensions
         public static MauiAppBuilder ViewModelInit(this MauiAppBuilder builder)
         {
             builder.Services
+                .AddTransient<ActivityPageViewModel>()
                 .AddTransient<ActivityListPageViewModel>()
                 .AddTransient<ImportSettingsPageViewModel>()
                 .AddTransient<MenuPageViewModel>();

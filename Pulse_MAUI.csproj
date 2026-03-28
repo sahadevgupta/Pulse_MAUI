@@ -103,26 +103,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models/Database/" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="../azure-mobile-apps-main/sdk/dotnet/src/Microsoft.Datasync.Client.SQLiteStore/Microsoft.Datasync.Client.SQLiteStore.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
-        <!-- Point to Entitlements.plist for keychain access -->
-        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+		<!-- Point to Entitlements.plist for keychain access -->
+		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
 
-        <!-- Manual provisioning and code signing -->
-        <ProvisioningType>manual</ProvisioningType>
-        <CodesignKey>Apple Distribution: LISCR, LLC. (AR76G6RJX7)</CodesignKey>
-		<CodesignProvision>Seafarer STG Distribution</CodesignProvision>
-        <EnableCodeSigning>true</EnableCodeSigning>
-        <CodesignRequireProvisioningProfile>true</CodesignRequireProvisioningProfile>
+		<!-- Manual provisioning and code signing -->
+		<ProvisioningType>manual</ProvisioningType>
+		<CodesignKey>Apple Development: Marcus Moloney (QZ8W2AE38S)</CodesignKey>
+        <CodesignProvision>Seafarer Development</CodesignProvision>
+		<EnableCodeSigning>true</EnableCodeSigning>
+		<CodesignRequireProvisioningProfile>true</CodesignRequireProvisioningProfile>
 
-        <!-- Debugging -->
-        <MtouchDebug>true</MtouchDebug>
+		<!-- Debugging -->
+		<MtouchDebug>true</MtouchDebug>
+		<ApplicationTitle>SEA 360 DEV</ApplicationTitle> 
+		<ApplicationId>com.liscr.Seafarer.DEV</ApplicationId>
     </PropertyGroup>
 
 </Project>

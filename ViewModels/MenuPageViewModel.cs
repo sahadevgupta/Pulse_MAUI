@@ -58,20 +58,21 @@ namespace Pulse_MAUI.ViewModels
             _activityService = activityService;
             _activitySearchService = activitySearchService;
             _punchSearchService = punchSearchService;
-
-            PopulateOptionsMenu();
-
-            App.Current?.Dispatcher.StartTimer(TimeSpan.FromSeconds(1), () =>
-            {
-                this.OnPropertyChanged("CurrentDate");
-                return true;
-            });
-
-            FetchDataCommand.Execute(null);
-
         }
 
         #region [ Methods && Service Calls ]
+
+        private async Task InitializeDataAsync()
+        {
+            PopulateOptionsMenu();
+            App.Current?.Dispatcher.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                CurrentDate = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
+                return true;
+            });
+            await FetchDataCommand.ExecuteAsync(null);
+
+        }
 
         /// <summary>
 		/// Populate the items for the options menu.
@@ -114,7 +115,7 @@ namespace Pulse_MAUI.ViewModels
         {
             if (!AppHelpers.IsLoggedIn)
             {
-                await ViewModelParameters.DialogService.ShowAlertDialog("Login Error", "Invalid User Login", AlertType.Error);
+                await DialogService.ShowAlertDialog("Login Error", "Invalid User Login", AlertType.Error);
                 return;
             }
 
@@ -132,17 +133,17 @@ namespace Pulse_MAUI.ViewModels
 
                 // 2. Upload blobs
                 if (!await EnsureInternetAsync()) return;
-                ViewModelParameters.DialogService.ShowLoading("Uploading Image Items");
+                DialogService.ShowLoading("Uploading Image Items");
                 await _appWorkflowManager.SynchroniseService.UploadBlobData(blobConnectionString);
 
                 // 3. Push/Pull data after images uploaded
                 // if (!await EnsureInternetAsync()) return;
-                // ViewModelParameters.DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
+                // DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
                 // await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
 
                 // 4. Download blobs
                 // if (!await EnsureInternetAsync()) return;
-                // ViewModelParameters.DialogService.ShowLoading("Downloading Image Items");
+                // DialogService.ShowLoading("Downloading Image Items");
                 // await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
 
                 // 5. Finish sync
@@ -157,12 +158,12 @@ namespace Pulse_MAUI.ViewModels
             catch (DatasyncInvalidOperationException ex)
             {
                 Debug.WriteLine(ex.Message);
-                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", ex.Message, AlertType.Error);
+                await DialogService.ShowAlertDialog("Sync Error", ex.Message, AlertType.Error);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
+                await DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
             }
         }
 
@@ -170,7 +171,7 @@ namespace Pulse_MAUI.ViewModels
         {
             if (!ViewModelParameters.ConnectivityService.IsConnected)
             {
-                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
+                await DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                 return false;
             }
             return true;
@@ -190,7 +191,7 @@ namespace Pulse_MAUI.ViewModels
                     ? UserInterface.MenuPage_Synchronising
                     : UserInterface.MenuPage_Synchronising + " (Full)";
 
-                ViewModelParameters.DialogService.ShowLoading(loadingMsg);
+                DialogService.ShowLoading(loadingMsg);
 
                 var syncResult = await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(isIncremental, false);
 
@@ -198,7 +199,7 @@ namespace Pulse_MAUI.ViewModels
                 {
                     var sb = new StringBuilder();
                     syncResult.ForEach(e => sb.AppendLine(e));
-                    await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
+                    await DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
                 }
             }
             catch (DatasyncInvalidOperationException ex)
@@ -208,7 +209,7 @@ namespace Pulse_MAUI.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                await ViewModelParameters.DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
+                await DialogService.ShowAlertDialog("Sync Error", "Unable to complete data sync", AlertType.Error);
             }
         }
 
@@ -246,18 +247,18 @@ namespace Pulse_MAUI.ViewModels
             Shell.Current.FlyoutIsPresented = false;
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
-                await ViewModelParameters.DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
+                await DialogService.ShowAlertDialog("Alert!!", "No Internet Connection Available");
                 return;
             }
 
             try
             {
-                ViewModelParameters.DialogService.ShowLoading("Authenticating User");
+                DialogService.ShowLoading("Authenticating User");
                 await _appWorkflowManager.UserService.LoginAsync(AppHelpers.AzureServiceUrl);
 
                 await PerformFullSyncAsync();
 
-                ViewModelParameters.DialogService.HideLoading();
+                DialogService.HideLoading();
                 WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.PostSyncRefresh));
 
                 PopulateOptionsMenu();
@@ -265,6 +266,15 @@ namespace Pulse_MAUI.ViewModels
             catch (Exception ex)
             {
             }
+        }
+
+        #endregion
+
+        #region [ Override Methods ]
+
+        public async override Task LoadDataOnNavigatedTo()
+        {
+            await InitializeDataAsync();
         }
 
         #endregion

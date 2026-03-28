@@ -1,4 +1,5 @@
 ﻿using Pulse_MAUI.Interfaces;
+using Pulse_MAUI.Services.Navigation;
 
 namespace Pulse_MAUI.ViewModels.Common
 {
@@ -7,18 +8,18 @@ namespace Pulse_MAUI.ViewModels.Common
         public ViewModelParameters(IAppWorkflowManager appWorkflowManager,
             IConnectivityService connectivityService,
             IDialogService dialogService,
-            IShellNavigationService shellNavigationService)
+            INavigationService navigationService)
         {
             AppWorkflowManager = appWorkflowManager;
             ConnectivityService = connectivityService;
             DialogService = dialogService;
-            ShellNavigationService = shellNavigationService;
+            NavigationService = navigationService;
         }
 
         public IAppWorkflowManager AppWorkflowManager { get; }
         public IConnectivityService ConnectivityService { get; }
         public IDialogService DialogService { get; }
-        public IShellNavigationService ShellNavigationService { get; }
+        public INavigationService NavigationService { get; }
     }
 
 }

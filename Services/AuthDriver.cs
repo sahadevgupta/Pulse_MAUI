@@ -37,7 +37,7 @@ namespace Pulse_MAUI.Services
                 })
                 .WithAuthority(config.Authority)
 #if IOS
-                .WithIosKeychainSecurityGroup("com.microsoft.adalcache")
+                .WithIosKeychainSecurityGroup("microsoft.adalcache")
 #endif
 #if ANDROID
                .WithParentActivityOrWindow(() => Platform.CurrentActivity)

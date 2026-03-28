@@ -9,5 +9,6 @@ namespace Pulse_MAUI.Interfaces
 
         Task FetchActivityListAsync();
         Task<ObservableRangeCollection<Activity>> FetchFilteredActivitiesList();
+        Task<IEnumerable<ActivityTask>> FetchActivityTasksAsync(Activity activity);
     }
 }

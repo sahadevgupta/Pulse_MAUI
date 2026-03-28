@@ -1,4 +1,5 @@
-﻿using Pulse_MAUI.Models.Request;
+﻿using Pulse_MAUI.Models;
+using Pulse_MAUI.Models.Request;
 
 namespace Pulse_MAUI.Interfaces
 {
@@ -7,5 +8,6 @@ namespace Pulse_MAUI.Interfaces
         Task<string> GetAppConfigAsync();
         Task<string> GetAzureConnectionAsync();
         Task PostSyncLogAsync(SyncLogRequest syncLogRequest);
+        Task<Project?> GetDefaultProject();
     }
 }

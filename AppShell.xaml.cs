@@ -14,9 +14,9 @@ namespace Pulse_MAUI
 
             LoadMenuItems();
 
-            //Routing.RegisterRoute(nameof(activity), typeof(ImportSettingsPage));
-            Routing.RegisterRoute(nameof(ImportSettingsPage),typeof(ImportSettingsPage));
-            Routing.RegisterRoute(nameof(PunchListPage),typeof(PunchListPage));
+            Routing.RegisterRoute(nameof(ActivityPage), typeof(ActivityPage));
+            Routing.RegisterRoute(nameof(ImportSettingsPage), typeof(ImportSettingsPage));
+            Routing.RegisterRoute(nameof(PunchListPage), typeof(PunchListPage));
         }
 
         private void LoadMenuItems()
@@ -26,7 +26,7 @@ namespace Pulse_MAUI
             {
                 AddFlyoutPage(nameof(ImportSettingsPage), "Import Settings", typeof(ImportSettingsPage));
             }
-            else 
+            else
             {
                 AddFlyoutPage(nameof(ActivityListPage), "Activities", typeof(ActivityListPage));
                 AddFlyoutPage(nameof(PunchListPage), "Punch List", typeof(PunchListPage));
@@ -66,7 +66,7 @@ namespace Pulse_MAUI
             {
                 Dispatcher.Dispatch(async () =>
                 {
-                   await DisplayAlertAsync(UserInterface.Synchronise_Reminder, string.Format(UserInterface.Synchronise_Date, AppHelpers.SyncDate), "Ok");
+                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, string.Format(UserInterface.Synchronise_Date, AppHelpers.SyncDate), "Ok");
 
                 });
             }
@@ -74,7 +74,7 @@ namespace Pulse_MAUI
             {
                 Dispatcher.Dispatch(async () =>
                 {
-                   await DisplayAlertAsync(UserInterface.Synchronise_Reminder,UserInterface.Synchronise_DateNone,"Ok");
+                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, UserInterface.Synchronise_DateNone, "Ok");
                 });
             }
         }

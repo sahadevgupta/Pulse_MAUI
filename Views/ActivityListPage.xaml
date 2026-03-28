@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pulse_MAUI.Views.ActivityListPage"
-             xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
-             xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
-             xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:views="clr-namespace:Pulse_MAUI.Views.ContentViews"
-             Title="{resources:Translate ActivityListPage_Title}">
-    <Grid Padding="10" RowDefinitions="Auto,*">
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                x:Class="Pulse_MAUI.Views.ActivityListPage"
+                xmlns:behaviors="clr-namespace:Pulse_MAUI.Behaviors"
+                xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+                xmlns:models="clr-namespace:Pulse_MAUI.Models"
+                xmlns:pages="clr-namespace:Pulse_MAUI.Views"
+                xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:views="clr-namespace:Pulse_MAUI.Views.ContentViews"
+                xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+                Title="{resources:Translate ActivityListPage_Title}"
+                x:DataType="vm:ActivityListPageViewModel">
+    <Grid Padding="10"
+          RowSpacing="10"
+          RowDefinitions="Auto,*">
         <toolkit:Expander x:Name="expander">
             <toolkit:Expander.Header>
                 <HorizontalStackLayout Padding="12"
                                        BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
-                    <Image Source="{x:Static helpers:Images.Filter }" Scale="0.7"/>
+                    <Image Source="{x:Static helpers:Images.Filter }"
+                           Scale="0.7"/>
 
                     <Label Text="{resources:Translate Show}"
                            Style="{StaticResource LabelDefaultSignikaRegular}">
@@ -21,28 +29,86 @@
                             <DataTrigger TargetType="Label"
                                          Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
                                          Value="True">
-                                <Setter Property="Text" Value="{resources:Translate Hide}"/>
+                                <Setter Property="Text"
+                                        Value="{resources:Translate Hide}"/>
                             </DataTrigger>
                         </Label.Triggers>
                     </Label>
 
                 </HorizontalStackLayout>
-                                       
+
             </toolkit:Expander.Header>
             <views:ActivitySearchView Margin="0,10"/>
         </toolkit:Expander>
 
-        <controls:CustomListView x:Name="activitiesList"
-                                 Grid.Row="1"
-                                 IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
-				HasUnevenRows="true"
-				ItemsSource="{Binding Activities}">
-            <controls:CustomListView.ItemTemplate>
-                <DataTemplate>
-                    <controls:ActivityCell/>
+        <CollectionView ItemsSource="{Binding Activities}"
+                        IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
+                        Grid.Row="1"
+                        x:Name="activitiesList">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical"
+                                   ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Activity">
+                    <Border StrokeShape="RoundRectangle 8">
+                        <Border.Behaviors>
+                            <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewActivityCommand, Source={x:Reference activitiesList}}"
+                                                                    CommandParameter="{Binding .}"/>
+                        </Border.Behaviors>
+                        <Grid ColumnDefinitions="7*,3*"
+                              Padding="10">
+
+                            <VerticalStackLayout>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                       Text="{Binding PCAId, StringFormat='ID: {0}'}"
+                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                       Text="{Binding Name}"
+                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                                       Text="{Binding TagId}"
+                                       TextColor="Gray"/>
+
+                            </VerticalStackLayout>
+
+
+                            <Border StrokeShape="RoundRectangle 12"
+                                    Grid.Column="1"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Start"
+                                    Padding="12,4"
+                                    BackgroundColor="{StaticResource Primary}">
+                                <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                                       Text="{Binding Status}"
+                                       FontSize="Small"
+                                       VerticalTextAlignment="Center"
+                                       TextColor="White"/>
+                            </Border>
+
+
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </controls:CustomListView.ItemTemplate>
-        </controls:CustomListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- <controls:CustomListView x:Name="
+                                        activitiesList"
+                                 Grid.Row="
+                                        1"
+                                 IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
+                                 HasUnevenRows="true"
+                                 ItemsSource="{Binding Activities}">
+                                    <controls:CustomListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:ActivityCell/>
+                                        </DataTemplate>
+                                    </controls:CustomListView.ItemTemplate>
+                                    </controls:CustomListView> -->
 
     </Grid>
-</ContentPage>
+</pages:BasePage>

@@ -2,7 +2,7 @@ using Pulse_MAUI.ViewModels;
 
 namespace Pulse_MAUI.Views;
 
-public partial class ActivityListPage : ContentPage
+public partial class ActivityListPage : BasePage
 {
 	readonly ActivityListPageViewModel _viewModel;
 
@@ -13,9 +13,11 @@ public partial class ActivityListPage : ContentPage
 		BindingContext = _viewModel;
 	}
 
-	protected override async void OnAppearing()
+	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		await _viewModel.RefreshActivityListCommand.ExecuteAsync(null);
+		//_viewModel.LoadDataOnAppearing();
 	}
+
+
 }
