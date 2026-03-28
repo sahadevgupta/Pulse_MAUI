@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="azure-mobile-apps-main/sdk/dotnet/src/Microsoft.Datasync.Client.SQLiteStore/Microsoft.Datasync.Client.SQLiteStore.csproj" />
+  <Project Path="azure-mobile-apps-main/sdk/dotnet/src/Microsoft.Datasync.Client/Microsoft.Datasync.Client.csproj" />
+  <Project Path="Pulse_MAUI/Pulse_MAUI.csproj" />
+</Solution>
