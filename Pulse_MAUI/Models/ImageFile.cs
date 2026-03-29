@@ -24,7 +24,8 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The description.
         /// </value>
-        public string Description { get; set; }
+        [ObservableProperty]
+        private string? _description;
 
         /// <summary>
         /// Gets or sets the checklist step.

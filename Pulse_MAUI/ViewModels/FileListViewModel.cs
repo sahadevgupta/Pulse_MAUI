@@ -2,10 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Mopups.Interfaces;
 using Pulse_MAUI.Constants;
 using Pulse_MAUI.Enums;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
+using Pulse_MAUI.Popups;
 
 namespace Pulse_MAUI.ViewModels;
 
@@ -13,7 +15,8 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
     IFileService fileService,
     ILookupService lookupService,
     IItemService itemService,
-    IMediaService mediaService) : BaseViewModel(viewModelParameters)
+    IMediaService mediaService,
+    IPopupNavigation popupNavigation) : BaseViewModel(viewModelParameters)
 {
     #region [ Properties ]
 
@@ -72,6 +75,45 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
         return ms.ToArray();
     }
 
+    private async Task SaveItemAsync(ImageFile result, int? recordId, int projectId, string? mobileId = null)
+    {
+        var controlTypes = await lookupService.GetControlTypeLookups();
+        int controlTypeValue = controlTypes.FirstOrDefault(c => c.Value == (fileType == FileType.Activity ? "Activity" : "Punch"))?.LookupId ?? 0;
+
+        ImageFile image = new ImageFile();
+        image.Url = result.Url;
+        image.AvailableToDelete = true;
+
+        Item item = new Item();
+        item.LocalPath = result.Url;
+
+        if (fileType == FileType.Punch)
+        {
+            if (recordId != null)
+            {
+                item.RecordId = recordId;
+            }
+            else
+            {
+                item.LocalReferenceID = mobileId;
+            }
+        }
+        else
+        {
+            item.RecordId = recordId;
+        }
+
+        item.ProjectId = projectId;
+        item.Name = Helpers.FileUtility.GetFileName(result.Url);
+        item.ControlType = controlTypeValue;
+        item.MimeType = "image/jpeg";
+
+        Files.Add(image);
+
+        await itemService.SaveItem(item);
+    }
+
+
     #endregion
 
     #region [ Commands ]
@@ -116,43 +158,6 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
         }
     }
 
-    private async Task SaveItemAsync(ImageFile result, int? recordId, int projectId, string? mobileId = null)
-    {
-        var controlTypes = await lookupService.GetControlTypeLookups();
-        int controlTypeValue = controlTypes.FirstOrDefault(c => c.Value == (fileType == FileType.Activity ? "Activity" : "Punch"))?.LookupId ?? 0;
-
-        ImageFile image = new ImageFile();
-        image.Url = result.Url;
-        image.AvailableToDelete = true;
-
-        Item item = new Item();
-        item.LocalPath = result.Url;
-
-        if (fileType == FileType.Punch)
-        {
-            if (recordId != null)
-            {
-                item.RecordId = recordId;
-            }
-            else
-            {
-                item.LocalReferenceID = mobileId;
-            }
-        }
-        else
-        {
-            item.RecordId = recordId;
-        }
-
-        item.ProjectId = projectId;
-        item.Name = Helpers.FileUtility.GetFileName(result.Url);
-        item.ControlType = controlTypeValue;
-        item.MimeType = "image/jpeg";
-
-        Files.Add(image);
-
-        await itemService.SaveItem(item);
-    }
 
     [RelayCommand]
     private async Task PickPhoto()
@@ -170,6 +175,48 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
                 await SaveItemAsync(result, activity.PCAId, activity.ProjectId.GetValueOrDefault());
 
             }
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteImage(ImageFile imageFile)
+    {
+        var result = await fileService.DeleteImageAsync(imageFile, fileType == FileType.Activity ? activity.PCAId : punchItem.PunchId);
+        if (result)
+        {
+            Files.Remove(imageFile);
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditImageDescription(ImageFile imageFile)
+    {
+        var descriptionPopup = new EditImageDescriptionPopup(
+            fileType == FileType.Activity ? activity.TaskCount : 0,
+            imageFile.Description,
+            imageFile.ChecklistStep
+        );
+        descriptionPopup.OkClicked += async (s, arg) =>
+        {
+            await UpdateImageDescriptionAsync(imageFile, arg);
+
+        };
+        await popupNavigation.PushAsync(descriptionPopup);
+    }
+
+    private async Task UpdateImageDescriptionAsync(ImageFile imageFile, Controls.CustomDialogs.DetailInputResult arg)
+    {
+        var response = await fileService.UpdateImageDescription(
+            imageFile,
+            fileType == FileType.Activity ? activity.PCAId : punchItem.PunchId,
+            arg.Description,
+            arg.Step
+        );
+
+        if (response)
+        {
+            imageFile.Description = arg.Description;
+            imageFile.ChecklistStep = arg.Step != "None" ? Convert.ToInt32(arg.Step) : null;
         }
     }
 

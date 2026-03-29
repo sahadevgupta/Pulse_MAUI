@@ -316,14 +316,12 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
 
         if (_success)
         {
+            Activity.StatusId = AsyncHelpers.RunSync(async () => await lookupService.GetActivityStatusLookupId(SelectedStatus));
+            Activity.Status = SelectedStatus;
+
             await activityService.SaveActivityTasks(activityTasksToSave);
 
-            //// Possible status options
-            ////"In Progress"
-            ////"Closed Complete"
-            ////"Pending"
 
-            //
             // Compare the old status ID with the new to see if any changes have been made.
             int oldStatusId = await activityService.GetExistingActivityTaskStatusId(Activity.Id);
 
@@ -339,7 +337,6 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
                     Activity.DateCompleted = null;
                 }
             }
-
 
             await activityService.SaveActivity(Activity);
 

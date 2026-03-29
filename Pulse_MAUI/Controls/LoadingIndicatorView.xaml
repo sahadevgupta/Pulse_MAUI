@@ -8,7 +8,7 @@
             VerticalOptions="Center"
             StrokeShape="RoundRectangle 12">
         <VerticalStackLayout
-            Padding="20"
+            Padding="25,15"
             Spacing="10"
             BackgroundColor="Black"
             HorizontalOptions="Center"

@@ -2,44 +2,105 @@
 <pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 x:Class="Pulse_MAUI.Views.FileListPage"
+                xmlns:behaviors="clr-namespace:Pulse_MAUI.Behaviors"
+                xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
                 xmlns:pages="clr-namespace:Pulse_MAUI.Views"
                 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                 xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
                 Title="FileListPage">
 
-    <Grid RowDefinitions="Auto,Auto, *"
-          Padding="20">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:MultiMathExpressionConverter x:Key="MultiMathExpressionConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="10"
+          Padding="0,20">
 
 
         <!-- IMAGE CAROUSEL -->
-        <Grid Grid.Row="0">
+        <VerticalStackLayout Grid.Row="0">
 
             <CarouselView x:Name="PhotosCarousel"
                           ItemsSource="{Binding Files}"
                           IndicatorView="Indicators"
-                          PeekAreaInsets="50"
                           HeightRequest="250"
                           Loop="False"
                           HorizontalScrollBarVisibility="Never">
 
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="10">
+                        <Grid>
 
-                            <Border Stroke="#DDDDDD"
-                                    BackgroundColor="White"
-                                    StrokeShape="RoundRectangle 20"
-                                    StrokeThickness="1"
-                                    Padding="10">
+                            <Image Aspect="AspectFill"
+                                   Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
+                                   HeightRequest="230"
+                                   WidthRequest="330"/>
 
-                                <Image Aspect="AspectFill"
-                                       Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
-                                       HeightRequest="230"
-                                       WidthRequest="330">
+                            <StackLayout Grid.Row="0"
+                                         VerticalOptions="End"
+                                         BackgroundColor="#80000000"
+                                         Padding="12">
+                                <Label TextColor="White"
+                                       Margin="50,0"
+                                       Text="{Binding Description,TargetNullValue='Testing fehj ejrejhjehfjerhjerhjgherj ger gerjgh ejrghejrk ghkejrg hekrjgh ejfh ewjfhkejwh fjkehfjkeh fjkehfkejf hekjfhejkrfhjkerfhejkrfhejkrf'}"
+                                       FontSize="14"
+                                       MaxLines="1"
+                                       LineBreakMode="TailTruncation"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalOptions="Center"/>
+
+                            </StackLayout>
+
+                            <Border StrokeShape="Ellipse"
+                                    BackgroundColor="{StaticResource PrimaryGreen}"
+                                    HorizontalOptions="Start"
+                                    TranslationY="-15"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    Margin="5,0,0,0"
+                                    StrokeThickness="0"
+                                    Padding="20"
+                                    VerticalOptions="End">
+                                <Border.Behaviors>
+                                    <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.EditImageDescriptionCommand,Source={x:Reference PhotosCarousel}}"
+                                                                            CommandParameter="{Binding .}"/>
+                                </Border.Behaviors>
+
+                                <Image HeightRequest="30">
+                                    <Image.Source>
+                                        <FontImageSource FontFamily="MyFont"
+                                                         Glyph="{x:Static ext:FontAwesomeIcons.Edit}"
+                                                         Color="White"/>
+                                    </Image.Source>
                                 </Image>
-
                             </Border>
 
+
+                            <Border StrokeShape="Ellipse"
+                                    BackgroundColor="Red"
+                                    HorizontalOptions="End"
+                                    TranslationY="-15"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    Margin="0,0,5,0"
+                                    StrokeThickness="0"
+                                    Padding="21"
+                                    VerticalOptions="End">
+                                <Border.Behaviors>
+                                    <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.DeleteImageCommand,Source={x:Reference PhotosCarousel}}"
+                                                                            CommandParameter="{Binding .}"/>
+                                </Border.Behaviors>
+                                <Image HeightRequest="30">
+                                    <Image.Source>
+                                        <FontImageSource FontFamily="MyFont"
+                                                         Glyph="{x:Static ext:FontAwesomeIcons.Trash}"
+                                                         Color="White"/>
+                                    </Image.Source>
+                                </Image>
+                            </Border>
 
                         </Grid>
                     </DataTemplate>
@@ -52,33 +113,60 @@
                            VerticalOptions="End"
                            IndicatorColor="#CCCCCC"
                            SelectedIndicatorColor="#1E88E5"
-                           Margin="0,10"/>
+                           Margin="0,15,0,0"/>
 
-        </Grid>
+
+            <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                   FontSize="Large"
+                   HorizontalOptions="End"
+                   Margin="0,0,10,0">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span>
+                            <Span.Text>
+                                <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}"
+                                              ConverterParameter="x + 1">
+                                    <Binding Source="{x:Reference PhotosCarousel}"
+                                             Path="Position"/>
+                                </MultiBinding>
+                            </Span.Text>
+                        </Span>
+                        <Span Text=" of "/>
+                        <Span Text="{Binding Files.Count}"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+        </VerticalStackLayout>
 
         <HorizontalStackLayout Grid.Row="1"
                                Spacing="15"
-                               HorizontalOptions="Center">
+                               Margin="0,10,0,0"
+                               HorizontalOptions="Center"
+                               VerticalOptions="End">
 
             <Button Text="Take Photo"
                     x:Name="TakePhotoButton"
-                    HeightRequest="48"
+                    Style="{StaticResource DefaultButtonStyle}"
                     CornerRadius="12"
-                    FontSize="16"
-                    Padding="20,10"
-                    Command="{Binding TakePhotoCommand}"
-                    BackgroundColor="#1E88E5"
-                    TextColor="White"/>
+                    Command="{Binding TakePhotoCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MyFont"
+                                     Glyph="{x:Static ext:FontAwesomeIcons.Camera}"/>
+                </Button.ImageSource>
+
+            </Button>
 
             <Button Text="Pick Photo"
                     x:Name="PickPhotoButton"
-                    HeightRequest="48"
+                    Style="{StaticResource DefaultButtonStyle}"
                     CornerRadius="12"
-                    FontSize="16"
-                    Padding="20,10"
-                    Command="{Binding PickPhotoCommand}"
-                    BackgroundColor="#1E88E5"
-                    TextColor="White"/>
+                    Command="{Binding PickPhotoCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MyFont"
+                                     Glyph="{x:Static ext:FontAwesomeIcons.Image}"/>
+                </Button.ImageSource>
+            </Button>
 
 
 
@@ -86,6 +174,7 @@
 
         <!-- FILE LIST (Editable Items) -->
         <CollectionView Grid.Row="2"
+                        IsVisible="False"
                         ItemsSource="{Binding Files}"
                         Margin="0,10,0,0"
                         SelectionMode="None"
@@ -95,54 +184,55 @@
                 <DataTemplate>
 
                     <Border Stroke="#E0E0E0"
+                            Style="{StaticResource DefaultBorderStyle}"
                             BackgroundColor="White"
-                            StrokeShape="RoundRectangle 15"
+                            StrokeThickness="1"
                             Padding="10"
                             Margin="0,0,0,12">
 
-                        <Grid ColumnDefinitions="Auto,*,Auto,Auto"
-                              ColumnSpacing="10">
+                        <Grid ColumnDefinitions="*,Auto,Auto"
+                              ColumnSpacing="12">
 
                             <!-- Thumbnail -->
-                            <Image Grid.Column="0"
-                                   Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
-                                   HeightRequest="55"
-                                   WidthRequest="75"
-                                   Aspect="AspectFill"/>
 
-                            <!-- File Title -->
-                            <VerticalStackLayout Grid.Column="1"
-                                                 VerticalOptions="Center">
-                                <Label Text="{Binding FileName}"
-                                       FontSize="16"
-                                       TextColor="#444"/>
+                            <Border Style="{StaticResource DefaultBorderStyle}"
+                                    HorizontalOptions="Start"
+                                    HeightRequest="55"
+                                    WidthRequest="75">
+                                <Image Grid.Column="0"
+                                       Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
+                                       Aspect="AspectFill"/>
 
-                                <Label Text="{Binding FileSizeDisplay}"
-                                       FontSize="13"
-                                       TextColor="#777"/>
-                            </VerticalStackLayout>
+                            </Border>
 
-                            <!-- Edit Button -->
-                            <Button Grid.Column="2"
-                                    Text="Edit"
-                                    Padding="15,8"
-                                    CornerRadius="8"
-                                    FontSize="14"
-                                    BackgroundColor="#EEEEEE"
-                                    TextColor="#444"
-                                    Command="{Binding BindingContext.EditCommand, Source={x:Reference PhotosCarousel}}"
-                                    CommandParameter="{Binding}"/>
 
-                            <!-- Delete Button -->
-                            <Button Grid.Column="3"
-                                    Text="Delete"
-                                    Padding="15,8"
-                                    CornerRadius="8"
-                                    FontSize="14"
-                                    BackgroundColor="#D32F2F"
-                                    TextColor="White"
-                                    Command="{Binding BindingContext.DeleteCommand, Source={x:Reference PhotosCarousel}}"
-                                    CommandParameter="{Binding}"/>
+                            <ImageButton Grid.Column="1"
+                                         VerticalOptions="Center"
+                                         BackgroundColor="Transparent"
+                                         Command="{Binding BindingContext.EditImageDescriptionCommand, Source={x:Reference images}}"
+                                         CommandParameter="{Binding .}">
+                                <ImageButton.Source>
+                                    <FontImageSource FontFamily="MyFont"
+                                                     Glyph="{x:Static ext:FontAwesomeIcons.Edit}"
+                                                     Color="{StaticResource DarkBlue}"/>
+                                </ImageButton.Source>
+
+                            </ImageButton>
+
+                            <ImageButton Grid.Column="2"
+                                         Margin="0,0,10,0"
+                                         VerticalOptions="Center"
+                                         BackgroundColor="Transparent"
+                                         Command="{Binding BindingContext.DeleteImageCommand, Source={x:Reference images}}"
+                                         CommandParameter="{Binding .}">
+                                <ImageButton.Source>
+                                    <FontImageSource FontFamily="MyFont"
+                                                     Glyph="{x:Static ext:FontAwesomeIcons.Trash}"
+                                                     Color="OrangeRed"/>
+                                </ImageButton.Source>
+                            </ImageButton>
+
+
                         </Grid>
                     </Border>
 

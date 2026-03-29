@@ -9,10 +9,11 @@
     <Color x:Key="PrimaryBlue">#2276D7</Color>
     <Color x:Key="PrimaryTeal">#1FA2A6</Color>
     <Color x:Key="PrimaryGreen">#4CAF50</Color>
-    <Color x:Key="DarkBlue">#0D2B5A</Color>
     <Color x:Key="NeutralGray">#8C8C8C</Color>
     <Color x:Key="LightBackground">#F6F9FC</Color>
     <Color x:Key="CardBackground">#FFFFFF</Color>
+    <Color x:Key="ChalkGrey">#cee1ea</Color>
+    <Color x:Key="Green">#008000</Color>
 
     <!-- GRADIENT -->
     <LinearGradientBrush x:Key="BrandGradient"
@@ -48,7 +49,7 @@
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
-    <Color x:Key="StandardOrange">#04273F</Color>
+    <Color x:Key="DarkBlue">#04273F</Color>
     <Color x:Key="StockLightBlue">#27aaE1</Color>
     <Color x:Key="PopupBackground">#A0000000</Color>
 

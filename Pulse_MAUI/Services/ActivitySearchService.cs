@@ -261,6 +261,8 @@ namespace Pulse_MAUI.Services
             return activities;
         }
 
+
+
     }
 
     //   /// <summary>

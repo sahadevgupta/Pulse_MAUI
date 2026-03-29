@@ -3,6 +3,7 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 x:Class="Pulse_MAUI.Views.ActivityPage"
                 xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                xmlns:converters="clr-namespace:Pulse_MAUI.Converters"
                 xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
                 xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
                 xmlns:local="clr-namespace:Pulse_MAUI.Views.ContentViews"
@@ -12,6 +13,10 @@
                 xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
                 Title="{resources:Translate ActivityPage_Title}"
                 x:DataType="vm:ActivityPageViewModel">
+
+       <pages:BasePage.Resources>
+              <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+       </pages:BasePage.Resources>
 
        <pages:BasePage.ToolbarItems>
               <ToolbarItem x:Name="imagesTap"
@@ -56,19 +61,43 @@
               RowSpacing="10"
               RowDefinitions="Auto,*">
 
+
               <Border Style="{StaticResource DefaultBorderStyle}"
-                      Padding="10">
-                     <VerticalStackLayout BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
-                                          Padding="10">
-                            <Label Text="{Binding Activity.PCAId}"
-                                   TextColor="White"/>
-                            <Label Text="{Binding Activity.Name}"
-                                   TextColor="White"/>
-                            <Label Text="{Binding Activity.TagId}"
-                                   TextColor="White"/>
-                            <Label Text="{Binding Activity.Status}"
-                                   TextColor="White"/>
-                     </VerticalStackLayout>
+                      StrokeShape="RoundRectangle 8"
+                      BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
+                      Margin="10,10,10,0">
+                     <Grid>
+
+                            <VerticalStackLayout Padding="10">
+                                   <Label Text="{Binding Activity.PCAId}"
+                                          Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          FontSize="16"
+                                          TextColor="White"/>
+                                   <Label Text="{Binding Activity.Name}"
+                                          Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          FontSize="16"
+                                          TextColor="White"/>
+                                   <Label Text="{Binding Activity.TagId}"
+                                          Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          FontSize="16"
+                                          TextColor="White"/>
+
+                            </VerticalStackLayout>
+
+                            <Border StrokeShape="RoundRectangle 8,0,8,0"
+                                    HorizontalOptions="End"
+                                    Margin="0,5,-1,0"
+                                    Padding="5"
+                                    StrokeThickness="0"
+                                    BackgroundColor="{Binding Activity.Status,Converter={StaticResource StatusToColorConverter}}"
+                                    VerticalOptions="Start">
+                                   <Label Text="{Binding Activity.Status}"
+                                          Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          FontSize="16"
+                                          VerticalTextAlignment="Center"
+                                          TextColor="White"/>
+                            </Border>
+                     </Grid>
               </Border>
 
               <CollectionView Grid.Row="1"
@@ -87,9 +116,11 @@
                                                          TextColor="White"
                                                          FontSize="{x:Static helpers:FontSizes.Large}"/>
 
-                                   <Picker TextColor="White"
-                                           ItemsSource="{Binding StatusList}"
-                                           SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+                                   <controls:CustomPicker ItemsSource="{Binding StatusList}"
+                                                          Placeholder="Status"
+                                                          SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+
+
 
                             </VerticalStackLayout>
 

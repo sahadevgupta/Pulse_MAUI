@@ -58,6 +58,47 @@
                         Value="{StaticResource DefaultShadow}"/>
         </Style>
 
+        <Style TargetType="Button"
+               x:Key="DefaultButtonStyle">
+                <Setter Property="BackgroundColor"
+                        Value="{StaticResource DarkBlue}"/>
+                <Setter Property="TextColor"
+                        Value="White"/>
+                <Setter Property="CornerRadius"
+                        Value="12"/>
+                <Setter Property="FontFamily"
+                        Value="SignikaRegular"/>
+                <Setter Property="FontSize"
+                        Value="16"/>
+                <Setter Property="BorderWidth"
+                        Value="0"/>
+                <Setter Property="CornerRadius"
+                        Value="4"/>
+                <Setter Property="Padding"
+                        Value="20,10"/>
+                <Setter Property="MinimumHeightRequest"
+                        Value="44"/>
+                <Setter Property="MinimumWidthRequest"
+                        Value="44"/>
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                        <VisualStateGroupList>
+                                <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                        <Setter Property="TextColor"
+                                                                Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}"/>
+                                                        <Setter Property="BackgroundColor"
+                                                                Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"/>
+                                                </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver"/>
+                                </VisualStateGroup>
+                        </VisualStateGroupList>
+                </Setter>
+
+        </Style>
+
         <!--#region MAUI Default Syles-->
         <Style TargetType="ActivityIndicator">
                 <Setter Property="Color"
@@ -120,6 +161,7 @@
                                 </VisualStateGroup>
                         </VisualStateGroupList>
                 </Setter>
+
         </Style>
 
         <Style TargetType="CheckBox">
@@ -241,10 +283,10 @@
                         Value="0"/>
                 <Setter Property="CornerRadius"
                         Value="0"/>
-                <Setter Property="MinimumHeightRequest"
+                <!-- <Setter Property="MinimumHeightRequest"
                         Value="44"/>
                 <Setter Property="MinimumWidthRequest"
-                        Value="44"/>
+                        Value="44"/> -->
                 <Setter Property="VisualStateManager.VisualStateGroups">
                         <VisualStateGroupList>
                                 <VisualStateGroup x:Name="CommonStates">

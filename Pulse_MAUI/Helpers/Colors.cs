@@ -13,7 +13,7 @@ namespace Pulse_MAUI.Helpers
         /// <summary>
         /// The green.
         /// </summary>
-        public static readonly Color StandardOrange = (Color)(Application.Current?.Resources["StandardOrange"] ?? MauiColors.Black);
+        public static readonly Color StandardOrange = (Color)(Application.Current?.Resources["DarkBlue"] ?? MauiColors.Black);
 
 
         public static readonly Color StockSuperLightGrey = Color.FromArgb("828282");

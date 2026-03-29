@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopup:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="Pulse_MAUI.Popups.EditImageDescriptionPopup"
+                 xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                 xmlns:mopup="clr-namespace:Mopups.Pages;assembly=Mopups"
+                 xmlns:mopupsanim="clr-namespace:Mopups.Animations;assembly=Mopups"
+                 CloseWhenBackgroundIsClicked="True"
+                 BackgroundColor="{StaticResource PopupBackground}">
+
+    <mopup:PopupPage.Animation>
+        <mopupsanim:MoveAnimation
+            DurationIn="400"
+            DurationOut="300"
+            EasingIn="SinIn"
+            EasingOut="SinOut"
+            PositionIn="Bottom"
+            PositionOut="Bottom"/>
+    </mopup:PopupPage.Animation>
+
+    <Border VerticalOptions="Center"
+            BackgroundColor="White"
+            StrokeShape="RoundRectangle 12"
+            Padding="16"
+            Margin="20,0">
+        <Grid RowDefinitions="Auto,Auto"
+              ColumnDefinitions="*,*"
+              ColumnSpacing="16"
+              RowSpacing="10">
+            <VerticalStackLayout Grid.ColumnSpan="2">
+                <Label Text="File Item Details"
+                       HorizontalOptions="Center"
+                       FontSize="24"
+                       Style="{StaticResource LabelDefaultSignikaMedium}"/>
+
+                <Label Text="Please Enter Description"
+                       Margin="0,10,0,0"/>
+                <Entry Placeholder="Please Enter Description"
+                       x:Name="descriptionEntry"/>
+
+                <controls:CustomPicker Title="Please Select Checklist Step"
+                                       Placeholder="Checklist Step"
+                                       Margin="0,10,0,0"
+                                       x:Name="checklistPicker"/>
+
+
+                <!-- <Label Text="Please Select Checklist Step"
+                       Margin="0,10,0,0"/>
+                <Picker x:Name="checklistPicker"/> -->
+            </VerticalStackLayout>
+
+            <Button Style="{StaticResource DefaultButtonStyle}"
+                    Margin="0,15,0,0"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Clicked="Ok_Clicked"
+                    Text="Ok"/>
+
+            <Button Style="{StaticResource DefaultButtonStyle}"
+                    BackgroundColor="Red"
+                    Margin="0,15,0,0"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Cancel"
+                    Clicked="Cancel_Clicked"/>
+
+        </Grid>
+    </Border>
+
+
+
+</mopup:PopupPage>

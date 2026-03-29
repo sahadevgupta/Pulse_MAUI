@@ -7,7 +7,8 @@ namespace Pulse_MAUI.Services;
 
 
 
-public class FileService(IDataManager dataManager, ILookupService lookupService) : IFileService
+public class FileService(IDataManager dataManager,
+    ILookupService lookupService) : IFileService
 {
     /// <summary>
     /// Uploads the BLOB images.
@@ -180,362 +181,179 @@ public class FileService(IDataManager dataManager, ILookupService lookupService)
 
     }
 
-    /*
-        /// <summary>
-        /// Opens the native image picker for selecting a picture from the device.
-        /// </summary>
-        /// <returns>async Task</returns>
-        public async Task PickImage()
+    public async Task<bool> DeleteImageAsync(ImageFile imageFile, int? recordId)
+    {
+        IEnumerable<Item> items = await dataManager.GetAllItemsAsync();
+        Item? itemToDelete = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordId == recordId);
+        if (itemToDelete != null)
         {
-
-            var pickOptions = new PickMediaOptions
-            {
-                CompressionQuality = 50,
-                PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small,
-            };
-
-            MediaFile file = await CrossMedia.Current.PickPhotoAsync(pickOptions);
-
-            if (file != null)
-            {
-                ImageFile image = new ImageFile();
-                image.Url = file.Path;
-                image.AvailableToDelete = true;
-                ActivityFiles.Add(image);
-
-                fileListViewModel.Files = ActivityFiles;
-                fileListViewModel.Position = ActivityFiles.Count - 1;
-
-
-                Item item = new Item();
-                item.LocalPath = file.Path;
-                item.RecordID = fileListViewModel.Activity.PCAId;
-                item.ProjectId = fileListViewModel.Activity.ProjectId;
-                item.Name = Helpers.FileUtility.GetFileName(file.Path);
-                item.MimeType = "image/jpeg";
-
-                var controlTypes = await lookupService.GetControlTypeLookups();
-                int ActivityValue = controlTypes.FirstOrDefault(c => c.Value == "Activity").LookupId;
-                item.ControlType = ActivityValue;
-
-                await ItemService.Instance.SaveItem(item);
-            }
-
+            await dataManager.DeleteItemAsync(itemToDelete);
+            return true;
         }
+        return false;
+    }
 
-
-        /// <summary>
-        /// Picks the image.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <returns></returns>
-        public async Task PickImage(PunchFileListViewModel fileListViewModel)
+    public async Task<bool> UpdateImageDescription(ImageFile imageFile, int? recordId, string description, string checklistStep)
+    {
+        IEnumerable<Item> items = await dataManager.GetAllItemsAsync();
+        Item? itemToUpdate = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordId == recordId);
+        if (itemToUpdate != null)
         {
+            // update the item in the file list.
+            itemToUpdate.Description = description;
 
-            var pickOptions = new PickMediaOptions
+            if (checklistStep != "None")
             {
-                CompressionQuality = 50,
-                PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small,
-            };
-
-
-            MediaFile file = await CrossMedia.Current.PickPhotoAsync(pickOptions);
-
-            if (file != null)
-            {
-
-                ImageFile image = new ImageFile();
-                image.Url = file.Path;
-                image.AvailableToDelete = true;
-                PunchFiles.Add(image);
-
-                fileListViewModel.Files = PunchFiles;
-                fileListViewModel.Position = PunchFiles.Count - 1;
-
-                Item item = new Item();
-                item.LocalPath = file.Path;
-
-                if (fileListViewModel.PunchItem.PunchId != null)
-                {
-                    item.RecordID = fileListViewModel.PunchItem.PunchId;
-                }
-                else
-                {
-                    item.LocalReferenceID = fileListViewModel.PunchItem.MobileId;
-                }
-
-                item.ProjectId = fileListViewModel.PunchItem.ProjectId;
-                item.Name = Helpers.FileUtility.GetFileName(file.Path);
-                item.MimeType = "image/jpeg";
-
-                var controlTypes = await lookupService.GetControlTypeLookups();
-                int PunchValue = controlTypes.FirstOrDefault(c => c.Value == "Punch").LookupId;
-                item.ControlType = PunchValue;
-
-                await ItemService.Instance.SaveItem(item);
-            }
-
-        }
-
-
-        /// <summary>
-        /// Opens the native camera application on the device.
-        /// </summary>
-        /// <returns>The image.</returns>
-        public async Task TakeImage(ActivityFileListViewModel fileListViewModel)
-        {
-
-            // Only run if a viable camera is available
-            if (CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported)
-            {
-
-                var cameraOptions = new StoreCameraMediaOptions
-                {
-                    CompressionQuality = 50,
-                    AllowCropping = true,
-                    DefaultCamera = CameraDevice.Rear,
-                    SaveToAlbum = false,
-                    Directory = "Captured",
-                    PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small,
-                };
-
-                await CrossMedia.Current.Initialize();
-
-                MediaFile file = await CrossMedia.Current.TakePhotoAsync(cameraOptions);
-                if (file != null)
-                {
-                    var controlTypes = await lookupService.GetControlTypeLookups();
-                    int ActivityValue = controlTypes.FirstOrDefault(c => c.Value == "Activity").LookupId;
-
-                    ImageFile image = new ImageFile();
-                    image.Url = file.Path;
-                    image.AvailableToDelete = true;
-                    ActivityFiles.Add(image);
-
-                    Item item = new Item();
-                    item.LocalPath = file.Path;
-                    item.RecordID = fileListViewModel.Activity.PCAId;
-                    item.ProjectId = fileListViewModel.Activity.ProjectId;
-                    item.Name = Helpers.FileUtility.GetFileName(file.Path);
-                    item.ControlType = ActivityValue;
-                    item.MimeType = "image/jpeg";
-
-                    fileListViewModel.Files = ActivityFiles;
-                    fileListViewModel.Position = ActivityFiles.Count - 1;
-
-                    await ItemService.Instance.SaveItem(item);
-
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// Takes the image.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <returns></returns>
-        public async Task TakeImage(PunchFileListViewModel fileListViewModel)
-        {
-
-            // Only run if a viable camera is available
-            if (CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported)
-            {
-
-                var cameraOptions = new StoreCameraMediaOptions
-                {
-                    CompressionQuality = 50,
-                    AllowCropping = true,
-                    DefaultCamera = CameraDevice.Rear,
-                    SaveToAlbum = false,
-                    Directory = "Captured",
-                    PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small,
-                };
-
-                await CrossMedia.Current.Initialize();
-
-                MediaFile file = await CrossMedia.Current.TakePhotoAsync(cameraOptions);
-                if (file != null)
-                {
-                    ImageFile image = new ImageFile();
-                    image.Url = file.Path;
-                    image.AvailableToDelete = true;
-                    PunchFiles.Add(image);
-
-                    fileListViewModel.Files = PunchFiles;
-                    fileListViewModel.Position = PunchFiles.Count - 1;
-
-                    Item item = new Item();
-                    item.LocalPath = file.Path;
-
-
-                    if (fileListViewModel.PunchItem.PunchId != null)
-                    {
-                        item.RecordID = fileListViewModel.PunchItem.PunchId;
-                    }
-                    else
-                    {
-                        item.LocalReferenceID = fileListViewModel.PunchItem.MobileId;
-                    }
-
-                    item.ProjectId = fileListViewModel.PunchItem.ProjectId;
-                    item.Name = Helpers.FileUtility.GetFileName(file.Path);
-                    item.MimeType = "image/jpeg";
-
-                    var controlTypes = await lookupService.GetControlTypeLookups();
-                    int PunchValue = controlTypes.FirstOrDefault(c => c.Value == "Punch").LookupId;
-                    item.ControlType = PunchValue;
-
-                    await ItemService.Instance.SaveItem(item);
-
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// Updates the image description.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="checklistStep">The checklist step.</param>
-        /// <returns></returns>
-        public async Task UpdateImageDescription(ActivityFileListViewModel fileListViewModel, int position, string description, string checklistStep)
-        {
-            var PCAId = fileListViewModel.Activity.PCAId;
-            var imageFile = fileListViewModel.Files[position];
-
-            await ItemService.Instance.FetchItemListForActivityAsync(PCAId);
-
-            Item item = ItemService.Instance.Items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PCAId);
-
-            if (item != null)
-            {
-
-                // update the item in the file list.
-                item.Description = description;
-                fileListViewModel.Files[position].Description = description;
-
-                if (checklistStep != "None")
-                {
-                    item.CheckListStep = Convert.ToInt32(checklistStep);
-                    fileListViewModel.Files[position].ChecklistStep = Convert.ToInt32(checklistStep);
-                }
-                else
-                {
-                    item.CheckListStep = null;
-                    fileListViewModel.Files[position].ChecklistStep = null;
-
-                }
-
-                await ItemService.Instance.SaveItem(item);
-
-
-            }
-        }
-
-
-
-        /// <summary>
-        /// Updates the image description.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <param name="description">The description.</param>
-        /// <param name="checklistStep">The checklist step.</param>
-        /// <returns></returns>
-        public async Task UpdateImageDescription(PunchFileListViewModel fileListViewModel, int position, string description, string checklistStep)
-        {
-
-            int? PunchId = fileListViewModel.PunchItem.PunchId;
-            var imageFile = fileListViewModel.Files[position];
-
-            await ItemService.Instance.FetchItemListForActivityAsync(PunchId);
-
-            Item item = ItemService.Instance.Items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PunchId);
-
-            if (item != null)
-            {
-
-                // update the item in the file list.
-                item.Description = description;
-                fileListViewModel.Files[position].Description = description;
-
-                if (checklistStep != "None")
-                {
-                    item.CheckListStep = Convert.ToInt32(checklistStep);
-                    fileListViewModel.Files[position].ChecklistStep = Convert.ToInt32(checklistStep);
-                }
-                else
-                {
-                    item.CheckListStep = null;
-                    fileListViewModel.Files[position].ChecklistStep = null;
-
-                }
-
-                await ItemService.Instance.SaveItem(item);
-
-
-            }
-        }
-
-
-        /// <summary>
-        /// Deletes the image.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <returns></returns>
-        public async Task<bool> DeleteImage(ActivityFileListViewModel fileListViewModel)
-        {
-
-            var PCAId = fileListViewModel.Activity.PCAId;
-            if (fileListViewModel.Position <= ActivityFiles.Count())
-            {
-                var imageFile = fileListViewModel.Files[fileListViewModel.Position];
-
-                IEnumerable<Item> items = await ItemService.Instance.GetItemListAsync();
-                Item itemToDelete = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PCAId);
-
-                // delete the item from the items table
-                await ItemService.Instance.DeleteItem(itemToDelete);
-
-                // delete the item from the local file instance
-                ActivityFiles.Remove(imageFile);
-
-                return true;
-
+                itemToUpdate.CheckListStep = Convert.ToInt32(checklistStep);
             }
             else
             {
-                return false;
+                itemToUpdate.CheckListStep = null;
             }
-
+            await dataManager.SaveItemAsync(itemToUpdate);
+            return true;
         }
+        return false;
+    }
 
 
-        /// <summary>
-        /// Deletes the image.
-        /// </summary>
-        /// <param name="fileListViewModel">The file ListView model.</param>
-        /// <returns></returns>
-        public async Task DeleteImage(PunchFileListViewModel fileListViewModel)
-        {
+    /*
+     public async Task UpdateImageDescription(ActivityFileListViewModel fileListViewModel, int position, string description, string checklistStep)
+     {
+         var PCAId = fileListViewModel.Activity.PCAId;
+         var imageFile = fileListViewModel.Files[position];
 
-            var PunchId = fileListViewModel.PunchItem.PunchId;
-            if (fileListViewModel.Position <= PunchFiles.Count())
-            {
-                var imageFile = fileListViewModel.Files[fileListViewModel.Position];
+         await ItemService.Instance.FetchItemListForActivityAsync(PCAId);
 
-                IEnumerable<Item> items = await ItemService.Instance.GetItemListAsync();
-                Item itemToDelete = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PunchId);
+         Item item = ItemService.Instance.Items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PCAId);
 
-                // delete the item from the items table
-                await ItemService.Instance.DeleteItem(itemToDelete);
+         if (item != null)
+         {
 
-                // delete the item from the local file instance
-                PunchFiles.Remove(imageFile);
+             // update the item in the file list.
+             item.Description = description;
+             fileListViewModel.Files[position].Description = description;
 
-            }
+             if (checklistStep != "None")
+             {
+                 item.CheckListStep = Convert.ToInt32(checklistStep);
+                 fileListViewModel.Files[position].ChecklistStep = Convert.ToInt32(checklistStep);
+             }
+             else
+             {
+                 item.CheckListStep = null;
+                 fileListViewModel.Files[position].ChecklistStep = null;
 
-        }
-    */
+             }
+
+             await ItemService.Instance.SaveItem(item);
+
+
+         }
+     }
+
+
+
+     /// <summary>
+     /// Updates the image description.
+     /// </summary>
+     /// <param name="fileListViewModel">The file ListView model.</param>
+     /// <param name="description">The description.</param>
+     /// <param name="checklistStep">The checklist step.</param>
+     /// <returns></returns>
+     public async Task UpdateImageDescription(PunchFileListViewModel fileListViewModel, int position, string description, string checklistStep)
+     {
+
+         int? PunchId = fileListViewModel.PunchItem.PunchId;
+         var imageFile = fileListViewModel.Files[position];
+
+         await ItemService.Instance.FetchItemListForActivityAsync(PunchId);
+
+         Item item = ItemService.Instance.Items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PunchId);
+
+         if (item != null)
+         {
+
+             // update the item in the file list.
+             item.Description = description;
+             fileListViewModel.Files[position].Description = description;
+
+             if (checklistStep != "None")
+             {
+                 item.CheckListStep = Convert.ToInt32(checklistStep);
+                 fileListViewModel.Files[position].ChecklistStep = Convert.ToInt32(checklistStep);
+             }
+             else
+             {
+                 item.CheckListStep = null;
+                 fileListViewModel.Files[position].ChecklistStep = null;
+
+             }
+
+             await ItemService.Instance.SaveItem(item);
+
+
+         }
+     }
+
+
+     /// <summary>
+     /// Deletes the image.
+     /// </summary>
+     /// <param name="fileListViewModel">The file ListView model.</param>
+     /// <returns></returns>
+     public async Task<bool> DeleteImage(ActivityFileListViewModel fileListViewModel)
+     {
+
+         var PCAId = fileListViewModel.Activity.PCAId;
+         if (fileListViewModel.Position <= ActivityFiles.Count())
+         {
+             var imageFile = fileListViewModel.Files[fileListViewModel.Position];
+
+             IEnumerable<Item> items = await ItemService.Instance.GetItemListAsync();
+             Item itemToDelete = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PCAId);
+
+             // delete the item from the items table
+             await ItemService.Instance.DeleteItem(itemToDelete);
+
+             // delete the item from the local file instance
+             ActivityFiles.Remove(imageFile);
+
+             return true;
+
+         }
+         else
+         {
+             return false;
+         }
+
+     }
+
+
+     /// <summary>
+     /// Deletes the image.
+     /// </summary>
+     /// <param name="fileListViewModel">The file ListView model.</param>
+     /// <returns></returns>
+     public async Task DeleteImage(PunchFileListViewModel fileListViewModel)
+     {
+
+         var PunchId = fileListViewModel.PunchItem.PunchId;
+         if (fileListViewModel.Position <= PunchFiles.Count())
+         {
+             var imageFile = fileListViewModel.Files[fileListViewModel.Position];
+
+             IEnumerable<Item> items = await ItemService.Instance.GetItemListAsync();
+             Item itemToDelete = items.FirstOrDefault(i => i.LocalPath == imageFile.Url && i.RecordID == PunchId);
+
+             // delete the item from the items table
+             await ItemService.Instance.DeleteItem(itemToDelete);
+
+             // delete the item from the local file instance
+             PunchFiles.Remove(imageFile);
+
+         }
+
+     }
+ */
 }

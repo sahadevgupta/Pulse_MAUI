@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pulse_MAUI.Views.ContentViews.ActivityTaskView"
+             xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
              xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
              xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
              xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
@@ -15,10 +16,11 @@
               <toolkit:Expander.Header>
                      <Border Style="{StaticResource DefaultBorderStyle}"
                              BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
-                             Padding="10">
+                             Padding="16">
                             <Grid ColumnDefinitions="*,Auto">
                                    <Label Text="{Binding TaskTitle}"
                                           Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          FontSize="Body"
                                           TextColor="White"/>
 
                                    <Image Grid.Column="1"
@@ -75,7 +77,14 @@
                              Text="{Binding ActivityTask.Comments}"
                              Placeholder="{resources:Translate ActivityPage_EditorPlaceHolder}"/>
 
-                     <Label Grid.Row="5"
+
+                     <controls:CustomPicker Title="{resources:Translate ActivityPage_Equipment}"
+                                            Margin="0,10,0,0"
+                                            ItemsSource="{Binding EquipmentList}"
+                                            ItemDisplayBinding="{Binding Name}"
+                                            SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"/>
+
+                     <!-- <Label Grid.Row="5"
                             Margin="0,10,0,0"
                             Style="{StaticResource LabelDefaultSignikaBold}"
                             Text="{resources:Translate ActivityPage_Equipment}"/>
@@ -84,9 +93,14 @@
                              Grid.Row="10"
                              ItemsSource="{Binding EquipmentList}"
                              ItemDisplayBinding="{Binding Name}"
-                             SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"/>
+                             SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"/> -->
 
-                     <Label Grid.Row="5"
+                     <controls:CustomPicker Title="{resources:Translate ActivityPage_Status}"
+                                            Margin="0,10,0,0"
+                                            ItemsSource="{Binding StatusList}"
+                                            SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+
+                     <!-- <Label Grid.Row="5"
                             Margin="0,10,0,0"
                             Style="{StaticResource LabelDefaultSignikaBold}"
                             Text="{resources:Translate ActivityPage_Status}"/>
@@ -94,7 +108,7 @@
                      <Picker BackgroundColor="White"
                              Grid.Row="12"
                              ItemsSource="{Binding StatusList}"
-                             SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+                             SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/> -->
               </VerticalStackLayout>
        </toolkit:Expander>
 

@@ -2,20 +2,54 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pulse_MAUI.Controls.CustomPicker"
+             xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
              x:Name="customPicker">
-    <VerticalStackLayout>
+    <Grid RowDefinitions="Auto,Auto"
+          RowSpacing="4"
+          BackgroundColor="transparent">
+
         <Label Style="{StaticResource LabelDefaultSignikaRegular}"
                FontSize="16"
                Text="{Binding Title,Source={x:Reference customPicker}}"
-               TextColor="White"/>
+               TextColor="{Binding TitleColor,Source={x:Reference customPicker}}"/>
 
-        <Picker ItemsSource="{Binding ItemsSource,Source={x:Reference customPicker}}"
-                SelectedItem="{Binding SelectedItem,Source={x:Reference customPicker}}"
-                TextColor="{StaticResource OffBlack}"
-                FontSize="16"
-                Title="{Binding Title,Source={x:Reference customPicker},StringFormat='Select {0}'}"
-                FontFamily="SignikaRegular"
-                x:Name="MainPicker"/>
+        <Border StrokeShape="RoundRectangle 8"
+                StrokeThickness="0"
+                Grid.Row="1"
+                Padding="10,0"
+                BackgroundColor="WhiteSmoke">
 
-    </VerticalStackLayout>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+            </Border.GestureRecognizers>
+
+            <Grid>
+                <Picker ItemsSource="{Binding ItemsSource,Source={x:Reference customPicker}}"
+                        SelectedItem="{Binding SelectedItem,Source={x:Reference customPicker}}"
+                        Title="{Binding Source={x:Reference customPicker}, Path=Placeholder}"
+                        FontSize="14"
+                        FontFamily="SignikaRegular"
+                        x:Name="MainPicker"/>
+
+                <!-- Placeholder Layer - Only shows when no item selected -->
+                <!-- <Label x:Name="PlaceholderLabel"
+                       Text="{Binding Source={x:Reference customPicker}, Path=Placeholder}"
+                       TextColor="Gray"
+                       VerticalOptions="Center"
+                       Margin="10,0,0,0"
+                       IsVisible="False"/> -->
+
+                <ImageButton HorizontalOptions="End">
+                    <ImageButton.Source>
+                        <FontImageSource FontFamily="MyFont"
+                                         Glyph="{x:Static ext:FontAwesomeIcons.ChevronDown}"
+                                         Color="Black"
+                                         Size="20"/>
+                    </ImageButton.Source>
+                </ImageButton>
+
+            </Grid>
+        </Border>
+
+    </Grid>
 </ContentView>

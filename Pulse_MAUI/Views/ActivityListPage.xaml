@@ -4,6 +4,7 @@
                 x:Class="Pulse_MAUI.Views.ActivityListPage"
                 xmlns:behaviors="clr-namespace:Pulse_MAUI.Behaviors"
                 xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                xmlns:converters="clr-namespace:Pulse_MAUI.Converters"
                 xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
                 xmlns:models="clr-namespace:Pulse_MAUI.Models"
                 xmlns:pages="clr-namespace:Pulse_MAUI.Views"
@@ -13,6 +14,11 @@
                 xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
                 Title="{resources:Translate ActivityListPage_Title}"
                 x:DataType="vm:ActivityListPageViewModel">
+
+    <pages:BasePage.Resources>
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+    </pages:BasePage.Resources>
+
     <Grid Padding="10"
           RowSpacing="10"
           RowDefinitions="Auto,*">
@@ -52,19 +58,20 @@
                         IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
                         Grid.Row="1"
                         x:Name="activitiesList">
-            <CollectionView.ItemsLayout>
+            <!-- <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical"
                                    ItemSpacing="8"/>
-            </CollectionView.ItemsLayout>
+            </CollectionView.ItemsLayout> -->
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Activity">
                     <Grid Padding="5"
                           IsClippedToBounds="True">
 
 
-                        <Border StrokeShape="RoundRectangle 8"
+                        <Border Style="{StaticResource DefaultBorderStyle}"
+                                StrokeThickness="1"
+                                Stroke="{StaticResource ChalkGrey}"
                                 BackgroundColor="White"
-                                Shadow="{StaticResource DefaultShadow}"
                                 Padding="10">
 
                             <Border.Behaviors>
@@ -95,7 +102,7 @@
                                         HorizontalOptions="End"
                                         VerticalOptions="Start"
                                         Padding="12,4"
-                                        Background="{StaticResource BrandGradient}">
+                                        BackgroundColor="{Binding Status,Converter={StaticResource StatusToColorConverter}}">
                                     <Label Style="{StaticResource LabelDefaultSignikaMedium}"
                                            Text="{Binding Status}"
                                            FontSize="Small"

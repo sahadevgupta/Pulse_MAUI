@@ -12,6 +12,12 @@ public partial class CustomPicker : ContentView
     public static readonly BindableProperty TitleProperty =
         BindableProperty.Create(nameof(Title), typeof(string), typeof(CustomPicker));
 
+    public static readonly BindableProperty PlaceholderProperty =
+        BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(CustomPicker));
+
+    public static readonly BindableProperty TitleColorProperty =
+        BindableProperty.Create(nameof(TitleColor), typeof(Color), typeof(CustomPicker), Colors.Black);
+
     public static readonly BindableProperty ItemsSourceProperty =
         BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(CustomPicker), default(IList), BindingMode.TwoWay);
 
@@ -23,6 +29,18 @@ public partial class CustomPicker : ContentView
     {
         get => (string)GetValue(TitleProperty);
         set => SetValue(TitleProperty, value);
+    }
+
+    public string Placeholder
+    {
+        get => (string)GetValue(PlaceholderProperty);
+        set => SetValue(PlaceholderProperty, value);
+    }
+
+    public Color TitleColor
+    {
+        get => (Color)GetValue(TitleColorProperty);
+        set => SetValue(TitleColorProperty, value);
     }
 
     public IList ItemsSource
@@ -47,6 +65,11 @@ public partial class CustomPicker : ContentView
     {
         InitializeComponent();
         ModifyControl();
+
+        // MainPicker.SelectedIndexChanged += (s, e) =>
+        // {
+        //     PlaceholderLabel.IsVisible = MainPicker.SelectedIndex < 0;
+        // };
     }
 
     private static void OnItemDisplayBindingChanged(BindableObject bindable, object oldValue, object newValue)
@@ -77,18 +100,19 @@ public partial class CustomPicker : ContentView
 #if ANDROID
             var control = handler.PlatformView;
             control.Background = null;
-
-            //var layoutParams = new MarginLayoutParams(control.LayoutParameters);
-            //layoutParams.SetMargins(0, 0, 0, 0);
-            //control.LayoutParameters = layoutParams;
-            //control.LayoutParameters = layoutParams;
-            //control.SetPadding(0, 0, 0, 0);
             control.SetPadding(0, 0, 0, 0);
+            control.SetHintTextColor(Android.Graphics.Color.Gray);
+
 #elif IOS
            handler.PlatformView.Layer.BorderWidth = 0;
            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
 #endif
 
         });
+    }
+
+    private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+    {
+        MainPicker.Focus();
     }
 }

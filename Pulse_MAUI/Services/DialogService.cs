@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Pulse_MAUI.Services
 {
-    
+
     public class DialogService(ILoadingService lodingService, IPopupNavigation popupNavigation) : IDialogService
     {
         public async Task ShowAlertDialog(string title, string message, AlertType alertType = AlertType.Warning, int timeout = 3500)
@@ -19,12 +19,12 @@ namespace Pulse_MAUI.Services
             {
                 AlertTitle = title,
                 Message = message,
-                Icon = alertType == AlertType.Warning ? 
+                Icon = alertType == AlertType.Warning ?
                        FontAwesomeIcons.ExclamationTriangle :
-                      (alertType == AlertType.Success ?  FontAwesomeIcons.CheckCircle : FontAwesomeIcons.TimesCircle),
+                      (alertType == AlertType.Success ? FontAwesomeIcons.CheckCircle : FontAwesomeIcons.TimesCircle),
 
                 IconTintColor = alertType == AlertType.Warning ?
-                       (Color)Application.Current!.Resources["StandardOrange"] :
+                       (Color)Application.Current!.Resources["DarkBlue"] :
                       (alertType == AlertType.Success ? (Color)Application.Current!.Resources["Green"] : Colors.Red),
             };
 
@@ -32,7 +32,7 @@ namespace Pulse_MAUI.Services
                                                 .Any(p => p is CustomDialogPopup);
             if (!isMyPopupOpen)
             {
-                await MainThread.InvokeOnMainThreadAsync(async() =>
+                await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     await popupNavigation.PushAsync(popup);
                     System.Threading.Timer? timer = null;
@@ -42,7 +42,7 @@ namespace Pulse_MAUI.Services
                         timer?.Dispose();
                     }, null, timeout, System.Threading.Timeout.Infinite);
                 });
-                
+
             }
         }
         public void ShowLoading(string message = "Loading...")
