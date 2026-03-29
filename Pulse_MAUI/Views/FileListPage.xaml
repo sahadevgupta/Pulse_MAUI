@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                x:Class="Pulse_MAUI.Views.FileListPage"
+                xmlns:pages="clr-namespace:Pulse_MAUI.Views"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+                Title="FileListPage">
+
+    <Grid RowDefinitions="Auto,Auto, *"
+          Padding="20">
+
+
+        <!-- IMAGE CAROUSEL -->
+        <Grid Grid.Row="0">
+
+            <CarouselView x:Name="PhotosCarousel"
+                          ItemsSource="{Binding Files}"
+                          IndicatorView="Indicators"
+                          PeekAreaInsets="50"
+                          HeightRequest="250"
+                          Loop="False"
+                          HorizontalScrollBarVisibility="Never">
+
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+
+                            <Border Stroke="#DDDDDD"
+                                    BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="1"
+                                    Padding="10">
+
+                                <Image Aspect="AspectFill"
+                                       Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
+                                       HeightRequest="230"
+                                       WidthRequest="330">
+                                </Image>
+
+                            </Border>
+
+
+                        </Grid>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+
+            </CarouselView>
+
+            <IndicatorView x:Name="Indicators"
+                           HorizontalOptions="Center"
+                           VerticalOptions="End"
+                           IndicatorColor="#CCCCCC"
+                           SelectedIndicatorColor="#1E88E5"
+                           Margin="0,10"/>
+
+        </Grid>
+
+        <HorizontalStackLayout Grid.Row="1"
+                               Spacing="15"
+                               HorizontalOptions="Center">
+
+            <Button Text="Take Photo"
+                    x:Name="TakePhotoButton"
+                    HeightRequest="48"
+                    CornerRadius="12"
+                    FontSize="16"
+                    Padding="20,10"
+                    Command="{Binding TakePhotoCommand}"
+                    BackgroundColor="#1E88E5"
+                    TextColor="White"/>
+
+            <Button Text="Pick Photo"
+                    x:Name="PickPhotoButton"
+                    HeightRequest="48"
+                    CornerRadius="12"
+                    FontSize="16"
+                    Padding="20,10"
+                    Command="{Binding PickPhotoCommand}"
+                    BackgroundColor="#1E88E5"
+                    TextColor="White"/>
+
+
+
+        </HorizontalStackLayout>
+
+        <!-- FILE LIST (Editable Items) -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Files}"
+                        Margin="0,10,0,0"
+                        SelectionMode="None"
+                        x:Name="images">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border Stroke="#E0E0E0"
+                            BackgroundColor="White"
+                            StrokeShape="RoundRectangle 15"
+                            Padding="10"
+                            Margin="0,0,0,12">
+
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                              ColumnSpacing="10">
+
+                            <!-- Thumbnail -->
+                            <Image Grid.Column="0"
+                                   Source="{Binding Url, TargetNullValue='icon.png',FallbackValue='error.png'}"
+                                   HeightRequest="55"
+                                   WidthRequest="75"
+                                   Aspect="AspectFill"/>
+
+                            <!-- File Title -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding FileName}"
+                                       FontSize="16"
+                                       TextColor="#444"/>
+
+                                <Label Text="{Binding FileSizeDisplay}"
+                                       FontSize="13"
+                                       TextColor="#777"/>
+                            </VerticalStackLayout>
+
+                            <!-- Edit Button -->
+                            <Button Grid.Column="2"
+                                    Text="Edit"
+                                    Padding="15,8"
+                                    CornerRadius="8"
+                                    FontSize="14"
+                                    BackgroundColor="#EEEEEE"
+                                    TextColor="#444"
+                                    Command="{Binding BindingContext.EditCommand, Source={x:Reference PhotosCarousel}}"
+                                    CommandParameter="{Binding}"/>
+
+                            <!-- Delete Button -->
+                            <Button Grid.Column="3"
+                                    Text="Delete"
+                                    Padding="15,8"
+                                    CornerRadius="8"
+                                    FontSize="14"
+                                    BackgroundColor="#D32F2F"
+                                    TextColor="White"
+                                    Command="{Binding BindingContext.DeleteCommand, Source={x:Reference PhotosCarousel}}"
+                                    CommandParameter="{Binding}"/>
+                        </Grid>
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</pages:BasePage>

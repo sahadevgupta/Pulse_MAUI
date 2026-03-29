@@ -1,20 +1,22 @@
 ﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Pulse_MAUI.Models
 {
-	/// <summary>
-	/// Image File model class.
-	/// Fogbugz Case:
-	/// Author: Manuel Dambrine
-	/// Created: 29/03/2013
-	/// </summary>
-	public class ImageFile
-	{
-		/// <summary>
-		/// Gets or sets the URL.
-		/// </summary>
-		/// <value>The URL.</value>
-		public string Url { get; set; }
+    /// <summary>
+    /// Image File model class.
+    /// Fogbugz Case:
+    /// Author: Manuel Dambrine
+    /// Created: 29/03/2013
+    /// </summary>
+    public partial class ImageFile : ObservableObject
+    {
+        /// <summary>
+        /// Gets or sets the URL.
+        /// </summary>
+        /// <value>The URL.</value>
+        [ObservableProperty]
+        private string? _url;
 
         /// <summary>
         /// Gets or sets the description.
@@ -46,6 +48,6 @@ namespace Pulse_MAUI.Models
         /// <value>
         /// The type of the control.
         /// </value>
-        public int? ControlType { get; set;  }
-	}
+        public int? ControlType { get; set; }
+    }
 }

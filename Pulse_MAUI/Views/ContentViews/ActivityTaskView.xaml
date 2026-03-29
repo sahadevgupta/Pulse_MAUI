@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pulse_MAUI.Views.ContentViews.ActivityTaskView"
+             xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
+             xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+             xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+             x:DataType="vm:ActivityTaskViewModel"
+             Padding="10,0">
+
+       <toolkit:Expander IsExpanded="True"
+                         x:Name="expander">
+              <toolkit:Expander.Header>
+                     <Border Style="{StaticResource DefaultBorderStyle}"
+                             BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
+                             Padding="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                   <Label Text="{Binding TaskTitle}"
+                                          Style="{StaticResource LabelDefaultSignikaMedium}"
+                                          TextColor="White"/>
+
+                                   <Image Grid.Column="1"
+                                          Margin="0,0,5,0">
+                                          <Image.Source>
+                                                 <FontImageSource FontFamily="MyFont"
+                                                                  Glyph="{x:Static ext:FontAwesomeIcons.ChevronDown}"
+                                                                  Size="20"/>
+                                          </Image.Source>
+                                          <Image.Triggers>
+                                                 <DataTrigger TargetType="Image"
+                                                              Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
+                                                              Value="True">
+                                                        <Setter Property="Rotation"
+                                                                Value="180"/>
+                                                 </DataTrigger>
+                                          </Image.Triggers>
+                                   </Image>
+                            </Grid>
+
+                     </Border>
+              </toolkit:Expander.Header>
+              <VerticalStackLayout Padding="10"
+                                   Spacing="2">
+                     <Label Grid.Row="1"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_TaskDescription}"/>
+                     <Label Grid.Row="2"
+                            Text="{Binding ActivityTask.TaskDescription}"/>
+                     <Label Grid.Row="3"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_ExpectedResult}"/>
+                     <Label Grid.Row="4"
+                            Text="{Binding ActivityTask.ExpectedResult}"/>
+
+                     <Label Grid.Row="5"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_Result}"/>
+
+                     <Editor MaxLength="1000"
+                             HeightRequest="100"
+                             x:Name="editor"
+                             Text="{Binding ActivityTask.ActualResult}"
+                             Placeholder="{resources:Translate ActivityPage_EditorPlaceHolder}"/>
+                     <Label Grid.Row="5"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_Comments}"/>
+
+                     <Editor MaxLength="1000"
+                             HeightRequest="100"
+                             Text="{Binding ActivityTask.Comments}"
+                             Placeholder="{resources:Translate ActivityPage_EditorPlaceHolder}"/>
+
+                     <Label Grid.Row="5"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_Equipment}"/>
+
+                     <Picker BackgroundColor="White"
+                             Grid.Row="10"
+                             ItemsSource="{Binding EquipmentList}"
+                             ItemDisplayBinding="{Binding Name}"
+                             SelectedItem="{Binding SelectedEquipment, Mode=TwoWay}"/>
+
+                     <Label Grid.Row="5"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource LabelDefaultSignikaBold}"
+                            Text="{resources:Translate ActivityPage_Status}"/>
+
+                     <Picker BackgroundColor="White"
+                             Grid.Row="12"
+                             ItemsSource="{Binding StatusList}"
+                             SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+              </VerticalStackLayout>
+       </toolkit:Expander>
+
+</ContentView>

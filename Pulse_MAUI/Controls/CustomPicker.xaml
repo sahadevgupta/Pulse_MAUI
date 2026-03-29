@@ -5,10 +5,17 @@
              x:Name="customPicker">
     <VerticalStackLayout>
         <Label Style="{StaticResource LabelDefaultSignikaRegular}"
-               Text="{Binding Title,Source={x:Reference customPicker}}"/>
+               FontSize="16"
+               Text="{Binding Title,Source={x:Reference customPicker}}"
+               TextColor="White"/>
 
         <Picker ItemsSource="{Binding ItemsSource,Source={x:Reference customPicker}}"
-                SelectedItem="{Binding SelectedItem,Source={x:Reference customPicker}}"/>
+                SelectedItem="{Binding SelectedItem,Source={x:Reference customPicker}}"
+                TextColor="{StaticResource OffBlack}"
+                FontSize="16"
+                Title="{Binding Title,Source={x:Reference customPicker},StringFormat='Select {0}'}"
+                FontFamily="SignikaRegular"
+                x:Name="MainPicker"/>
 
     </VerticalStackLayout>
 </ContentView>

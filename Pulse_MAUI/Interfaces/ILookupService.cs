@@ -15,5 +15,6 @@ namespace Pulse_MAUI.Interfaces
         Task<int> GetStatusLookupId(string value);
         Task<int> GetActivityTaskStatusLookupId(string value);
         Task<int> GetActivityStatusLookupId(string value);
+        Task<string?> GetLookupValue(int id);
     }
 }

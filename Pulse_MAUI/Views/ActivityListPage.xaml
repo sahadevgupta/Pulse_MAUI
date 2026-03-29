@@ -18,27 +18,34 @@
           RowDefinitions="Auto,*">
         <toolkit:Expander x:Name="expander">
             <toolkit:Expander.Header>
-                <HorizontalStackLayout Padding="12"
-                                       BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
-                    <Image Source="{x:Static helpers:Images.Filter }"
-                           Scale="0.7"/>
+                <Border Padding="12"
+                        StrokeShape="RoundRectangle 12,12,0,0"
+                        BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
 
-                    <Label Text="{resources:Translate Show}"
-                           Style="{StaticResource LabelDefaultSignikaRegular}">
-                        <Label.Triggers>
-                            <DataTrigger TargetType="Label"
-                                         Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
-                                         Value="True">
-                                <Setter Property="Text"
-                                        Value="{resources:Translate Hide}"/>
-                            </DataTrigger>
-                        </Label.Triggers>
-                    </Label>
+                    <HorizontalStackLayout>
+                        <Image Source="{x:Static helpers:Images.Filter }"
+                               Scale="0.7"/>
 
-                </HorizontalStackLayout>
+                        <Label Text="{resources:Translate Show}"
+                               Style="{StaticResource LabelDefaultSignikaRegular}"
+                               TextColor="White">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
+                                             Value="True">
+                                    <Setter Property="Text"
+                                            Value="{resources:Translate Hide}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                    </HorizontalStackLayout>
+                </Border>
 
             </toolkit:Expander.Header>
-            <views:ActivitySearchView Margin="0,10"/>
+            <Border StrokeShape="RoundRectangle 0,0,12,12">
+                <views:ActivitySearchView/>
+            </Border>
         </toolkit:Expander>
 
         <CollectionView ItemsSource="{Binding Activities}"
@@ -47,68 +54,64 @@
                         x:Name="activitiesList">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical"
-                                   ItemSpacing="10"/>
+                                   ItemSpacing="8"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Activity">
-                    <Border StrokeShape="RoundRectangle 8">
-                        <Border.Behaviors>
-                            <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewActivityCommand, Source={x:Reference activitiesList}}"
-                                                                    CommandParameter="{Binding .}"/>
-                        </Border.Behaviors>
-                        <Grid ColumnDefinitions="7*,3*"
-                              Padding="10">
-
-                            <VerticalStackLayout>
-
-                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
-                                       Text="{Binding PCAId, StringFormat='ID: {0}'}"
-                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
-
-                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
-                                       Text="{Binding Name}"
-                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
-
-                                <Label Style="{StaticResource LabelDefaultSignikaMedium}"
-                                       Text="{Binding TagId}"
-                                       TextColor="Gray"/>
-
-                            </VerticalStackLayout>
+                    <Grid Padding="5"
+                          IsClippedToBounds="True">
 
 
-                            <Border StrokeShape="RoundRectangle 12"
-                                    Grid.Column="1"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Start"
-                                    Padding="12,4"
-                                    BackgroundColor="{StaticResource Primary}">
-                                <Label Style="{StaticResource LabelDefaultSignikaMedium}"
-                                       Text="{Binding Status}"
-                                       FontSize="Small"
-                                       VerticalTextAlignment="Center"
-                                       TextColor="White"/>
-                            </Border>
+                        <Border StrokeShape="RoundRectangle 8"
+                                BackgroundColor="White"
+                                Shadow="{StaticResource DefaultShadow}"
+                                Padding="10">
+
+                            <Border.Behaviors>
+                                <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewActivityCommand, Source={x:Reference activitiesList}}"
+                                                                        CommandParameter="{Binding .}"/>
+                            </Border.Behaviors>
+                            <Grid ColumnDefinitions="7*,3*">
+
+                                <VerticalStackLayout>
+
+                                    <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                           Text="{Binding PCAId, StringFormat='ID: {0}'}"
+                                           TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                    <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                           Text="{Binding Name}"
+                                           TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                    <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                                           Text="{Binding TagId}"
+                                           TextColor="Gray"/>
+
+                                </VerticalStackLayout>
 
 
-                        </Grid>
-                    </Border>
+                                <Border StrokeShape="RoundRectangle 12"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Start"
+                                        Padding="12,4"
+                                        Background="{StaticResource BrandGradient}">
+                                    <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                                           Text="{Binding Status}"
+                                           FontSize="Small"
+                                           VerticalTextAlignment="Center"
+                                           TextColor="White"/>
+                                </Border>
+
+
+                            </Grid>
+                        </Border>
+                    </Grid>
+
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- <controls:CustomListView x:Name="
-                                        activitiesList"
-                                 Grid.Row="
-                                        1"
-                                 IsVisible="{Binding Activities.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
-                                 HasUnevenRows="true"
-                                 ItemsSource="{Binding Activities}">
-                                    <controls:CustomListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <controls:ActivityCell/>
-                                        </DataTemplate>
-                                    </controls:CustomListView.ItemTemplate>
-                                    </controls:CustomListView> -->
 
     </Grid>
 </pages:BasePage>

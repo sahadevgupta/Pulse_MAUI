@@ -13,6 +13,8 @@ namespace Pulse_MAUI.Extensions
             builder.Services
                 .AddTransient<ActivityPageViewModel>()
                 .AddTransient<ActivityListPageViewModel>()
+                .AddTransient<ActivityTaskViewModel>()
+                .AddTransient<FileListViewModel>()
                 .AddTransient<ImportSettingsPageViewModel>()
                 .AddTransient<MenuPageViewModel>();
 

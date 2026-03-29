@@ -27,6 +27,8 @@ namespace Pulse_MAUI.Extensions
                             .AddSingleton<IDialogService, DialogService>()
                             .AddSingleton<IDisciplineService, DisciplineService>()
                             .AddSingleton<IEngineerService, EngineerService>()
+                            .AddSingleton<IEquipmentService, EquipmentService>()
+                            .AddSingleton<IFileService, FileService>()
                             .AddSingleton<IItemService, ItemService>()
                             .AddSingleton<ILoginProvider, LoginProvider>()
                             .AddSingleton<ILookupService, LookupService>()
@@ -50,7 +52,8 @@ namespace Pulse_MAUI.Extensions
                             .AddSingleton<ILoadingService, Pulse_MAUI.Platforms.iOS.Services.LodingPageService>();
 #endif
 
-            builder.Services.AddTransient<IViewModelParameters, ViewModelParameters>();
+            builder.Services.AddTransient<IViewModelParameters, ViewModelParameters>()
+                            .AddTransient<IMediaService, MediaService>();
             //                .AddTransient<IApiServiceBaseParams, ApiServiceBaseParams>()
             //                .AddTransient<IDialogService, DialogService>();
 

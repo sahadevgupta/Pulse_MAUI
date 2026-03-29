@@ -1,12 +1,100 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pulse_MAUI.Views.ActivityPage"
-             Title="ActivityPage">
-    <VerticalStackLayout>
-        <Label
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"/>
-    </VerticalStackLayout>
-</ContentPage>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                x:Class="Pulse_MAUI.Views.ActivityPage"
+                xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
+                xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+                xmlns:local="clr-namespace:Pulse_MAUI.Views.ContentViews"
+                xmlns:pages="clr-namespace:Pulse_MAUI.Views"
+                xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+                Title="{resources:Translate ActivityPage_Title}"
+                x:DataType="vm:ActivityPageViewModel">
+
+       <pages:BasePage.ToolbarItems>
+              <ToolbarItem x:Name="imagesTap"
+                           Text="{resources:Translate ActivityPage_Add}"
+                           Command="{Binding ExecuteActivityImageCommand}">
+                     <ToolbarItem.IconImageSource>
+                            <FontImageSource FontFamily="MyFont"
+                                             Glyph="{x:Static ext:FontAwesomeIcons.Camera}"
+                                             Size="24"/>
+                     </ToolbarItem.IconImageSource>
+              </ToolbarItem>
+              <ToolbarItem
+                     Command="{Binding NavigateToPunchCommand}"
+                     Text="{resources:Translate ActivityPage_Add}">
+                     <ToolbarItem.IconImageSource>
+                            <FontImageSource FontFamily="MyFont"
+                                             Glyph="{x:Static ext:FontAwesomeIcons.PlusCircle}"
+                                             Size="24"/>
+                     </ToolbarItem.IconImageSource>
+              </ToolbarItem>
+              <ToolbarItem
+                     Command="{Binding SaveActivityCommand}"
+                     Text="{resources:Translate ActivityPage_Add}">
+                     <ToolbarItem.IconImageSource>
+                            <FontImageSource FontFamily="MyFont"
+                                             Glyph="{x:Static ext:FontAwesomeIcons.Save}"
+                                             Size="24"/>
+                     </ToolbarItem.IconImageSource>
+              </ToolbarItem>
+              <ToolbarItem
+                     Command="{Binding CancelActivityCommand}"
+                     Text="{resources:Translate ActivityPage_Add}">
+                     <ToolbarItem.IconImageSource>
+                            <FontImageSource FontFamily="MyFont"
+                                             Glyph="{x:Static ext:FontAwesomeIcons.TimesCircle}"
+                                             Size="24"/>
+                     </ToolbarItem.IconImageSource>
+              </ToolbarItem>
+       </pages:BasePage.ToolbarItems>
+
+       <Grid
+              RowSpacing="10"
+              RowDefinitions="Auto,*">
+
+              <Border Style="{StaticResource DefaultBorderStyle}"
+                      Padding="10">
+                     <VerticalStackLayout BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
+                                          Padding="10">
+                            <Label Text="{Binding Activity.PCAId}"
+                                   TextColor="White"/>
+                            <Label Text="{Binding Activity.Name}"
+                                   TextColor="White"/>
+                            <Label Text="{Binding Activity.TagId}"
+                                   TextColor="White"/>
+                            <Label Text="{Binding Activity.Status}"
+                                   TextColor="White"/>
+                     </VerticalStackLayout>
+              </Border>
+
+              <CollectionView Grid.Row="1"
+                              ItemsSource="{Binding ActivityTasks}">
+                     <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                   <local:ActivityTaskView/>
+                            </DataTemplate>
+                     </CollectionView.ItemTemplate>
+                     <CollectionView.Footer>
+                            <VerticalStackLayout BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
+                                                 Margin="10"
+                                                 Padding="10">
+
+                                   <controls:CustomLabel Text="Activity Status:"
+                                                         TextColor="White"
+                                                         FontSize="{x:Static helpers:FontSizes.Large}"/>
+
+                                   <Picker TextColor="White"
+                                           ItemsSource="{Binding StatusList}"
+                                           SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"/>
+
+                            </VerticalStackLayout>
+
+                     </CollectionView.Footer>
+              </CollectionView>
+       </Grid>
+
+</pages:BasePage>

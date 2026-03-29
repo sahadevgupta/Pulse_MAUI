@@ -24,8 +24,9 @@
         </DataTemplate>
     </Shell.FlyoutContentTemplate>
 
-    <FlyoutItem>
+    <FlyoutItem Route="activityroot">
         <ShellContent
+            Route="activitylist"
             ContentTemplate="{DataTemplate views:ActivityListPage}"/>
     </FlyoutItem>
 </Shell>

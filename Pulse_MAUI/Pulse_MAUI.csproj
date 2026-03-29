@@ -22,7 +22,7 @@
 
 		<!-- App Identifier -->
 		<!-- <ApplicationId>com.companyname.pulse_maui</ApplicationId> -->
-		<ApplicationId>com.liscr.Seafarer.STG</ApplicationId>
+		<ApplicationId>com.Pulse.Pulse_MAUI</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

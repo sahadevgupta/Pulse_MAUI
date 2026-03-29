@@ -1,3 +1,4 @@
+using MauiColors = Microsoft.Maui.Graphics.Colors;
 namespace Pulse_MAUI.Helpers
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace Pulse_MAUI.Helpers
         /// <summary>
         /// The green.
         /// </summary>
-        public static readonly Color StandardOrange = Color.FromArgb("e84e1b");
+        public static readonly Color StandardOrange = (Color)(Application.Current?.Resources["StandardOrange"] ?? MauiColors.Black);
 
 
         public static readonly Color StockSuperLightGrey = Color.FromArgb("828282");
@@ -20,7 +21,7 @@ namespace Pulse_MAUI.Helpers
         /// <summary>
         /// The blue.
         /// </summary>
-        public static readonly Color StockLightBlue = Color.FromArgb("00a8e1");
+        public static readonly Color StockLightBlue = (Color)(Application.Current?.Resources["StockLightBlue"] ?? MauiColors.Black);
 
         /// <summary>
         /// The gray.

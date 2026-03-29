@@ -21,38 +21,46 @@ namespace Pulse_MAUI.Platforms.Android.Services
 
         private void InitLoadingPage(string message)
         {
-            if(Application.Current?.Windows.Any() == false)
+            if (Application.Current?.Windows.Any() == false)
                 return;
 
-            var page = Application.Current?.Windows[0].Page;
-            var loadingView = new LoadingIndicatorView();
-            loadingView.Text = message;
-            if (page?.Handler != null)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                _nativeView = loadingView.ToHandler(page.Handler?.MauiContext!)?.PlatformView;
+                var page = Application.Current?.Windows[0].Page;
+                var loadingView = new LoadingIndicatorView();
+                loadingView.Text = message;
+                if (page?.Handler != null)
+                {
+                    _nativeView = loadingView.ToHandler(page.Handler?.MauiContext!)?.PlatformView;
 
-                _dialog = new Dialog(Platform.CurrentActivity);
-                _dialog.RequestWindowFeature((int)WindowFeatures.NoTitle);
-                _dialog.SetCancelable(false);
-                _dialog.SetContentView(_nativeView);
-                Window window = _dialog.Window;
-                window.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
-                window.ClearFlags(WindowManagerFlags.DimBehind);
-                window.SetBackgroundDrawable(new ColorDrawable(Colors.Transparent.ToPlatform()));
+                    _dialog = new Dialog(Platform.CurrentActivity);
+                    _dialog.RequestWindowFeature((int)WindowFeatures.NoTitle);
+                    _dialog.SetCancelable(false);
+                    _dialog.SetContentView(_nativeView);
+                    Window window = _dialog.Window;
+                    window.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+                    window.ClearFlags(WindowManagerFlags.DimBehind);
+                    window.SetBackgroundDrawable(new ColorDrawable(Colors.Transparent.ToPlatform()));
 
-                _isInitialized = true;
-            }
+                    _isInitialized = true;
+                }
+            });
+
         }
 
         public void HideLoading()
         {
             // Hide the page
-            _dialog?.Hide();
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _dialog?.Hide();
+            });
+
         }
 
         public void ShowLoading(string message)
         {
-            InitLoadingPage(message); 
+            InitLoadingPage(message);
 
             // showing the native loading page
             _dialog?.Show();

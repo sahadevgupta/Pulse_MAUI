@@ -8,7 +8,8 @@ using System.Text;
 
 namespace Pulse_MAUI.Services
 {
-    public class PunchSearchService(IActivityService activityService, IPunchService punchService) : IPunchSearchService
+    public class PunchSearchService(IActivityService activityService,
+        IPunchService punchService) : IPunchSearchService
     {
         /// <summary>
 		/// The activities.

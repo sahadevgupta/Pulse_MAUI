@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Services.Navigation;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Pulse_MAUI.ViewModels
 {
-    public partial class BaseViewModel(IViewModelParameters viewModelParameters) : ObservableObject
+    public partial class BaseViewModel(IViewModelParameters viewModelParameters) : ObservableObject, IQueryAttributable
     {
         protected readonly IViewModelParameters ViewModelParameters = viewModelParameters;
         protected readonly INavigationService NavigationService = viewModelParameters.NavigationService;
@@ -21,6 +22,11 @@ namespace Pulse_MAUI.ViewModels
 
         [ObservableProperty]
         private bool _isBusy;
+
+        public virtual void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+
+        }
 
         #region [ Methods ]
 
@@ -38,5 +44,22 @@ namespace Pulse_MAUI.ViewModels
         }
 
         #endregion
+
+        #region [ Commands ]
+
+        [RelayCommand]
+        private async Task Back()
+        {
+            await NavigationService.NavigateBack();
+        }
+
+        [RelayCommand]
+        private void ShowFlyout()
+        {
+            Shell.Current.FlyoutIsPresented = true;
+        }
+
+        #endregion
+
     }
 }

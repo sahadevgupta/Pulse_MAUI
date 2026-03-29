@@ -43,11 +43,27 @@ public class BasePage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
+		Shell.SetTabBarIsVisible(this, false);
+		Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+		{
+			Command = (this.BindingContext as BaseViewModel)?.ShowFlyoutCommand,
+			IconOverride = "hamburger_menu.png"
+		});
+
 		if (BindingContext is BaseViewModel viewModel)
 		{
 			await viewModel.LoadDataOnAppearing();
 		}
 	}
+
+	// private void a(object obj)
+	// {
+
+	// 	if (BindingContext is BaseViewModel vm)
+	// 	{
+	// 		vm.BackCommand.ExecuteAsync(null);
+	// 	}
+	// }
 
 	protected override async void OnDisappearing()
 	{

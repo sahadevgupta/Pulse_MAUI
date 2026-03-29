@@ -196,5 +196,21 @@ namespace Pulse_MAUI.Services
 
             return lookup != null ? lookup.LookupId : 0;
         }
+
+        /// <summary>
+        /// Returns the value field of a lookup.
+        /// </summary>
+        /// <returns>The lookup value.</returns>
+        /// <param name="id">Identifier.</param>
+        public async Task<string?> GetLookupValue(int id)
+        {
+            var availableLookups = await GetLookupListAsync();
+
+            var lookup = availableLookups
+                .ToList()
+                .FirstOrDefault(p => p.LookupId == id);
+
+            return lookup != null ? lookup.Value : string.Empty;
+        }
     }
 }

@@ -5,6 +5,8 @@ using Pulse_MAUI.Models;
 namespace Pulse_MAUI.Services
 {
     public class ActivityService(IDataManager dataManager,
+        IEngineerService engineerService,
+        IUserService userService,
         IActivitySearchService activitySearchService) : IActivityService
     {
         /// <summary>
@@ -207,172 +209,115 @@ namespace Pulse_MAUI.Services
             return orderedActivityTasks;
         }
 
-        ///// <summary>
-        ///// Saves a list of activity tasks.
-        ///// </summary>
-        ///// <returns>Task.</returns>
-        ///// <param name="activityTasksToSave">Activity Tasks to save.</param>
-        //public async Task SaveActivityTasks(IEnumerable<ActivityTask> activityTasksToSave)
-        //{
-
-        //    //float? LastLatitude;
-        //    //float? LastLongitude;
-
-        //    //// just get the location once for the tasks
-        //    //if (IsLocationAvailable())
-        //    //{
-        //    //    var locator = CrossGeolocator.Current;
-        //    //    var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(10));
-
-        //    //    LastLatitude = (float)position.Latitude;
-        //    //    LastLongitude = (float)position.Longitude;
-        //    //}
-        //    //else
-        //    //{
-        //    //    LastLatitude = null;
-        //    //    LastLongitude = null;
-        //    //}
-
-        //    foreach (var activityTaskToSave in activityTasksToSave)
-        //    {
+        /// <summary>
+        /// Saves a list of activity tasks.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="activityTasksToSave">Activity Tasks to save.</param>
+        public async Task SaveActivityTasks(IEnumerable<ActivityTask> activityTasksToSave)
+        {
+            foreach (var activityTaskToSave in activityTasksToSave)
+            {
 
 
-        //        if (await ActivityTaskNeedsSave(activityTaskToSave))
-        //        {
-        //            activityTaskToSave.Engineer = EngineerService.Instance.CurrentEngineer.EngineerId;
-        //            activityTaskToSave.DateRecorded = DateTime.UtcNow;
-        //            activityTaskToSave.UserName = UserService.Instance.CurrentUser.ApexId;
+                if (await ActivityTaskNeedsSave(activityTaskToSave))
+                {
+                    activityTaskToSave.Engineer = engineerService.CurrentEngineer.EngineerId;
+                    activityTaskToSave.DateRecorded = DateTime.UtcNow;
+                    activityTaskToSave.UserName = userService.CurrentUser.ApexId;
 
+                    await dataManager.SaveActivityTaskAsync(activityTaskToSave);
+                }
+            }
+        }
 
-        //            //if (LastLatitude != null)
-        //            //{
-        //            //    activityTaskToSave.LastLatitude = (float)LastLatitude;
-        //            //}
+        /// <summary>
+        /// Saves the activity.
+        /// </summary>
+        /// <param name="activityToSave">The activity to save.</param>
+        /// <returns></returns>
+        public async Task SaveActivity(Activity activityToSave)
+        {
+            if (await ActivityNeedsSave(activityToSave))
+            {
+                activityToSave.DateRecorded = DateTime.UtcNow;
+                activityToSave.ModifiedBy = userService.CurrentUser.ApexId;
 
-        //            //if (LastLongitude != null)
-        //            //{
-        //            //    activityTaskToSave.LastLongitude = (float)LastLongitude;
-        //            //}
-
-
-        //            await dataManager.SaveActivityTaskAsync(activityTaskToSave);
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Saves the activity.
-        ///// </summary>
-        ///// <param name="activityToSave">The activity to save.</param>
-        ///// <returns></returns>
-        //public async Task SaveActivity(Activity activityToSave)
-        //{
-
-        //    //float? LastLatitude;
-        //    //float? LastLongitude;
-
-        //    // TODO: Need to check why location is needed.
-        //    // just get the location once for the tasks
-
-        //    //if (IsLocationAvailable())
-        //    //{
-        //    //    var locator = CrossGeolocator.Current;
-        //    //    var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(10));
-
-        //    //    LastLatitude = (float)position.Latitude;
-        //    //    LastLongitude = (float)position.Longitude;
-        //    //}
-        //    //else
-        //    //{
-        //    //    LastLatitude = null;
-        //    //    LastLongitude = null;
-        //    //}
-
-        //    if (await ActivityNeedsSave(activityToSave))
-        //    {
-        //        activityToSave.DateRecorded = DateTime.UtcNow;
-        //        activityToSave.ModifiedBy = UserService.Instance.CurrentUser.ApexId;
-        //        //activityToSave.LastLatitude = LastLatitude;
-        //        //activityToSave.LastLongitude = LastLongitude;
-
-
-        //        await dataManager.SaveActivityAsync(activityToSave);
-        //    }
-        //}
+                await dataManager.SaveActivityAsync(activityToSave);
+            }
+        }
 
 
 
 
-        ///// <summary>
-        ///// Check if Activity Requires a Save
-        ///// </summary>
-        ///// <param name="activity">The activity.</param>
-        ///// <returns></returns>
-        //public async Task<bool> ActivityNeedsSave(Activity activity)
-        //{
-        //    bool needsSaving = false;
+        /// <summary>
+        /// Check if Activity Requires a Save
+        /// </summary>
+        /// <param name="activity">The activity.</param>
+        /// <returns></returns>
+        public async Task<bool> ActivityNeedsSave(Activity activity)
+        {
+            bool needsSaving = false;
 
-        //    if (!string.IsNullOrEmpty(activity.Id))
-        //    {
-        //        var savedActivity = await dataManager.GetActivityById(activity.Id);
+            if (!string.IsNullOrEmpty(activity.Id))
+            {
+                var savedActivity = await dataManager.GetActivityById(activity.Id);
 
-        //        if (activity.StatusId != savedActivity.StatusId)
-        //        {
-        //            needsSaving = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        needsSaving = true;
-        //    }
+                if (activity.StatusId != savedActivity.StatusId)
+                {
+                    needsSaving = true;
+                }
+            }
+            else
+            {
+                needsSaving = true;
+            }
 
-        //    return needsSaving;
+            return needsSaving;
 
-        //}
+        }
 
+        /// <summary>
+        /// Checks whether the activity task has been updated.
+        /// </summary>
+        /// <returns>The task needs save.</returns>
+        /// <param name="activityTask">Activity task.</param>
+        public async Task<bool> ActivityTaskNeedsSave(ActivityTask activityTask)
+        {
+            bool needsSaving = false;
 
-
-
-        ///// <summary>
-        ///// Checks whether the activity task has been updated.
-        ///// </summary>
-        ///// <returns>The task needs save.</returns>
-        ///// <param name="activityTask">Activity task.</param>
-        //public async Task<bool> ActivityTaskNeedsSave(ActivityTask activityTask)
-        //{
-        //    bool needsSaving = false;
-
-        //    if (!string.IsNullOrEmpty(activityTask.Id))
-        //    {
-        //        var savedActivityTask = await dataManager.GetActivityTaskById(activityTask.Id);
+            if (!string.IsNullOrEmpty(activityTask.Id))
+            {
+                var savedActivityTask = await dataManager.GetActivityTaskById(activityTask.Id);
 
 
-        //        if (activityTask.ActualResult != savedActivityTask.ActualResult ||
-        //            activityTask.Comments != savedActivityTask.Comments ||
-        //            activityTask.Status != Helpers.General.NullableIntegerToInt(savedActivityTask.Status, 0) || activityTask.Equipment != savedActivityTask.Equipment)
-        //        {
-        //            needsSaving = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        needsSaving = true;
-        //    }
+                if (activityTask.ActualResult != savedActivityTask.ActualResult ||
+                    activityTask.Comments != savedActivityTask.Comments ||
+                    activityTask.Status != Helpers.General.NullableIntegerToInt(savedActivityTask.Status, 0) ||
+                    activityTask.Equipment != savedActivityTask.Equipment)
+                {
+                    needsSaving = true;
+                }
+            }
+            else
+            {
+                needsSaving = true;
+            }
 
-        //    return needsSaving;
-        //}
+            return needsSaving;
+        }
 
-        ///// <summary>
-        ///// Gets the existing activity task status identifier.
-        ///// </summary>
-        ///// <param name="activityId">The activity identifier.</param>
-        ///// <returns></returns>
-        //public async Task<int> GetExistingActivityTaskStatusId(string activityId)
-        //{
-        //    var savedActivity = await dataManager.GetActivityById(activityId);
+        /// <summary>
+        /// Gets the existing activity task status identifier.
+        /// </summary>
+        /// <param name="activityId">The activity identifier.</param>
+        /// <returns></returns>
+        public async Task<int> GetExistingActivityTaskStatusId(string activityId)
+        {
+            var savedActivity = await dataManager.GetActivityById(activityId);
 
-        //    return savedActivity.StatusId;
-        //}
+            return savedActivity.StatusId;
+        }
 
 
     }

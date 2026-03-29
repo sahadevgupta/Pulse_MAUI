@@ -10,5 +10,10 @@ namespace Pulse_MAUI.Interfaces
         Task FetchActivityListAsync();
         Task<ObservableRangeCollection<Activity>> FetchFilteredActivitiesList();
         Task<IEnumerable<ActivityTask>> FetchActivityTasksAsync(Activity activity);
+        Task<bool> ActivityNeedsSave(Activity activity);
+        Task<bool> ActivityTaskNeedsSave(ActivityTask activityTask);
+        Task SaveActivity(Activity activityToSave);
+        Task SaveActivityTasks(IEnumerable<ActivityTask> activityTasksToSave);
+        Task<int> GetExistingActivityTaskStatusId(string activityId);
     }
 }

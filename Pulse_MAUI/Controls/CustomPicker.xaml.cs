@@ -3,19 +3,21 @@ using static Android.Views.ViewGroup;
 #endif
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Pulse_MAUI.Controls;
 
 public partial class CustomPicker : ContentView
 {
-    public static readonly BindableProperty TitleProperty = 
+    public static readonly BindableProperty TitleProperty =
         BindableProperty.Create(nameof(Title), typeof(string), typeof(CustomPicker));
 
     public static readonly BindableProperty ItemsSourceProperty =
-        BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(CustomPicker), default(IList),BindingMode.TwoWay);
+        BindableProperty.Create(nameof(ItemsSource), typeof(IList), typeof(CustomPicker), default(IList), BindingMode.TwoWay);
 
     public static readonly BindableProperty SelectedItemProperty =
-        BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(CustomPicker),null, BindingMode.TwoWay);
+        BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(CustomPicker), null, BindingMode.TwoWay);
+
 
     public string Title
     {
@@ -34,16 +36,44 @@ public partial class CustomPicker : ContentView
         get => GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
     }
+
+    public BindingBase ItemDisplayBinding
+    {
+        get => MainPicker.ItemDisplayBinding;
+        set => MainPicker.ItemDisplayBinding = value;
+    }
+
     public CustomPicker()
-	{
-		InitializeComponent();
-		ModifyControl();
-	}
+    {
+        InitializeComponent();
+        ModifyControl();
+    }
+
+    private static void OnItemDisplayBindingChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        var control = (CustomPicker)bindable;
+
+        if (newValue is BindingBase binding)
+        {
+            control.MainPicker.ItemDisplayBinding = binding;
+        }
+    }
+
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        base.OnPropertyChanged(propertyName);
+
+        if (propertyName == nameof(ItemDisplayBinding))
+        {
+            if (ItemDisplayBinding is BindingBase binding)
+                MainPicker.ItemDisplayBinding = binding;
+        }
+    }
 
     private void ModifyControl()
     {
-		Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping(nameof(CustomPicker), (handler, view) =>
-		{
+        Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping(nameof(CustomPicker), (handler, view) =>
+        {
 #if ANDROID
             var control = handler.PlatformView;
             control.Background = null;

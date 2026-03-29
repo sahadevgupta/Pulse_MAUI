@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 
 using Microsoft.Datasync.Client;
 using Microsoft.Datasync.Client.Serialization;
@@ -18,7 +19,8 @@ namespace Pulse_MAUI.Data
 {
     public partial class DataManager : IDataManager
     {
-        readonly IProjectServices projectServices;
+        private readonly IServiceProvider _serviceProvider;
+        IProjectServices projectServices => _serviceProvider.GetRequiredService<IProjectServices>();
         private bool isInitialized = false;
 
         private DatasyncClient client;
@@ -40,9 +42,9 @@ namespace Pulse_MAUI.Data
         private IOfflineTable<Priority> priorityTable;
         private IOfflineTable<Discipline> disciplineTable;
 
-        public DataManager(IProjectServices projectServices)
+        public DataManager(IServiceProvider serviceProvider)
         {
-            this.projectServices = projectServices;
+            _serviceProvider = serviceProvider;
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 await InitDataManager();
@@ -138,21 +140,21 @@ namespace Pulse_MAUI.Data
             }
 
             // Return each Table type
-            this.activityTable = client.GetOfflineTable<Activity>("activity");
+            this.activityTable = client.GetOfflineTable<Activity>();
             Console.WriteLine("Data sync client initialixed : " + activityTable.GetType().FullName);
-            this.activityTaskTable = client.GetOfflineTable<ActivityTask>("activitytask");
-            this.punchItemTable = client.GetOfflineTable<PunchItem>("punchitem");
-            this.componentTable = client.GetOfflineTable<Component>("component");
-            this.commissioningSystemTable = client.GetOfflineTable<CommissioningSystem>("commissioningsystem");
-            this.projectTable = client.GetOfflineTable<Project>("project");
-            this.unitTable = client.GetOfflineTable<Unit>("unit");
-            this.engineerTable = client.GetOfflineTable<Engineer>("engineer");
-            this.userTable = client.GetOfflineTable<User>("user");
-            this.lookupTable = client.GetOfflineTable<Lookup>("lookup");
-            this.itemTable = client.GetOfflineTable<Item>("item");
-            this.equipmentTable = client.GetOfflineTable<Equipment>("equipment");
-            this.priorityTable = client.GetOfflineTable<Priority>("priority");
-            this.disciplineTable = client.GetOfflineTable<Discipline>("discipline");
+            this.activityTaskTable = client.GetOfflineTable<ActivityTask>();
+            this.punchItemTable = client.GetOfflineTable<PunchItem>();
+            this.componentTable = client.GetOfflineTable<Component>();
+            this.commissioningSystemTable = client.GetOfflineTable<CommissioningSystem>();
+            this.projectTable = client.GetOfflineTable<Project>();
+            this.unitTable = client.GetOfflineTable<Unit>();
+            this.engineerTable = client.GetOfflineTable<Engineer>();
+            this.userTable = client.GetOfflineTable<User>();
+            this.lookupTable = client.GetOfflineTable<Lookup>();
+            this.itemTable = client.GetOfflineTable<Item>();
+            this.equipmentTable = client.GetOfflineTable<Equipment>();
+            this.priorityTable = client.GetOfflineTable<Priority>();
+            this.disciplineTable = client.GetOfflineTable<Discipline>();
 
             isInitialized = true;
 

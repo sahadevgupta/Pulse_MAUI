@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
 using Pulse_MAUI.Constants;
 using Pulse_MAUI.Events;
 using Pulse_MAUI.Interfaces;
@@ -20,7 +21,7 @@ namespace Pulse_MAUI.ViewModels
         readonly IActivityService _activityService;
 
         [ObservableProperty]
-        private ObservableCollection<Activity>? _activities;
+        private ObservableCollection<Activity> _activities = new();
 
         #endregion
 
@@ -70,6 +71,8 @@ namespace Pulse_MAUI.ViewModels
                 { NavigationParamConstant.Activity, selectedActivity }
             };
             await NavigationService.NavigateToPage<ActivityPage>(parameters: param);
+
+            //await Shell.Current.GoToAsync($"//activityroot/activity", param);
         }
 
         #endregion
