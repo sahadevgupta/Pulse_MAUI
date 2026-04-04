@@ -361,3 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+AUDIT_REPORT.md
+audit-report-2026-04-04_22-57-23.html
+audit-report-2026-04-04_22-57-23.json
+P0_P1_FIX_GUIDE.md
+p0_p1_fixes-2026-04-04_23-02-36.json
+p0_p1_fixes-2026-04-04_23-04-38.json
+p0_p1_fixes-2026-04-04_23-04-51.json
+p0_p1_fixes-2026-04-04_23-06-10.json
+.claude/commands/p0-p1-audit.py
+.claude/commands/project-stability-audit.py

@@ -59,15 +59,15 @@
             <Grid>
 
                 <VerticalStackLayout Padding="10">
-                    <Label Text="{Binding Activity.PCAId}"
+                    <Label Text="{Binding Punch.PunchId, StringFormat='ID: {0}'}"
                            Style="{StaticResource LabelDefaultSignikaMedium}"
                            FontSize="16"
                            TextColor="White"/>
-                    <Label Text="{Binding Activity.Name}"
+                    <Label Text="{Binding Punch.CreatedOn,StringFormat='Created Date/Time: {0}'}"
                            Style="{StaticResource LabelDefaultSignikaMedium}"
                            FontSize="16"
                            TextColor="White"/>
-                    <Label Text="{Binding Activity.TagId}"
+                    <Label Text="{Binding Punch.CreatedBy,StringFormat='Created By: {0}'}"
                            Style="{StaticResource LabelDefaultSignikaMedium}"
                            FontSize="16"
                            TextColor="White"/>
