@@ -1,18 +1,14 @@
-﻿using Newtonsoft.Json;
-using Pulse_MAUI.Constants;
-using Pulse_MAUI.Models;
-using Pulse_MAUI.Models.Response;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http.Headers;
+﻿using System.Diagnostics;
 using System.Text;
+using Newtonsoft.Json;
+using Pulse_MAUI.Constants;
+using Pulse_MAUI.Models.Response;
 
 namespace Pulse_MAUI.Data
 {
     public class AuthHeaderHandler : DelegatingHandler
     {
-        public static string AccessToken { get; set; }
+        public static string? AccessToken { get; set; }
 
         /// <summary>
         /// Overrides the send async method. Currently not used.

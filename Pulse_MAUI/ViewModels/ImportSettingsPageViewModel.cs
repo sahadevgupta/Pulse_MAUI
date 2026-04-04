@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PCATablet.Core.Data;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
@@ -29,9 +28,9 @@ namespace Pulse_MAUI.ViewModels
         {
             _dataManager = dataManager;
 
-#if DEBUG
+            //#if DEBUG
             Url = "https://pulseargwebappmobile.azurewebsites.net";
-#endif
+            //#endif
         }
 
         #region [ Methods & Service Calls ]
@@ -85,7 +84,7 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task ImportSettings()
         {
-            //DialogService.ShowLoading("Importing Service Settings..");
+            DialogService.ShowLoading("Importing Service Settings..");
 
             try
             {
