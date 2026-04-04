@@ -2,9 +2,6 @@
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Resources.Languages;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulse_MAUI.Services
 {
@@ -55,24 +52,20 @@ namespace Pulse_MAUI.Services
             Units = new ObservableRangeCollection<string>();
             CommSystem = new ObservableRangeCollection<string>();
 
-            await Task.Run(() =>
-            {
-                var availableActivities = FetchActivities();
-                ActivitiesName = availableActivities;
+            var availableActivities = FetchActivities();
+            ActivitiesName = availableActivities;
 
-                var availableComponents = FetchComponentTypes();
-                ComponentTypes = availableComponents;
+            var availableComponents = FetchComponentTypes();
+            ComponentTypes = availableComponents;
 
-                var availableComponentTags = FetchComponentTags();
-                ComponentTags = availableComponentTags;
+            var availableComponentTags = FetchComponentTags();
+            ComponentTags = availableComponentTags;
 
-                var availableUnits = FetchUnits();
-                Units = availableUnits;
+            var availableUnits = FetchUnits();
+            Units = availableUnits;
 
-                var availableCommSystem = FetchCommSystem();
-                CommSystem = availableCommSystem;
-
-            });
+            var availableCommSystem = FetchCommSystem();
+            CommSystem = availableCommSystem;
             return true;
         }
 
@@ -261,159 +254,6 @@ namespace Pulse_MAUI.Services
             return activities;
         }
 
-
-
     }
-
-    //   /// <summary>
-    ///// Class for handling Activity search functionality
-    ///// Fogbugz Case:
-    ///// Author: Manuel Dambrine
-    ///// Created: 29/03/2013
-    ///// </summary>
-    //public class ActivitySearchService
-    //   {
-
-    //       public int DataLoaded;
-    //       public bool UIInitalised;
-
-    //       private static ActivitySearchService instance;
-
-    //       /// <summary>
-    //       /// Gets the instance.
-    //       /// </summary>
-    //       /// <value>The instance.</value>
-    //       public static ActivitySearchService Instance
-    //       {
-    //           get
-    //           {
-    //               if (instance == null)
-    //               {
-    //                   instance = new ActivitySearchService();
-    //               }
-
-    //               return instance;
-    //           }
-    //       }
-
-    //       /// <summary>
-    //       /// The activities.
-    //       /// </summary>
-    //       public ObservableRangeCollection<string> Activities;
-
-    //       /// <summary>
-    //       /// The component types.
-    //       /// </summary>
-    //       public ObservableRangeCollection<string> ComponentTypes;
-
-    //       /// <summary>
-    //       /// The component tags.
-    //       /// </summary>
-    //       public ObservableRangeCollection<string> ComponentTags;
-
-
-    //       /// <summary>
-    //       /// The units
-    //       /// </summary>
-    //       public ObservableRangeCollection<string> Units;
-
-
-    //       /// <summary>
-    //       /// The comm system
-    //       /// </summary>
-    //       /// 
-    //       public ObservableRangeCollection<string> CommSystem;
-    //       /// <summary>
-    //       /// Gets or sets the selected activity.
-    //       /// </summary>
-    //       /// <value>The selected activity.</value>
-    //       public string SelectedActivity { get; set; }
-
-    //       /// <summary>
-    //       /// Gets or sets the selected component tag.
-    //       /// </summary>
-    //       /// <value>The selected component tag.</value>
-    //       public string SelectedComponentTag { get; set; }
-
-    //       /// <summary>
-    //       /// Gets or sets the type of the selected component.
-    //       /// </summary>
-    //       /// <value>The type of the selected component.</value>
-    //       public string SelectedComponentType { get; set; }
-
-
-    //       /// <summary>
-    //       /// Gets or sets the selected unit.
-    //       /// </summary>
-    //       /// <value>
-    //       /// The selected unit.
-    //       /// </value>
-    //       public string SelectedUnit { get; set; }
-
-    //       /// <summary>
-    //       /// Gets or sets the selected comm system.
-    //       /// </summary>
-    //       /// <value>
-    //       /// The selected comm system.
-    //       /// </value>
-    //       public string SelectedCommSystem { get; set; }
-
-    //       /// <summary>
-    //       /// Initializes a new instance of the <see cref="T:PCATablet.Core.Services.ActivitySearchService"/> class.
-    //       /// </summary>
-    //       private ActivitySearchService()
-    //       {
-    //           Activities = new ObservableRangeCollection<string>();
-    //           ComponentTypes = new ObservableRangeCollection<string>();
-    //           ComponentTags = new ObservableRangeCollection<string>();
-    //           Units = new ObservableRangeCollection<string>();
-    //           CommSystem = new ObservableRangeCollection<string>();
-
-    //       }
-
-
-    //       /// <summary>
-    //       /// Fetches and populates all Activity search values
-    //       /// </summary>
-    //       public async Task<bool> FetchSearchItems()
-    //       {
-
-    //           Activities = new ObservableRangeCollection<string>();
-    //           ComponentTypes = new ObservableRangeCollection<string>();
-    //           ComponentTags = new ObservableRangeCollection<string>();
-    //           Units = new ObservableRangeCollection<string>();
-    //           CommSystem = new ObservableRangeCollection<string>();
-
-    //           await ActivityService.Instance.FetchActivityListAsync();
-
-    //           await Task.Run(() =>
-    //           {
-    //               var availableActivities = FetchActivities();
-    //               Activities = availableActivities;
-
-    //               var availableComponents = FetchComponentTypes();
-    //               ComponentTypes = availableComponents;
-
-    //               var availableComponentTags = FetchComponentTags();
-    //               ComponentTags = availableComponentTags;
-
-    //               var availableUnits = FetchUnits();
-    //               Units = availableUnits;
-
-    //               var availableCommSystem = FetchCommSystem();
-    //               CommSystem = availableCommSystem;
-
-    //           });
-
-    //           DataLoaded = DataLoaded + 1;
-    //           return true;
-    //       }
-
-
-
-
-
-
-
 
 }

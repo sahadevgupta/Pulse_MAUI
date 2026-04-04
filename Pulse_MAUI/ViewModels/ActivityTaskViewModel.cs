@@ -1,7 +1,5 @@
-using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Resources.Languages;
@@ -12,7 +10,6 @@ public partial class ActivityTaskViewModel(IViewModelParameters viewModelParamet
 IEquipmentService equipmentService,
     ILookupService lookupService) : BaseViewModel(viewModelParameters)
 {
-
 
     [ObservableProperty]
     ActivityTask? _activityTask;
@@ -29,28 +26,23 @@ IEquipmentService equipmentService,
     [ObservableProperty]
     Equipment? _selectedEquipment;
 
-    /// <summary>
-    /// Gets the task title.
-    /// </summary>
-    /// <value>The task title.</value>
-    public string TaskTitle
-    {
-        get
-        {
-            return string.Format(UserInterface.ActivityPage_StepHeader,
-                                 ActivityTask.Step,
-                                 ActivityTask.Status != null ?
-                                 AsyncHelpers.RunSync(async () => await lookupService.GetLookupValue(ActivityTask.Status.Value)) :
-                                     string.Empty
-                                 );
-        }
-    }
+    [ObservableProperty]
+    private string? _taskTitle;
+
 
     partial void OnSelectedStatusChanged(string? oldValue, string? newValue)
     {
-        if (ActivityTask != null)
+        _ = UpdateStatusAsync();
+    }
+
+    private async Task UpdateStatusAsync()
+    {
+        if (ActivityTask != null && !string.IsNullOrEmpty(SelectedStatus))
         {
-            ActivityTask.Status = AsyncHelpers.RunSync(async () => await lookupService.GetActivityTaskStatusLookupId(SelectedStatus));
+            ActivityTask.Status =
+                await lookupService.GetActivityTaskStatusLookupId(SelectedStatus);
+
+            await RefreshTaskTitleAsync();
         }
     }
 
@@ -58,7 +50,7 @@ IEquipmentService equipmentService,
     {
         if (ActivityTask != null)
         {
-            ActivityTask.Equipment = newValue.EquipmentId;
+            ActivityTask.Equipment = newValue?.EquipmentId;
             OnPropertyChanged(nameof(TaskTitle));
         }
     }
@@ -73,11 +65,12 @@ IEquipmentService equipmentService,
 
         foreach (var availableStatus in availableStatusList)
         {
-            StatusList.Add(availableStatus.Value);
+            if (!string.IsNullOrEmpty(availableStatus.Value))
+                StatusList.Add(availableStatus.Value);
         }
 
         var status = availableStatusList
-            .FirstOrDefault(p => p.LookupId == ActivityTask.Status);
+            .FirstOrDefault(p => p.LookupId == ActivityTask?.Status);
 
         SelectedStatus = status != null ? status.Value : string.Empty;
     }
@@ -89,9 +82,35 @@ IEquipmentService equipmentService,
     public async Task FetchEquipmentList()
     {
         // Get the equipment list and assign it
-        EquipmentList = await equipmentService.FetchEquipmentTasksAsync(ActivityTask.ProjectId);
-        SelectedEquipment = EquipmentList.FirstOrDefault(E => E.EquipmentId == ActivityTask.Equipment);
+        EquipmentList = await equipmentService.FetchEquipmentTasksAsync(ActivityTask?.ProjectId);
+        SelectedEquipment = EquipmentList.FirstOrDefault(E => E.EquipmentId == ActivityTask?.Equipment);
     }
 
+    async Task RefreshTaskTitleAsync()
+    {
+        if (ActivityTask == null)
+        {
+            TaskTitle = string.Empty;
+            return;
+        }
+
+        var statusText = string.Empty;
+
+        if (ActivityTask.Status.HasValue)
+            statusText = await lookupService.GetLookupValue(ActivityTask.Status.Value);
+
+        TaskTitle = string.Format(UserInterface.ActivityPage_StepHeader,
+                                  ActivityTask.Step,
+                                  statusText);
+    }
+
+    #region [ Override Methods ]
+
+    public override async Task LoadDataOnAppearing()
+    {
+        await RefreshTaskTitleAsync();
+    }
+
+    #endregion
 
 }

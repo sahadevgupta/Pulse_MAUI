@@ -116,41 +116,37 @@ namespace Pulse_MAUI.Services
         {
             var StatusList = new List<Lookup>();
 
-            await Task.Run(() =>
-             {
-                 var NotSet = new Lookup();
-                 NotSet.LookupId = 0;
-                 NotSet.ListOrder = 0;
-                 NotSet.Value = "---";
+            var NotSet = new Lookup();
+            NotSet.LookupId = 0;
+            NotSet.ListOrder = 0;
+            NotSet.Value = "---";
 
-                 var Pass = new Lookup();
-                 Pass.LookupId = 1;
-                 Pass.ListOrder = 1;
-                 Pass.Value = "Pass";
+            var Pass = new Lookup();
+            Pass.LookupId = 1;
+            Pass.ListOrder = 1;
+            Pass.Value = "Pass";
 
-                 var Fail = new Lookup();
-                 Fail.LookupId = 2;
-                 Fail.ListOrder = 2;
-                 Fail.Value = "Fail";
+            var Fail = new Lookup();
+            Fail.LookupId = 2;
+            Fail.ListOrder = 2;
+            Fail.Value = "Fail";
 
-                 var NA = new Lookup();
-                 NA.LookupId = 3;
-                 NA.ListOrder = 3;
-                 NA.Value = "N/A";
+            var NA = new Lookup();
+            NA.LookupId = 3;
+            NA.ListOrder = 3;
+            NA.Value = "N/A";
 
-                 var PL = new Lookup();
-                 PL.LookupId = 4;
-                 PL.ListOrder = 4;
-                 PL.Value = "P/L";
+            var PL = new Lookup();
+            PL.LookupId = 4;
+            PL.ListOrder = 4;
+            PL.Value = "P/L";
 
-                 StatusList.Add(NotSet);
-                 StatusList.Add(Pass);
-                 // Dont Add Fail to the options list
-                 //StatusList.Add(Fail);
-                 StatusList.Add(NA);
-                 StatusList.Add(PL);
-
-             });
+            StatusList.Add(NotSet);
+            StatusList.Add(Pass);
+            // Dont Add Fail to the options list
+            //StatusList.Add(Fail);
+            StatusList.Add(NA);
+            StatusList.Add(PL);
 
             return StatusList;
 

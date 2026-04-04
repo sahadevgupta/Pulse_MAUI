@@ -1,4 +1,6 @@
-﻿namespace Pulse_MAUI.Models
+﻿using Pulse_MAUI.Models.Database;
+
+namespace Pulse_MAUI.Models
 {
     /// <summary>
     /// Activity Task model class.
@@ -6,7 +8,7 @@
     /// Author: Manuel Dambrine
     /// Created: 29/03/2013
     /// </summary>
-    public class ActivityTask : BaseModel
+    public class ActivityTask : BaseSyncModel
     {
         /// <summary>
         /// Gets or sets the check list identifier.

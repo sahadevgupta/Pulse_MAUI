@@ -47,41 +47,33 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
     {
         if (Activity != null)
         {
-            //Activity.StatusId = AsyncHelpers.RunSync(async () => await LookupService.Instance.GetActivityStatusLookupId(selectedStatus));
-
             Activity.Status = newValue;
         }
 
     }
 
-    public void InitializeData()
+    public async Task InitializeData()
     {
         DialogService.ShowLoading();
-        Task.Run(async () =>
+        try
         {
-
-            try
+            if (ActivityTasks.Count == 0)
             {
-                if (ActivityTasks.Count == 0)
-                {
-                    //ViewModel.FetchDataCommand.Execute(null);
-                    await FetchDataCommand.ExecuteAsync(null);
-                }
-                else
-                {
-                    await FetchImageCountAsync();
-                }
+                await FetchDataCommand.ExecuteAsync(null);
             }
-            catch
+            else
             {
-
+                await FetchImageCountAsync();
             }
-            finally
-            {
-                DialogService.HideLoading();
-            }
-
-        });
+        }
+        catch (Exception ex)
+        {
+            // log ex
+        }
+        finally
+        {
+            DialogService.HideLoading();
+        }
     }
 
     /// <summary>
@@ -316,7 +308,7 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
 
         if (_success)
         {
-            Activity.StatusId = AsyncHelpers.RunSync(async () => await lookupService.GetActivityStatusLookupId(SelectedStatus));
+            Activity.StatusId = await lookupService.GetActivityStatusLookupId(SelectedStatus);
             Activity.Status = SelectedStatus;
 
             await activityService.SaveActivityTasks(activityTasksToSave);
@@ -419,7 +411,7 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
         if (query.ContainsKey(NavigationParamConstant.Activity))
         {
             Activity = (Activity)query[NavigationParamConstant.Activity];
-            InitializeData();
+            _ = InitializeData();
         }
     }
 

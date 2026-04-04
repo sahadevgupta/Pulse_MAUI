@@ -35,32 +35,29 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
 
     #region [ Methods & Service Calls ]
 
-    private void InitializeData(FileType fileType)
+    private async Task InitializeDataAsync(FileType fileType)
     {
         DialogService.ShowLoading();
-        Task.Run(async () =>
+        try
         {
-            try
+            switch (fileType)
             {
-                switch (fileType)
-                {
-                    case FileType.Activity:
-                        await FetchActivityFilesCommand.ExecuteAsync(null);
-                        break;
-                    case FileType.Punch:
-                        await FetchPunchFilesCommand.ExecuteAsync(null);
-                        break;
-                }
+                case FileType.Activity:
+                    await FetchActivityFilesCommand.ExecuteAsync(null);
+                    break;
+                case FileType.Punch:
+                    await FetchPunchFilesCommand.ExecuteAsync(null);
+                    break;
             }
-            catch (Exception ex)
-            {
+        }
+        catch (Exception ex)
+        {
 
-            }
-            finally
-            {
-                DialogService.HideLoading();
-            }
-        });
+        }
+        finally
+        {
+            DialogService.HideLoading();
+        }
 
     }
 
@@ -238,7 +235,7 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
             query.TryGetValue(NavigationParamConstant.Punch, out object? arg);
             punchItem = (PunchItem)arg!;
 
-            InitializeData(fileType);
+            _ = InitializeDataAsync(fileType);
         }
     }
 

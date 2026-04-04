@@ -1,4 +1,5 @@
 ﻿using System;
+using Pulse_MAUI.Models.Database;
 namespace Pulse_MAUI.Models
 {
 	/// <summary>
@@ -7,7 +8,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class CommissioningSystem : BaseModel
+	public class CommissioningSystem : BaseSyncModel
 	{
 		/// <summary>
 		/// Gets or sets the project identifier.
@@ -62,7 +63,7 @@ namespace Pulse_MAUI.Models
 		/// </summary>
 		/// <value>The cloned from PUCI.</value>
 		public int? ClonedFromPUCId { get; set; }
-        
 
-    }
+
+	}
 }

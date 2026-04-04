@@ -49,6 +49,7 @@ namespace Pulse_MAUI
                     options.Debug = true;
 
                     // Other Sentry options can be set here.
+                    options.SendDefaultPii = true;
                 }); ;
 
 #if DEBUG

@@ -2,9 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Services.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulse_MAUI.ViewModels
 {

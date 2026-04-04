@@ -49,25 +49,22 @@ namespace Pulse_MAUI.Services
             Units = new ObservableRangeCollection<string>();
             CommSystem = new ObservableRangeCollection<string>();
 
-            await Task.Run(async () =>
-            {
-                await punchService.FetchPunchListAsync();
+            await punchService.FetchPunchListAsync();
 
-                var availableUnits = FetchUnits();
-                Units = availableUnits;
+            var availableUnits = FetchUnits();
+            Units = availableUnits;
 
-                var availableCommSystem = FetchCommSystem();
-                CommSystem = availableCommSystem;
+            var availableCommSystem = FetchCommSystem();
+            CommSystem = availableCommSystem;
 
-                var availableActivities = FetchActivities();
-                Activities = availableActivities;
+            var availableActivities = FetchActivities();
+            Activities = availableActivities;
 
-                var availableComponents = FetchComponentTypes();
-                ComponentTypes = availableComponents;
+            var availableComponents = FetchComponentTypes();
+            ComponentTypes = availableComponents;
 
-                var availableComponentTags = FetchComponentTags();
-                ComponentTags = availableComponentTags;
-            });
+            var availableComponentTags = FetchComponentTags();
+            ComponentTags = availableComponentTags;
 
             return true;
 

@@ -643,30 +643,12 @@ namespace Pulse_MAUI.Data
             }
             catch (DatasyncConflictException exc)
             {
-                //if (exc.PushResult != null)
-                //{
-                //    syncErrors = exc.PushResult.Errors;
-                //}
+                SentrySdk.CaptureException(exc);
             }
-
-            // Simple error/conflict handling. A real application would handle the various errors like network conditions,
-            // server conflicts and others via the IMobileServiceSyncHandler.
-            //if (syncErrors != null)
-            //{
-            //    foreach (var error in syncErrors)
-            //    {
-            //        if (error.OperationKind == MobileServiceTableOperationKind.Update && error.Result != null)
-            //        {
-            //            //Update failed, reverting to server's copy.
-            //            await error.CancelAndUpdateItemAsync(error.Result);
-            //        }
-            //        else
-            //        {
-            //            // Discard local change.
-            //            await error.CancelAndDiscardItemAsync();
-            //        }
-            //    }
-            //}
+            catch (Exception exception)
+            {
+                SentrySdk.CaptureException(exception);
+            }
         }
 
         #endregion

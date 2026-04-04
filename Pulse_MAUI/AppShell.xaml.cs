@@ -31,8 +31,8 @@ namespace Pulse_MAUI
             }
             else
             {
-                AddFlyoutPage("activityroot\activitylist", "Activities", typeof(ActivityListPage));
-                AddFlyoutPage("activityroot\punchlist", "Punch List", typeof(PunchListPage));
+                AddFlyoutPage(@"activityroot\activitylist", "Activities", typeof(ActivityListPage));
+                AddFlyoutPage(@"activityroot\punchlist", "Punch List", typeof(PunchListPage));
 
             }
 

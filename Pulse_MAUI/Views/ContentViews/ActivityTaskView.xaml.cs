@@ -1,5 +1,3 @@
-using Android.Views;
-using Microsoft.Identity.Client;
 
 namespace Pulse_MAUI.Views.ContentViews;
 

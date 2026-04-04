@@ -47,7 +47,7 @@ namespace TodoApp.Android
 
             // Set up the TodoService
             TodoService = new RemoteTodoService();
-            
+
             // Set up the List Adapter
             todoAdapter = new TodoAdapter(this);
             itemList.SetAdapter(todoAdapter);

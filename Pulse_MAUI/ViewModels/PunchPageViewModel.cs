@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +7,6 @@ using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Resources.Languages;
-using Pulse_MAUI.Services;
 using Pulse_MAUI.Views;
 
 namespace Pulse_MAUI.ViewModels;
@@ -109,10 +107,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
     partial void OnSelectedProjectChanged(string? value)
     {
-        Task.Run(async () =>
-        {
-            await FetchUnitsCommand.ExecuteAsync(null);
-        });
+        _ = FetchUnitsCommand.ExecuteAsync(null);
 
     }
 
@@ -129,10 +124,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
         SelectedActivity = null;
         ActivitiesName?.Clear();
-        Task.Run(async () =>
-        {
-            await FetchCommSystemsCommand.ExecuteAsync(null);
-        });
+        _ = FetchCommSystemsCommand.ExecuteAsync(null);
     }
 
     partial void OnSelectedCommSystemChanged(string? value)
@@ -146,10 +138,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         SelectedActivity = null;
         ActivitiesName?.Clear();
 
-        Task.Run(async () =>
-        {
-            await FetchComponentTypesCommand.ExecuteAsync(null);
-        });
+        _ = FetchComponentTypesCommand.ExecuteAsync(null);
     }
 
     partial void OnSelectedComponentTypeChanged(string? value)
@@ -160,10 +149,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         SelectedActivity = null;
         ActivitiesName?.Clear();
 
-        Task.Run(async () =>
-        {
-            await FetchComponentTagsCommand.ExecuteAsync(null);
-        });
+        _ = FetchComponentTagsCommand.ExecuteAsync(null);
     }
 
     partial void OnSelectedComponentTagChanged(string? value)
@@ -171,10 +157,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         SelectedActivity = null;
         ActivitiesName?.Clear();
 
-        Task.Run(async () =>
-        {
-            await FetchActivitiesCommand.ExecuteAsync(null);
-        });
+        _ = FetchActivitiesCommand.ExecuteAsync(null);
     }
 
     internal async Task OnBackPressed()
@@ -199,10 +182,10 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
     }
 
 
-    private void InitializeData()
+    private async Task InitializeDataAsync()
     {
         IdFormatted = string.Format(UserInterface.PunchPage_Id, Punch != null ? Punch.PunchId : 0);
-        Task.Run(async () =>
+        try
         {
             if (IsNewPunch)
             {
@@ -234,7 +217,11 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
             }
 
             await PopulateListsAsync();
-        });
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 
     /// <summary>
@@ -270,60 +257,58 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
     {
         var responseMessage = "";
 
-        await Task.Run(() =>
+        if (punchItemToValidate.Description == null)
         {
-            if (punchItemToValidate.Description == null)
+            responseMessage = responseMessage + Environment.NewLine + "You must enter a description";
+        }
+        else
+        {
+            if (punchItemToValidate.Description.Length == 0)
             {
                 responseMessage = responseMessage + Environment.NewLine + "You must enter a description";
             }
-            else
-            {
-                if (punchItemToValidate.Description.Length == 0)
-                {
-                    responseMessage = responseMessage + Environment.NewLine + "You must enter a description";
-                }
-            }
+        }
 
-            if (!punchItemToValidate.PUCId.HasValue)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a commissioning system";
-            }
+        if (!punchItemToValidate.PUCId.HasValue)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a commissioning system";
+        }
 
-            if (!punchItemToValidate.PUId.HasValue)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a unit";
-            }
+        if (!punchItemToValidate.PUId.HasValue)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a unit";
+        }
 
-            if (punchItemToValidate.TagId == null)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a component tag";
-            }
+        if (punchItemToValidate.TagId == null)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a component tag";
+        }
 
-            if (punchItemToValidate.ComponentType == null)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a component type";
-            }
+        if (punchItemToValidate.ComponentType == null)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a component type";
+        }
 
-            if (punchItemToValidate.Status == 0)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a Status";
-            }
+        if (punchItemToValidate.Status == 0)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a Status";
+        }
 
-            if (punchItemToValidate.Priority == null)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
-            }
+        if (punchItemToValidate.Priority == null)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
+        }
 
-            if (punchItemToValidate.Priority.Value == 0)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
-            }
+        if (punchItemToValidate.Priority.Value == 0)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
+        }
 
-            if (punchItemToValidate.DisciplineId == null || punchItemToValidate.DisciplineId == 0)
-            {
-                responseMessage = responseMessage + Environment.NewLine + "You must select a Discipline";
-            }
-        });
+        if (punchItemToValidate.DisciplineId == null || punchItemToValidate.DisciplineId == 0)
+        {
+            responseMessage = responseMessage + Environment.NewLine + "You must select a Discipline";
+        }
+
 
         return responseMessage;
 
@@ -480,15 +465,11 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
         disciplineListLocal.AddRange(disciplineItemsText, System.Collections.Specialized.NotifyCollectionChangedAction.Add);
 
-        await Task.Run(() =>
+        Discipline? selected = disciplineItems.FirstOrDefault(p => p.DisciplineId == Punch.DisciplineId);
+        if (selected != null)
         {
-
-            Discipline? selected = disciplineItems.FirstOrDefault(p => p.DisciplineId == Punch.DisciplineId);
-            if (selected != null)
-            {
-                selectedDisciplineLocal = selected.Name;
-            }
-        });
+            selectedDisciplineLocal = selected.Name;
+        }
 
         DisciplineList = disciplineListLocal;
         SelectedDiscipline = selectedDisciplineLocal;
@@ -595,8 +576,9 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
           .FirstOrDefault(p => p.Name == SelectedCommSystem)?.PUCId : 0;
 
         var availableComponentTagIds = availableComponents
-            .Where(p => p.ProjectId == Punch.ProjectId && p.Name == Punch.ComponentType)
-            .Where(p => p.PUCId == PUCId)
+            .Where(p => p.ProjectId == Punch.ProjectId &&
+                   p.Name == Punch.ComponentType &&
+                   p.PUCId == PUCId)
                .OrderBy(p => p.TagId)
             .Select(p => p.TagId)
             .Distinct();
@@ -731,7 +713,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
             Activity = arg != null ? (Activity)arg : null;
 
         }
-        InitializeData();
+        _ = InitializeDataAsync();
     }
 
 

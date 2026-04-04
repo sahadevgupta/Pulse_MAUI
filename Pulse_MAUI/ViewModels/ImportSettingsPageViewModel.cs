@@ -30,7 +30,7 @@ namespace Pulse_MAUI.ViewModels
             _dataManager = dataManager;
 
 #if DEBUG
-            Url = "https://pulseargwebappmobile.azurewebsites.net"
+            Url = "https://pulseargwebappmobile.azurewebsites.net";
 #endif
         }
 

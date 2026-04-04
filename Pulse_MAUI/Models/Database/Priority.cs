@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pulse_MAUI.Models.Database;
 
 namespace Pulse_MAUI.Models
 {
-    public class Priority : BaseModel
+    public class Priority : BaseSyncModel
     {
         /// <summary>
         /// Gets or sets the priority identifier.
