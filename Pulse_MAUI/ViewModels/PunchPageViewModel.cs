@@ -94,6 +94,10 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
     [ObservableProperty]
     private bool _isNewPunch;
+
+    [ObservableProperty]
+    private string? _idFormatted;
+
     private IEnumerable<Unit>? availableUnits;
     private IEnumerable<Component>? availableComponents;
     private IEnumerable<CommissioningSystem>? availableCommSystems;
@@ -173,11 +177,6 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         });
     }
 
-    partial void OnSelectedActivityChanged(string? value)
-    {
-        throw new NotImplementedException();
-    }
-
     internal async Task OnBackPressed()
     {
         if (IsNewPunch)
@@ -202,6 +201,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
     private void InitializeData()
     {
+        IdFormatted = string.Format(UserInterface.PunchPage_Id, Punch != null ? Punch.PunchId : 0);
         Task.Run(async () =>
         {
             if (IsNewPunch)
@@ -727,8 +727,11 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         else
         {
             IsNewPunch = true;
-            InitializeData();
+            query.TryGetValue(NavigationParamConstant.Activity, out object? arg);
+            Activity = arg != null ? (Activity)arg : null;
+
         }
+        InitializeData();
     }
 
 

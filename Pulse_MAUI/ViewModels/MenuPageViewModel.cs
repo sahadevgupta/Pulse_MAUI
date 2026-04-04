@@ -237,8 +237,13 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task MenuSelected(MenuOption selectedMenu)
         {
-            //await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
-            await Shell.Current.GoToAsync("//activityroot/activitylist");
+            // if (selectedMenu.Route == nameof(ActivityListPage))
+            // {
+            //     await Shell.Current.GoToAsync("//activityroot/activitylist");
+
+            // }
+            // else
+            await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
             Shell.Current.FlyoutIsPresented = false;
         }
 

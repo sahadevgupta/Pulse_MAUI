@@ -15,10 +15,10 @@ namespace Pulse_MAUI
             LoadMenuItems();
 
             Routing.RegisterRoute(nameof(ActivityPage), typeof(ActivityPage));
-            Routing.RegisterRoute(nameof(ActivityListPage), typeof(ActivityListPage));
+            //Routing.RegisterRoute(nameof(ActivityListPage), typeof(ActivityListPage));
             Routing.RegisterRoute(nameof(FileListPage), typeof(FileListPage));
             Routing.RegisterRoute(nameof(ImportSettingsPage), typeof(ImportSettingsPage));
-            Routing.RegisterRoute(nameof(PunchListPage), typeof(PunchListPage));
+            //Routing.RegisterRoute(nameof(PunchListPage), typeof(PunchListPage));
             Routing.RegisterRoute(nameof(PunchPage), typeof(PunchPage));
         }
 
@@ -31,8 +31,8 @@ namespace Pulse_MAUI
             }
             else
             {
-                AddFlyoutPage(nameof(ActivityListPage), "Activities", typeof(ActivityListPage));
-                AddFlyoutPage(nameof(PunchListPage), "Punch List", typeof(PunchListPage));
+                AddFlyoutPage("activityroot\activitylist", "Activities", typeof(ActivityListPage));
+                AddFlyoutPage("activityroot\punchlist", "Punch List", typeof(PunchListPage));
 
             }
 

@@ -17,7 +17,7 @@ namespace Pulse_MAUI.ViewModels
         readonly IDataManager _dataManager;
 
         [ObservableProperty]
-        private string? _url = "https://pulseargwebappmobile.azurewebsites.net";
+        private string? _url;
 
         [ObservableProperty]
         private string? _serviceName;
@@ -28,6 +28,10 @@ namespace Pulse_MAUI.ViewModels
             IViewModelParameters viewModelParameters) : base(viewModelParameters)
         {
             _dataManager = dataManager;
+
+#if DEBUG
+            Url = "https://pulseargwebappmobile.azurewebsites.net"
+#endif
         }
 
         #region [ Methods & Service Calls ]

@@ -28,5 +28,8 @@
         <ShellContent
             Route="activitylist"
             ContentTemplate="{DataTemplate views:ActivityListPage}"/>
+        <ShellContent
+            Route="punchlist"
+            ContentTemplate="{DataTemplate views:PunchListPage}"/>
     </FlyoutItem>
 </Shell>

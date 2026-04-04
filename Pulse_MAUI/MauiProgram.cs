@@ -15,7 +15,7 @@ namespace Pulse_MAUI
 #if DEBUG
             string environment = "DEV";
 #else
-		string environment = "PROD";
+            string environment = "DEV";
 #endif
 
             var builder = MauiApp.CreateBuilder();

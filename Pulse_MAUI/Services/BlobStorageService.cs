@@ -53,68 +53,106 @@ namespace Pulse_MAUI.Services
                     BlobPath = BlobPath.Replace("\\", "/");
                 }
 
-                CloudBlob blob = GetBlobContainer().GetBlobReference(BlobPath);
+                var cloudBlobContainer = await GetBlobContainer();
+                CloudBlob blob = cloudBlobContainer.GetBlobReference(BlobPath);
+
                 // get the blob attributes & check it has a length
 
                 if (BlobExists(blob))
                 {
                     await blob.FetchAttributesAsync();
-                    if (blob.Properties.Length > -1)
+
+
+                    if (blob.Properties.Length > 0)
                     {
-                        // write the blob contents to a byte array
                         byte[] content = new byte[blob.Properties.Length];
                         await blob.DownloadToByteArrayAsync(content, 0);
 
-                        if (!Object.Equals(content, null))
+                        if (content != null)
                         {
-                            // Write the bytes to a 'sandboxed' file on the local device
+                            // root app sandbox folder
+                            string rootPath = FileSystem.AppDataDirectory;
 
-                            var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
-
-                            if (!Directory.Exists(folderPath))
-                                Directory.CreateDirectory(folderPath);
-
-
-                            string fileName = Helpers.FileUtility.GetFileName(BlobPath);
+                            // extract folder hierarchy
                             IList<string> folders = Helpers.FileUtility.GetFoldersFromPath(BlobPath);
+                            string fileName = Helpers.FileUtility.GetFileName(BlobPath);
+
+                            // build directory path
+                            string folderPath = rootPath;
 
                             foreach (string folder in folders)
                             {
-                                if (folder.Length == 0)
-                                {
-                                    //throw new Exception("Invalid Folder Path");
-                                    return;
-                                }
+                                folderPath = Path.Combine(folderPath, folder);
                             }
 
+                            // create directory (safe, recursive)
+                            Directory.CreateDirectory(folderPath);
 
-                            // build the folder hierarchy
-                            var rootPath = FileSystem.AppDataDirectory;
-                            var currentPath = rootPath;
+                            // final file path (CORRECT!)
+                            string finalFilePath = Path.Combine(folderPath, fileName);
 
-                            foreach (string folder in folders)
-                            {
-                                currentPath = Path.Combine(currentPath, folder);
-
-                                if (!Directory.Exists(currentPath))
-                                    Directory.CreateDirectory(currentPath);
-                            }
-
-
-                            // store the file at the end of the hierarchy
-
-                            var currentFilePath = rootPath;
-
-                            foreach (string folder in folders)
-                            {
-                                currentPath = Path.Combine(currentPath, folder);
-
-                                if (!File.Exists(currentPath))
-                                    File.WriteAllBytes(currentPath, content);
-                            }
-
+                            // write file
+                            File.WriteAllBytes(finalFilePath, content);
                         }
                     }
+
+                    // if (blob.Properties.Length > -1)
+                    // {
+                    //     // write the blob contents to a byte array
+                    //     byte[] content = new byte[blob.Properties.Length];
+                    //     await blob.DownloadToByteArrayAsync(content, 0);
+
+                    //     if (!Object.Equals(content, null))
+                    //     {
+                    //         // Write the bytes to a 'sandboxed' file on the local device
+
+                    //         var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
+
+                    //         if (!Directory.Exists(folderPath))
+                    //             Directory.CreateDirectory(folderPath);
+
+
+                    //         string fileName = Helpers.FileUtility.GetFileName(BlobPath);
+                    //         IList<string> folders = Helpers.FileUtility.GetFoldersFromPath(BlobPath);
+
+                    //         foreach (string folder in folders)
+                    //         {
+                    //             if (folder.Length == 0)
+                    //             {
+                    //                 //throw new Exception("Invalid Folder Path");
+                    //                 return;
+                    //             }
+                    //         }
+
+
+                    //         // build the folder hierarchy
+                    //         var rootPath = FileSystem.AppDataDirectory;
+                    //         var currentPath = rootPath;
+
+                    //         foreach (string folder in folders)
+                    //         {
+                    //             currentPath = Path.Combine(currentPath, folder);
+
+                    //             if (!Directory.Exists(currentPath))
+                    //                 Directory.CreateDirectory(currentPath);
+                    //         }
+
+
+                    //         // store the file at the end of the hierarchy
+
+                    //         var currentFilePath = rootPath;
+
+                    //         foreach (string folder in folders)
+                    //         {
+                    //             currentPath = Path.Combine(currentFilePath, folder);
+
+                    //             if (!File.Exists(currentPath))
+                    //                 File.WriteAllBytes(currentPath, content);
+                    //         }
+
+                    //     }
+                    // }
+
                 }
                 else
                 {
@@ -166,14 +204,16 @@ namespace Pulse_MAUI.Services
 
                 if (item.ControlType != null)
                 {
-                    CloudBlockBlob blob = GetBlobContainer().GetBlockBlobReference(blobPath);
+                    var cloudBlobContainer = await GetBlobContainer();
+                    CloudBlob blob = cloudBlobContainer.GetBlobReference(blobPath);
 
                     var imgByte = System.IO.File.ReadAllBytes(item.LocalPath);
 
                     if (imgByte != null)
                     {
                         blob.Properties.ContentType = item.MimeType;
-                        await blob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
+                        CloudBlockBlob blockBlob = cloudBlobContainer.GetBlockBlobReference(blobPath);
+                        await blockBlob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
 
                         item.AzurePath = blobPath;
                         item.LocalPath = null;
@@ -189,9 +229,9 @@ namespace Pulse_MAUI.Services
         /// Gets the BLOB container.
         /// </summary>
         /// <returns></returns>
-        private CloudBlobContainer GetBlobContainer()
+        private async Task<CloudBlobContainer> GetBlobContainer()
         {
-            dynamic client = GetAzureClient();
+            var client = await GetAzureClient();
             return client.GetContainerReference(AppHelpers.BlobStorageName);
         }
 

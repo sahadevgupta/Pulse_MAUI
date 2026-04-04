@@ -13,7 +13,8 @@
 
     <pages:BasePage.Triggers>
         <DataTrigger TargetType="pages:BasePage"
-                     Binding="{Binding IsNewPunch}">
+                     Binding="{Binding IsNewPunch}"
+                     Value="True">
             <Setter Property="Title"
                     Value="{resources:Translate PunchPage_AddPunch}"/>
         </DataTrigger>
@@ -83,7 +84,7 @@
                 <Border Style="{StaticResource DefaultBorderStyle}"
                         BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
                         Padding="16">
-                    <Label Text="{Binding TaskTitle}"
+                    <Label Text="{Binding IdFormatted}"
                            Style="{StaticResource LabelDefaultSignikaMedium}"
                            FontSize="Body"
                            TextColor="White"/>

@@ -348,7 +348,11 @@ public partial class ActivityPageViewModel(IViewModelParameters viewModelParamet
     [RelayCommand]
     private async Task NavigateToPunch()
     {
-        await NavigationService.NavigateToPage<PunchListPage>();
+        var param = new Dictionary<string, object>()
+        {
+            { NavigationParamConstant.Activity , Activity }
+        };
+        await NavigationService.NavigateToPage<PunchPage>(parameters: param);
     }
 
     [RelayCommand]
