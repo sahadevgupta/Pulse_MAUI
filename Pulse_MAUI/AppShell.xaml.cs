@@ -15,9 +15,11 @@ namespace Pulse_MAUI
             LoadMenuItems();
 
             Routing.RegisterRoute(nameof(ActivityPage), typeof(ActivityPage));
+            Routing.RegisterRoute(nameof(ActivityListPage), typeof(ActivityListPage));
             Routing.RegisterRoute(nameof(FileListPage), typeof(FileListPage));
             Routing.RegisterRoute(nameof(ImportSettingsPage), typeof(ImportSettingsPage));
             Routing.RegisterRoute(nameof(PunchListPage), typeof(PunchListPage));
+            Routing.RegisterRoute(nameof(PunchPage), typeof(PunchPage));
         }
 
         private void LoadMenuItems()

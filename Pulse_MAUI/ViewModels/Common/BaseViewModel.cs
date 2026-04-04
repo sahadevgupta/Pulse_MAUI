@@ -43,6 +43,11 @@ namespace Pulse_MAUI.ViewModels
             return Task.CompletedTask;
         }
 
+        protected void HandleException(Exception exception)
+        {
+            SentrySdk.CaptureException(exception);
+        }
+
         #endregion
 
         #region [ Commands ]

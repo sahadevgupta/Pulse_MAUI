@@ -18,7 +18,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Pulse_MAUI</ApplicationTitle>
+		<ApplicationTitle>Pulse MAUI</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<!-- <ApplicationId>com.companyname.pulse_maui</ApplicationId> -->

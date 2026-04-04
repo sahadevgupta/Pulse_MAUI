@@ -41,7 +41,8 @@
         <CollectionView
             Grid.Row="1"
             x:Name="optionsList"
-            ItemsSource="{Binding OptionsItems}">
+            ItemsSource="{Binding OptionsItems}"
+            SelectionMode="Single">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MenuOption">

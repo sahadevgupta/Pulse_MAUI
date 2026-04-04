@@ -99,6 +99,16 @@ namespace Pulse_MAUI.Services
         }
 
         /// <summary>
+		/// Gets the component list async.
+		/// </summary>
+		/// <returns>The component list async.</returns>
+		public async Task<IEnumerable<Component>> GetComponentListAsync()
+        {
+            return await dataManager
+                .GetAllComponentsAsync();
+        }
+
+        /// <summary>
         /// Gets the activity status lookups.
         /// </summary>
         /// <returns></returns>
@@ -211,6 +221,16 @@ namespace Pulse_MAUI.Services
                 .FirstOrDefault(p => p.LookupId == id);
 
             return lookup != null ? lookup.Value : string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the activty list asynchronous.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Activity>> GetActivtyListAsync()
+        {
+            return await dataManager
+                .GetAllActivitiesAsync();
         }
     }
 }

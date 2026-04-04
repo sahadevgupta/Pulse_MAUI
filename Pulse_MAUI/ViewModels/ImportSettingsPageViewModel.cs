@@ -81,7 +81,7 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task ImportSettings()
         {
-            DialogService.ShowLoading("Importing Service Settings..");
+            //DialogService.ShowLoading("Importing Service Settings..");
 
             try
             {

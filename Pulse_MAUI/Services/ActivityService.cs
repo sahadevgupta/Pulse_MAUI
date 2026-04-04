@@ -145,15 +145,7 @@ namespace Pulse_MAUI.Services
         //    }
         //}
 
-        ///// <summary>
-        ///// Gets the activty list asynchronous.
-        ///// </summary>
-        ///// <returns></returns>
-        //public async Task<IEnumerable<Activity>> GetActivtyListAsync()
-        //{
-        //    return await dataManager
-        //        .GetAllActivitiesAsync();
-        //}
+
 
 
         ///// <summary>

@@ -137,17 +137,17 @@ namespace Pulse_MAUI.ViewModels
                 await _appWorkflowManager.SynchroniseService.UploadBlobData(blobConnectionString);
 
                 // 3. Push/Pull data after images uploaded
-                // if (!await EnsureInternetAsync()) return;
-                // DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
-                // await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
+                if (!await EnsureInternetAsync()) return;
+                DialogService.ShowLoading(UserInterface.MenuPage_Synchronising);
+                await _appWorkflowManager.SynchroniseService.PushAndPullDataAsync(true, true);
 
                 // 4. Download blobs
-                // if (!await EnsureInternetAsync()) return;
-                // DialogService.ShowLoading("Downloading Image Items");
-                // await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
+                if (!await EnsureInternetAsync()) return;
+                DialogService.ShowLoading("Downloading Image Items");
+                await _appWorkflowManager.SynchroniseService.DownloadBlobData(blobConnectionString);
 
                 // 5. Finish sync
-                //await _appWorkflowManager.SyncLogService.PostSyncLogFinish(transactionBatchId);
+                await _appWorkflowManager.SyncLogService.PostSyncLogFinish(transactionBatchId);
                 var a = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
 
                 AppHelpers.SyncDate = a;
@@ -237,7 +237,8 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task MenuSelected(MenuOption selectedMenu)
         {
-            await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
+            //await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
+            await Shell.Current.GoToAsync("//activityroot/activitylist");
             Shell.Current.FlyoutIsPresented = false;
         }
 

@@ -53,37 +53,15 @@ namespace Pulse_MAUI.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataManager"/> class.
-        /// </summary>
-        /// <param name="url">The URL.</param>
-        public void InitDataManager(string url)
-        {
-            // var uri = new Uri(url);
-            // var host = "https://" + uri.Host;
-
-            // // implement the mobile service client
-            // this.client = new DatasyncClient(host, new DatasyncClientOptions
-            // {
-            //     HttpPipeline = new HttpMessageHandler[] { new AuthHeaderHandler() }
-
-            // });
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="T:PCATablet.Core.Data.DataManager"/> class.
         /// </summary>
         public async Task InitDataManager()
         {
-            if (isInitialized)
+            if (isInitialized || AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
                 return;
 
             isInitialized = false;
-            // var folderPath = Path.Combine(AppConstants.AppRootFolder, AppHelpers.BlobStorageName);
-            // if (!Directory.Exists(folderPath))
-            // {
-            //     Directory.CreateDirectory(folderPath);
-            //     Debug.WriteLine($"Created database folder: {folderPath}");
-            // }
+
             var dbPath = Path.Combine(AppConstants.AppRootFolder, DBConstants.DatabaseFilename);
             Debug.WriteLine($"Database path: {dbPath}");
             var sqliteUri = $"file:{dbPath}";

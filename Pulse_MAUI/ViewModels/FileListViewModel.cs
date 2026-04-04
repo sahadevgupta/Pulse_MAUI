@@ -231,7 +231,13 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
         if (query.ContainsKey(NavigationParamConstant.FileType))
         {
             fileType = (FileType)query[NavigationParamConstant.FileType];
-            activity = (Activity)query[NavigationParamConstant.Activity];
+
+            query.TryGetValue(NavigationParamConstant.Activity, out object? value);
+            activity = (Activity)value!;
+
+            query.TryGetValue(NavigationParamConstant.Punch, out object? arg);
+            punchItem = (PunchItem)arg!;
+
             InitializeData(fileType);
         }
     }

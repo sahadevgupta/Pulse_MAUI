@@ -10,5 +10,6 @@ namespace Pulse_MAUI.Interfaces
         Task FetchPunchListAsync();
         Task<IEnumerable<PunchItem>> GetPunchListAsync();
         Task<PunchItem> CreatePunchItem();
+        Task SavePunchItem(PunchItem punchItemToSave);
     }
 }

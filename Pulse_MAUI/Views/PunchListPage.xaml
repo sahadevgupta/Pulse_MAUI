@@ -2,12 +2,130 @@
 <pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 x:Class="Pulse_MAUI.Views.PunchListPage"
+                xmlns:ext="clr-namespace:Pulse_MAUI.Extensions"
                 xmlns:pages="clr-namespace:Pulse_MAUI.Views"
+                xmlns:behaviors="clr-namespace:Pulse_MAUI.Behaviors"
+                xmlns:controls="clr-namespace:Pulse_MAUI.Controls"
+                xmlns:converters="clr-namespace:Pulse_MAUI.Converters"
+                xmlns:helpers="clr-namespace:Pulse_MAUI.Helpers"
+                xmlns:models="clr-namespace:Pulse_MAUI.Models"
+                xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                xmlns:views="clr-namespace:Pulse_MAUI.Views.ContentViews"
+                xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
+                x:DataType="vm:PunchListPageViewModel"
                 Title="PunchListPage">
-    <VerticalStackLayout>
-        <Label
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+
+    <pages:BasePage.Resources>
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+    </pages:BasePage.Resources>
+
+    <Grid Padding="10"
+          RowSpacing="10"
+          RowDefinitions="Auto,*">
+
+        <toolkit:Expander x:Name="expander">
+            <toolkit:Expander.Header>
+                <Border Padding="12"
+                        StrokeShape="RoundRectangle 12,12,0,0"
+                        BackgroundColor="{x:Static helpers:Colors.StandardOrange}">
+
+                    <HorizontalStackLayout>
+                        <Image Source="{x:Static helpers:Images.Filter }"
+                               Scale="0.7"/>
+
+                        <Label Text="{resources:Translate Show}"
+                               Style="{StaticResource LabelDefaultSignikaRegular}"
+                               TextColor="White">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding Source={x:Reference expander},Path=IsExpanded}"
+                                             Value="True">
+                                    <Setter Property="Text"
+                                            Value="{resources:Translate Hide}"/>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                    </HorizontalStackLayout>
+                </Border>
+
+            </toolkit:Expander.Header>
+            <Border StrokeShape="RoundRectangle 0,0,12,12">
+                <views:ActivitySearchView/>
+            </Border>
+        </toolkit:Expander>
+
+        <CollectionView ItemsSource="{Binding Punches}"
+                        IsVisible="{Binding Punches.Count, Converter={toolkit:IntToBoolConverter},FallbackValue=False, TargetNullValue=False}"
+                        Grid.Row="1"
+                        x:Name="activitiesList">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PunchItem">
+                    <Grid Padding="5"
+                          IsClippedToBounds="True">
+
+
+                        <Border Style="{StaticResource DefaultBorderStyle}"
+                                StrokeThickness="1"
+                                Stroke="{StaticResource ChalkGrey}"
+                                BackgroundColor="White"
+                                Padding="10">
+
+                            <Border.Behaviors>
+                                <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewActivityCommand, Source={x:Reference activitiesList}}"
+                                                                        CommandParameter="{Binding .}"/>
+                            </Border.Behaviors>
+                            <VerticalStackLayout>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                       Text="{Binding PunchId, StringFormat='ID: {0}'}"
+                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                       Text="{Binding Title}"
+                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+
+                                <Label Style="{StaticResource LabelDefaultSignikaMedium}"
+                                       Text="{Binding SubTitle}"
+                                       TextColor="Gray"/>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Border Grid.RowSpan="2"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                StrokeShape="Ellipse"
+                HeightRequest="60"
+                WidthRequest="60"
+                Padding="15"
+                StrokeThickness="0"
+                BackgroundColor="{StaticResource DarkBlue}">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Radius="10"
+                        Opacity="0.7"/>
+            </Border.Shadow>
+
+            <Border.Behaviors>
+                <behaviors:UltimateTapAnimationBehavior Command="{Binding AddPunchCommand}"/>
+            </Border.Behaviors>
+
+            <Image>
+                <Image.Source>
+                    <FontImageSource FontFamily="MyFont"
+                                     Glyph="{x:Static ext:FontAwesomeIcons.Plus}"/>
+                </Image.Source>
+            </Image>
+
+        </Border>
+
+
+    </Grid>
 </pages:BasePage>

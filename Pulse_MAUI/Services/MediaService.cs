@@ -28,7 +28,6 @@ public class MediaService : IMediaService
         }
 
         return image;
-
     }
 
     public async Task<ImageFile> TakePhoto()

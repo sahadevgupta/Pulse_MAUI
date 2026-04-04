@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using Pulse_MAUI.Models;
 using Pulse_MAUI.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,9 @@ namespace Pulse_MAUI.Extensions
                 .AddTransient<ActivityTaskViewModel>()
                 .AddTransient<FileListViewModel>()
                 .AddTransient<ImportSettingsPageViewModel>()
-                .AddTransient<MenuPageViewModel>();
+                .AddTransient<MenuPageViewModel>()
+                .AddTransient<PunchListPageViewModel>()
+                .AddTransient<PunchPageViewModel>();
 
             return builder;
         }
