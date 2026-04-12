@@ -106,7 +106,6 @@ namespace Pulse_MAUI.ViewModels
                     {
                         var setting = await _dataManager.GetSettings();
                         ServiceInfo info = ReadSettingData(setting);
-                        var x = 1;
 
                         if (info.ServiceError.Length == 0)
                         {
@@ -116,6 +115,8 @@ namespace Pulse_MAUI.ViewModels
 
                             ServiceName = "Found Service: " + info.ServiceTitle;
                             // Please restart the application
+                            DialogService.HideLoading();
+                            App.Current?.Windows[0].Page = new AppShell();
                         }
                         else
                         {

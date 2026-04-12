@@ -140,7 +140,7 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
     private async Task TakePhoto()
     {
         var result = await mediaService.TakePhoto();
-        if (result is not null && activity is not null)
+        if (result is not null && !string.IsNullOrEmpty(result.Url))
         {
             if (fileType == FileType.Punch)
             {
@@ -160,7 +160,7 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
     private async Task PickPhoto()
     {
         var result = await mediaService.PickPhotoAsync();
-        if (result is not null)
+        if (result is not null && !string.IsNullOrEmpty(result.Url))
         {
             if (fileType == FileType.Punch)
             {

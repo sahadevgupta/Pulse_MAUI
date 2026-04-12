@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Pulse_MAUI.Constants;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
 using Pulse_MAUI.Views;
@@ -84,6 +85,16 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
     #region [ Commands ]
 
     [RelayCommand]
+    private async Task ViewPunch(PunchItem punch)
+    {
+        var param = new Dictionary<string, object>
+        {
+            { NavigationParamConstant.Punch, punch}
+        };
+        await NavigationService.NavigateToPage<PunchPage>(parameters: param);
+    }
+
+    [RelayCommand]
     private async Task AddPunch()
     {
         await NavigationService.NavigateToPage<PunchPage>();
@@ -93,12 +104,12 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
 
     #region [ Override Methods ]
 
-    public override async Task LoadDataOnAppearing()
+    public override void LoadDataOnAppearing()
     {
-        await InitializeDataAsync();
+        _ = InitializeDataAsync();
     }
 
-    protected override async void OnUnitChanged(string? newValue)
+    protected override void OnUnitChanged(string? newValue)
     {
         try
         {
@@ -113,7 +124,7 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
                 CommSystem = punchSearchService.FetchCommSystem();
                 this.OnPropertyChanged("SelectedCommSystem");
             }
-            await FilterResults();
+            _ = FilterResults();
         }
         catch (Exception ex)
         {
@@ -121,7 +132,7 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
         }
     }
 
-    protected override async void OnCommSystemChanged(string? newValue)
+    protected override void OnCommSystemChanged(string? newValue)
     {
         try
         {
@@ -138,7 +149,7 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
                 this.OnPropertyChanged("SelectedComponentType");
             }
 
-            await FilterResults();
+            _ = FilterResults();
         }
         catch (Exception ex)
         {
@@ -146,7 +157,7 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
         }
     }
 
-    protected override async void OnComponentTagChanged(string? newValue)
+    protected override void OnComponentTagChanged(string? newValue)
     {
         try
         {
@@ -163,7 +174,7 @@ public partial class PunchListPageViewModel(IViewModelParameters viewModelParame
 
 
             this.OnPropertyChanged("SelectedComponentTag");
-            await FilterResults();
+            _ = FilterResults();
         }
         catch (Exception ex)
         {

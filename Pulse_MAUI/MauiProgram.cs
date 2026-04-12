@@ -31,7 +31,7 @@ namespace Pulse_MAUI
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("Signika-Regular.ttf", "SignikaRegular");
-                    fonts.AddFont("Signika-Bold.ttf", "SignikaSemibold");
+                    fonts.AddFont("Signika-Bold.ttf", "SignikaBold");
                     fonts.AddFont("Signika-Medium.ttf", "SignikaMedium");
 
                     //fontawesome

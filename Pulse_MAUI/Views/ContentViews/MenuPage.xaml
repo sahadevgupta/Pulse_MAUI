@@ -47,6 +47,14 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MenuOption">
                     <VerticalStackLayout Padding="10">
+                        <VerticalStackLayout.Triggers>
+                            <DataTrigger TargetType="VerticalStackLayout"
+                                         Binding="{Binding IsSelected}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor"
+                                        Value="{StaticResource Gray100}"/>
+                            </DataTrigger>
+                        </VerticalStackLayout.Triggers>
                         <VerticalStackLayout.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding BindingContext.MenuSelectedCommand,Source={x:Reference optionsList}}"
                                                   CommandParameter="{Binding .}"/>

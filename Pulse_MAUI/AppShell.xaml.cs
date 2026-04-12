@@ -69,7 +69,7 @@ namespace Pulse_MAUI
             {
                 Dispatcher.Dispatch(async () =>
                 {
-                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, string.Format(UserInterface.Synchronise_Date, AppHelpers.SyncDate), "Ok");
+                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, string.Format(UserInterface.Synchronise_Date, AppHelpers.SyncDate), "OK");
 
                 });
             }
@@ -77,7 +77,7 @@ namespace Pulse_MAUI
             {
                 Dispatcher.Dispatch(async () =>
                 {
-                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, UserInterface.Synchronise_DateNone, "Ok");
+                    await DisplayAlertAsync(UserInterface.Synchronise_Reminder, UserInterface.Synchronise_DateNone, "OK");
                 });
             }
         }

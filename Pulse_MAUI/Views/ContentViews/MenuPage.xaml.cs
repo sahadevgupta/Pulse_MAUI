@@ -12,12 +12,12 @@ public partial class MenuPage : ContentView
 		BindingContext = viewModel;
 	}
 
-	protected override async void OnParentSet()
+	protected override void OnParentSet()
 	{
 		base.OnParentSet();
 		if (Parent != null && viewModel != null)
 		{
-			await viewModel.LoadDataOnNavigatedTo();
+			viewModel.LoadDataOnNavigatedTo();
 		}
 	}
 

@@ -27,17 +27,14 @@ namespace Pulse_MAUI.ViewModels
 
         #region [ Methods ]
 
-        public virtual Task LoadDataOnAppearing()
+        public virtual void LoadDataOnAppearing()
         {
-            return Task.CompletedTask;
         }
-        public virtual Task LoadDataOnDisappearing()
+        public virtual void LoadDataOnDisappearing()
         {
-            return Task.CompletedTask;
         }
-        public virtual Task LoadDataOnNavigatedTo()
+        public virtual void LoadDataOnNavigatedTo()
         {
-            return Task.CompletedTask;
         }
 
         protected void HandleException(Exception exception)

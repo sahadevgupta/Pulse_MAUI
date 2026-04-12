@@ -40,7 +40,7 @@ public class BasePage : ContentPage
 
 	#region [ Override Methods ]
 
-	protected override async void OnAppearing()
+	protected override void OnAppearing()
 	{
 		base.OnAppearing();
 		Shell.SetTabBarIsVisible(this, false);
@@ -52,7 +52,7 @@ public class BasePage : ContentPage
 
 		if (BindingContext is BaseViewModel viewModel)
 		{
-			await viewModel.LoadDataOnAppearing();
+			viewModel.LoadDataOnAppearing();
 		}
 	}
 
@@ -65,12 +65,12 @@ public class BasePage : ContentPage
 	// 	}
 	// }
 
-	protected override async void OnDisappearing()
+	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
 		if (BindingContext is BaseViewModel viewModel)
 		{
-			await viewModel.LoadDataOnDisappearing();
+			viewModel.LoadDataOnDisappearing();
 		}
 	}
 
@@ -79,7 +79,7 @@ public class BasePage : ContentPage
 		base.OnNavigatedTo(args);
 		if (BindingContext is BaseViewModel viewModel && args.NavigationType != NavigationType.Pop)
 		{
-			await viewModel.LoadDataOnNavigatedTo();
+			viewModel.LoadDataOnNavigatedTo();
 		}
 	}
 	#endregion

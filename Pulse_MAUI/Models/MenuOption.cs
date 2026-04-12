@@ -1,4 +1,5 @@
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 namespace Pulse_MAUI.Models
 {
 	/// <summary>
@@ -7,7 +8,7 @@ namespace Pulse_MAUI.Models
 	/// Author: Manuel Dambrine
 	/// Created: 29/03/2013
 	/// </summary>
-	public class MenuOption
+	public partial class MenuOption : ObservableObject
 	{
 		/// <summary>
 		/// Gets or sets the icon source.
@@ -21,20 +22,23 @@ namespace Pulse_MAUI.Models
 		/// <value>The title.</value>
 		public string? Title { get; set; }
 
-        public string? Route { get; set; }
+		public string? Route { get; set; }
 
-        /// <summary>
-        /// Gets or sets the type of the target.
-        /// </summary>
-        /// <value>The type of the target.</value>
-        public Type? TargetType { get; set; }
+		/// <summary>
+		/// Gets or sets the type of the target.
+		/// </summary>
+		/// <value>The type of the target.</value>
+		public Type? TargetType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the index.
-        /// </summary>
-        /// <value>
-        /// The index.
-        /// </value>
-        public int Index { get; set; }
-	}	
+		/// <summary>
+		/// Gets or sets the index.
+		/// </summary>
+		/// <value>
+		/// The index.
+		/// </value>
+		public int Index { get; set; }
+
+		[ObservableProperty]
+		private bool _isSelected;
+	}
 }

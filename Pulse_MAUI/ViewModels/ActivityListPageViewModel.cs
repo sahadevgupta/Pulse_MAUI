@@ -98,9 +98,9 @@ namespace Pulse_MAUI.ViewModels
 
         #region [ Override Methods ]
 
-        public override async Task LoadDataOnAppearing()
+        public override void LoadDataOnAppearing()
         {
-            await InitializeDataAsync();
+            _ = InitializeDataAsync();
         }
 
         protected override void OnUnitChanged(string? newValue)

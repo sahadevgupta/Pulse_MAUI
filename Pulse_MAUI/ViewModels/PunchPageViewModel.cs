@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Pulse_MAUI.Constants;
@@ -170,6 +171,17 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
     partial void OnSelectedDisciplineChanged(string? value)
     {
         _ = UpdatePunchDiscipline(value ?? string.Empty);
+    }
+
+    partial void OnSelectedStatusChanged(string? value)
+    {
+        _ = UpdatePunchStatus(value ?? string.Empty);
+    }
+
+    private async Task UpdatePunchStatus(string value)
+    {
+        if (Punch != null)
+            Punch.Status = await lookupService.GetStatusLookupId(value);
     }
 
     private async Task UpdatePunchDiscipline(string value)
@@ -691,6 +703,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
                 .Punches?
                 .FirstOrDefault(p => p.Id == Punch?.Id);
 
+            IsNewPunch = false;
             await DialogService.ShowAlertDialog("Suceess!!", UserInterface.ActivityPage_Saved, Enums.AlertType.Success);
         }
         else

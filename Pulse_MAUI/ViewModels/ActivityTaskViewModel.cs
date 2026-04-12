@@ -106,9 +106,9 @@ IEquipmentService equipmentService,
 
     #region [ Override Methods ]
 
-    public override async Task LoadDataOnAppearing()
+    public override void LoadDataOnAppearing()
     {
-        await RefreshTaskTitleAsync();
+        _ = RefreshTaskTitleAsync();
     }
 
     #endregion

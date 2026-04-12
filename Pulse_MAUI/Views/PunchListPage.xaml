@@ -73,7 +73,7 @@
                                 Padding="10">
 
                             <Border.Behaviors>
-                                <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewActivityCommand, Source={x:Reference activitiesList}}"
+                                <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewPunchCommand, Source={x:Reference activitiesList}}"
                                                                         CommandParameter="{Binding .}"/>
                             </Border.Behaviors>
                             <VerticalStackLayout>

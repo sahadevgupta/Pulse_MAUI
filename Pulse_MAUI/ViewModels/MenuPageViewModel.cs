@@ -148,12 +148,15 @@ namespace Pulse_MAUI.ViewModels
 
                 // 5. Finish sync
                 await _appWorkflowManager.SyncLogService.PostSyncLogFinish(transactionBatchId);
-                var a = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
+                var syncDateTime = DateTime.UtcNow.ToString("dd-MM-yyyy, HH:mm:ss");
 
-                AppHelpers.SyncDate = a;
+                AppHelpers.SyncDate = syncDateTime;
 
                 // Refresh user
                 await _appWorkflowManager.UserService.FetchCurrentUser();
+
+                await DialogService.ShowAlertDialog("Suceess!!", "Sync Completed", Enums.AlertType.Success);
+
             }
             catch (DatasyncInvalidOperationException ex)
             {
@@ -243,6 +246,13 @@ namespace Pulse_MAUI.ViewModels
 
             // }
             // else
+
+            foreach (var menu in OptionsItems)
+            {
+                menu.IsSelected = false;
+            }
+
+            selectedMenu.IsSelected = true;
             await Shell.Current.GoToAsync($"//{selectedMenu.Route}");
             Shell.Current.FlyoutIsPresented = false;
         }
@@ -278,9 +288,9 @@ namespace Pulse_MAUI.ViewModels
 
         #region [ Override Methods ]
 
-        public async override Task LoadDataOnNavigatedTo()
+        public override void LoadDataOnNavigatedTo()
         {
-            await InitializeDataAsync();
+            _ = InitializeDataAsync();
         }
 
         #endregion

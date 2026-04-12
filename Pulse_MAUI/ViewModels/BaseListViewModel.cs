@@ -157,15 +157,14 @@ public abstract partial class BaseListViewModel : BaseViewModel
 
     #region [ Override Methods ]
 
-    public override async Task LoadDataOnNavigatedTo()
+    public override void LoadDataOnNavigatedTo()
     {
-        await RegisterEvents();
+        _ = RegisterEvents();
     }
 
-    public override async Task LoadDataOnDisappearing()
+    public override void LoadDataOnDisappearing()
     {
         DeregisterEvents();
-        await Task.CompletedTask;
     }
 
     #endregion
