@@ -32,6 +32,9 @@ namespace Pulse_MAUI.ViewModels
         ObservableCollection<MenuOption>? _optionsItems;
 
         [ObservableProperty]
+        private bool _isSyncEnabled;
+
+        [ObservableProperty]
         private string? _currentDate = DateTime.Now.ToString("dd MMMM yyyy HH:mm:ss");
 
         public string ProfileName
@@ -81,6 +84,7 @@ namespace Pulse_MAUI.ViewModels
         {
             if (AppHelpers.AzureServiceUrl == "https://www.syncservice.com")
             {
+                IsSyncEnabled = false;
                 OptionsItems = new ObservableCollection<MenuOption>
                 {
                     new MenuOption{
@@ -93,6 +97,7 @@ namespace Pulse_MAUI.ViewModels
             }
             else
             {
+                IsSyncEnabled = true;
                 OptionsItems = new ObservableCollection<MenuOption>
                 {
                   new MenuOption{

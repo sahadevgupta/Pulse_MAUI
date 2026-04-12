@@ -76,6 +76,6 @@
                 Command="{Binding SynchroniseDataCommand}"
                 Text="{resources:Translate MenuPage_Synchronise}"
                 VerticalOptions="End"
-                IsEnabled="{Binding AppEnabled}"/>
+                IsEnabled="{Binding IsSyncEnabled}"/>
     </Grid>
 </ContentView>

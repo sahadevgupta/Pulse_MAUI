@@ -243,7 +243,6 @@ namespace Pulse_MAUI.Services
         {
             string blobConnectionString = await dataManager.GetAzureBlobConnection();
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(blobConnectionString);
-
             return storageAccount.CreateCloudBlobClient();
         }
 
