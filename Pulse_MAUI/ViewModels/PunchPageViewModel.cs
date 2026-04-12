@@ -21,7 +21,6 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
     IEnumerable<Project> availableProjects = Enumerable.Empty<Project>();
     IEnumerable<Lookup> availableStatusList = Enumerable.Empty<Lookup>();
-    bool newPunch;
     int OpenStatusId;
 
     [ObservableProperty]
@@ -149,6 +148,8 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         SelectedActivity = null;
         ActivitiesName?.Clear();
 
+        Punch?.ComponentType = value;
+
         _ = FetchComponentTagsCommand.ExecuteAsync(null);
     }
 
@@ -158,6 +159,31 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         ActivitiesName?.Clear();
 
         _ = FetchActivitiesCommand.ExecuteAsync(null);
+    }
+
+    partial void OnSelectedPriorityChanged(string? value)
+    {
+        _ = UpdatePunchPriority(value ?? string.Empty);
+
+    }
+
+    partial void OnSelectedDisciplineChanged(string? value)
+    {
+        _ = UpdatePunchDiscipline(value ?? string.Empty);
+    }
+
+    private async Task UpdatePunchDiscipline(string value)
+    {
+        if (Punch != null)
+        {
+            Punch.DisciplineId = await disciplineService.GetDisciplineId(value);
+        }
+    }
+
+    private async Task UpdatePunchPriority(string value)
+    {
+        if (Punch != null)
+            Punch.Priority = await priorityService.GetPriorityId(Punch.ProjectId, value);
     }
 
     internal async Task OnBackPressed()
@@ -196,7 +222,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
             await ExecutePopulateControlListAsync();
 
-            if (Activity != null)
+            if (Activity != null && Punch != null)
             {
                 //Set some default values
                 Punch.Controltype = ActivityControlType;
@@ -220,7 +246,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         }
         catch (Exception ex)
         {
-
+            HandleException(ex);
         }
     }
 
@@ -299,7 +325,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
             responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
         }
 
-        if (punchItemToValidate.Priority.Value == 0)
+        if (punchItemToValidate.Priority.GetValueOrDefault() == 0)
         {
             responseMessage = responseMessage + Environment.NewLine + "You must select a Priority";
         }
@@ -325,21 +351,6 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
         availableProjects = await lookupService.GetProjectListAsync();
 
-#if DEBUG
-        var list = availableProjects.ToList();
-
-        // Add new item
-        list.Add(new Project
-        {
-            ProjectId = 2,
-            Name = "Test Project",
-            Description = "Test Project Added for Testiing in Dev Env",
-            Enabled = true
-        });
-
-        // Assign back if needed
-        availableProjects = list;
-#endif
 
         if (availableProjects != null && availableProjects.Count() > 0)
         {
@@ -424,7 +435,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         {
             foreach (var availableStatus in availableStatusList)
             {
-                StatusList.Add(availableStatus.Value);
+                StatusList.Add(availableStatus.Value ?? string.Empty);
             }
 
             if (Punch == null)
@@ -438,7 +449,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
             OpenStatusId = await lookupService.GetStatusLookupId("Open");
 
             // New punch items can only be set as open
-            if (newPunch)
+            if (IsNewPunch)
             {
                 var ClosedStatusId = await lookupService.GetStatusLookupId("Closed");
                 status = availableStatusList
@@ -548,21 +559,21 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
 
         var PUId = (availableUnits != null && !string.IsNullOrEmpty(SelectedUnit))
-                         ? availableUnits.FirstOrDefault(p => p.Name == SelectedUnit && p.ProjectId == Punch.ProjectId)?.PUId : 0;
+                         ? availableUnits.FirstOrDefault(p => p.Name == SelectedUnit && p.ProjectId == Punch?.ProjectId)?.PUId : 0;
 
         var PUCId = (availableCommSystems != null && !string.IsNullOrEmpty(SelectedCommSystem)) ? availableCommSystems
             .FirstOrDefault(p => p.Name == SelectedCommSystem && p.PUId == PUId)?.PUCId : 0;
 
         var availableComponentTypeNames = availableComponents
-                .Where(p => p.ProjectId == Punch.ProjectId && p.PUCId == PUCId)
+                .Where(p => p.ProjectId == Punch?.ProjectId && p.PUCId == PUCId)
                 .OrderBy(p => p.Name)
                 .Select(p => p.Name)
                 .Distinct();
 
-        ComponentTypes = new ObservableCollection<string>(availableComponentTypeNames);
+        ComponentTypes = new ObservableCollection<string>(availableComponentTypeNames!);
 
 
-        SelectedComponentType = Punch.ComponentType;
+        SelectedComponentType = Punch?.ComponentType;
     }
 
     [RelayCommand]
@@ -576,16 +587,16 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
           .FirstOrDefault(p => p.Name == SelectedCommSystem)?.PUCId : 0;
 
         var availableComponentTagIds = availableComponents
-            .Where(p => p.ProjectId == Punch.ProjectId &&
-                   p.Name == Punch.ComponentType &&
+            .Where(p => p.ProjectId == Punch?.ProjectId &&
+                   p.Name == Punch?.ComponentType &&
                    p.PUCId == PUCId)
                .OrderBy(p => p.TagId)
             .Select(p => p.TagId)
             .Distinct();
 
-        ComponentTags = new ObservableCollection<string>(availableComponentTagIds);
+        ComponentTags = new ObservableCollection<string>(availableComponentTagIds!);
 
-        SelectedComponentTag = Punch.TagId;
+        SelectedComponentTag = Punch?.TagId ?? string.Empty;
     }
 
     [RelayCommand]
@@ -600,11 +611,11 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
                 var tagId = SelectedComponentTag;
 
                 var availableActivityNames = availableActivities
-                        .Where(a => a.ProjectId == Punch.ProjectId && a.TagId == tagId)
+                        .Where(a => a.ProjectId == Punch?.ProjectId && a.TagId == tagId)
                         .OrderBy(a => a.Name)
                         .Select(a => a.Name);
 
-                ActivitiesName = new ObservableCollection<string>(availableActivityNames);
+                ActivitiesName = new ObservableCollection<string>(availableActivityNames!);
 
 
                 var PCAId = (availableCommSystems != null && !string.IsNullOrEmpty(SelectedComponentTag)) ? availableActivities
@@ -644,7 +655,7 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
     private async Task SavePunch()
     {
         // Populate values on punch item
-        if (newPunch)
+        if (IsNewPunch && Punch != null)
         {
             Punch.PUId = (availableUnits != null && !string.IsNullOrEmpty(SelectedUnit))
                ? availableUnits.FirstOrDefault(p => p.Name == SelectedUnit && p.ProjectId == Punch.ProjectId)?.PUId : 0;
@@ -667,18 +678,18 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
 
         }
 
-        var validationMessage = await ValidatePunchItemForSave(Punch);
+        var validationMessage = await ValidatePunchItemForSave(Punch!);
 
         if (validationMessage.Length == 0)
         {
-            await punchService.SavePunchItem(Punch);
+            await punchService.SavePunchItem(Punch!);
 
             //Reload the punch data
             await punchService.FetchPunchListAsync();
 
             Punch = punchService
-                .Punches
-                .FirstOrDefault(p => p.Id == Punch.Id);
+                .Punches?
+                .FirstOrDefault(p => p.Id == Punch?.Id);
 
             await DialogService.ShowAlertDialog("Suceess!!", UserInterface.ActivityPage_Saved, Enums.AlertType.Success);
         }
@@ -703,16 +714,17 @@ public partial class PunchPageViewModel(IViewModelParameters viewModelParameters
         base.ApplyQueryAttributes(query);
         if (query.ContainsKey(NavigationParamConstant.Punch))
         {
-            IsNewPunch = false;
+
             Punch = (PunchItem)query[NavigationParamConstant.Punch];
         }
         else
         {
-            IsNewPunch = true;
+
             query.TryGetValue(NavigationParamConstant.Activity, out object? arg);
             Activity = arg != null ? (Activity)arg : null;
 
         }
+        IsNewPunch = Punch == null;
         _ = InitializeDataAsync();
     }
 

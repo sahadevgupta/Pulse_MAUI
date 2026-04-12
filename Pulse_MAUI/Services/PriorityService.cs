@@ -41,6 +41,24 @@ public class PriorityService(IDataManager dataManager) : IPriorityService
 
     }
 
+    /// <summary>
+    /// Gets the priority identifier.
+    /// </summary>
+    /// <param name="projectId">The project identifier.</param>
+    /// <param name="value">The value.</param>
+    /// <returns></returns>
+    public async Task<int> GetPriorityId(int projectId, string value)
+    {
+        var availablePriorities = await GetPriorityListAsync();
+
+        var priority = availablePriorities
+            .ToList()
+            .Where(p => p.ProjectId == projectId && p.Value == value)
+            .FirstOrDefault(p => p.Value == value);
+
+        return priority != null ? priority.PriorityId : 0;
+    }
+
 }
 
 

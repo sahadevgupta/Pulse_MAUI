@@ -97,13 +97,13 @@ namespace Pulse_MAUI.ViewModels
                 {
                   new MenuOption{
                       Title = "Activities",
-                      Route = nameof(ActivityListPage),
+                      Route = $@"activityroot\activitylist",
                       TargetType = typeof(ActivityListPage),
                       Index = 0
                   }
                   ,new MenuOption{
                       Title = "Punch List",
-                      Route = nameof(PunchListPage),
+                      Route = $@"activityroot\punchlist",
                       TargetType = typeof(PunchListPage),
                       Index = 1
                   }

@@ -7,4 +7,5 @@ public interface IPriorityService
 {
     Task<IEnumerable<Priority>> GetPriorityListAsync();
     Task<IEnumerable<Priority>> GetPriorityListForProjectAsync(int projectId);
+    Task<int> GetPriorityId(int projectId, string value);
 }
