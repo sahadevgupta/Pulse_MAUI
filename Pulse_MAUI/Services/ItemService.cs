@@ -25,6 +25,7 @@ namespace Pulse_MAUI.Services
 		/// <param name="itemsToSave">Activity Tasks to save.</param>
 		public async Task SaveItem(Item itemToSave)
         {
+            //itemToSave.UploadedBy = UserService.Instance.CurrentUser.ApexId;
 
             //itemToSave.createdAt = DateTime.Now;
 

@@ -1,12 +1,8 @@
 ﻿using Mopups.Interfaces;
-using Mopups.Services;
 using Pulse_MAUI.Enums;
 using Pulse_MAUI.Extensions;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Popups;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pulse_MAUI.Services
 {
@@ -38,11 +34,14 @@ namespace Pulse_MAUI.Services
                     System.Threading.Timer? timer = null;
                     timer = new System.Threading.Timer((obj) =>
                     {
-                        popupNavigation.PopAsync();
+                        // Check if the popup stack is not empty before popping
+                        if (popupNavigation.PopupStack.Count > 0)
+                        {
+                            popupNavigation.PopAsync();
+                        }
                         timer?.Dispose();
                     }, null, timeout, System.Threading.Timeout.Infinite);
                 });
-
             }
         }
         public void ShowLoading(string message = "Loading...")

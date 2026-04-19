@@ -22,7 +22,6 @@ public class MediaService : IMediaService
 
         if (results != null && results.Any())
         {
-
             image.Url = results[0].FullPath;
             image.AvailableToDelete = true;
         }

@@ -83,6 +83,7 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
 
         Item item = new Item();
         item.LocalPath = result.Url;
+        item.TempFilePath = result.Url;
 
         if (fileType == FileType.Punch)
         {
@@ -108,6 +109,8 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
         Files.Add(image);
 
         await itemService.SaveItem(item);
+
+        var a = await itemService.GetItemListAsync();
     }
 
 

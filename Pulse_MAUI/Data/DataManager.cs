@@ -523,7 +523,7 @@ namespace Pulse_MAUI.Data
                     Debug.WriteLine("No pending operations to push");
                 }
 
-                //await this.itemTable.PurgeAsync();
+                var a1 = await this.itemTable.ToListAsync();
                 await this.itemTable.PullItemsAsync(this.itemTable.CreateQuery());
 
                 var a = await this.itemTable.ToListAsync();
@@ -683,7 +683,7 @@ namespace Pulse_MAUI.Data
             try
             {
 
-                result = await projectServices.GetAzureConnectionAsync().ConfigureAwait(false);
+                result = await projectServices.GetAzureConnectionAsync();
                 //result = output.Value<string>();
             }
             catch (Exception ex)
@@ -703,7 +703,7 @@ namespace Pulse_MAUI.Data
             string result = "";
             try
             {
-                result = await projectServices.GetAppConfigAsync().ConfigureAwait(false);
+                result = await projectServices.GetAppConfigAsync();
             }
             catch (Exception ex)
             {
@@ -748,7 +748,7 @@ namespace Pulse_MAUI.Data
             try
             {
                 // SyncLog/PostLogItem
-                await projectServices.PostSyncLogAsync(myEntry).ConfigureAwait(false);
+                await projectServices.PostSyncLogAsync(myEntry);
             }
 
             catch (Exception ex)

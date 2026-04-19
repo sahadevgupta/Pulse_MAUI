@@ -82,6 +82,18 @@ namespace Pulse_MAUI.Services
 
             if (itemData != null)
             {
+                foreach (var item in itemData)
+                {
+                    if (item.AzurePath == null && item.LocalPath == null)
+                    {
+                        var folderPath = Path.Combine(FileSystem.CacheDirectory, "Captured");
+                        // save the file into local storage
+                        var localFilePath = Path.Combine(folderPath, item.Name);
+                        if (File.Exists(localFilePath))
+                            item.LocalPath = localFilePath;
+                    }
+
+                }
 
                 var newItems = itemData.Where(i => i.AzurePath == null && i.LocalPath != null && i.ControlType == ControlType);
 

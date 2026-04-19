@@ -205,21 +205,41 @@ namespace Pulse_MAUI.Services
                 if (item.ControlType != null)
                 {
                     var cloudBlobContainer = await GetBlobContainer();
+                    //CloudBlockBlob blob = GetBlobContainer().GetBlockBlobReference(blobPath);
                     CloudBlob blob = cloudBlobContainer.GetBlobReference(blobPath);
 
                     var imgByte = System.IO.File.ReadAllBytes(item.LocalPath);
 
-                    if (imgByte != null)
+                    try
                     {
-                        blob.Properties.ContentType = item.MimeType;
-                        CloudBlockBlob blockBlob = cloudBlobContainer.GetBlockBlobReference(blobPath);
-                        await blockBlob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
 
-                        item.AzurePath = blobPath;
-                        item.LocalPath = null;
-                        item.Size = imgByte.Length;
 
-                        await itemService.SaveItem(item);
+                        if (imgByte != null)
+                        {
+                            // blob.Properties.ContentType = item.MimeType;
+                            CloudBlockBlob blockBlob = cloudBlobContainer.GetBlockBlobReference(blobPath);
+                            // await blockBlob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
+
+                            // item.AzurePath = blobPath;
+                            // item.LocalPath = null;
+                            // item.Size = imgByte.Length;
+
+                            // await itemService.SaveItem(item);
+
+                            blob.Properties.ContentType = item.MimeType;
+                            await blockBlob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
+
+                            item.AzurePath = blobPath;
+
+                            item.LocalPath = null;
+                            item.Size = imgByte.Length;
+
+                            await itemService.SaveItem(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
                     }
                 }
             }
@@ -236,6 +256,16 @@ namespace Pulse_MAUI.Services
         }
 
         /// <summary>
+        /// Gets the BLOB container.
+        /// </summary>
+        /// <returns></returns>
+        private CloudBlobContainer GetCloudBlobContainer()
+        {
+            dynamic client = GetAzureClient();
+            return client.GetContainerReference(AppHelpers.BlobStorageName);
+        }
+
+        /// <summary>
         /// Gets the azure client.
         /// </summary>
         /// <returns></returns>
@@ -245,6 +275,19 @@ namespace Pulse_MAUI.Services
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(blobConnectionString);
             return storageAccount.CreateCloudBlobClient();
         }
+
+
+        // /// <summary>
+        // /// Gets the azure client.
+        // /// </summary>
+        // /// <returns></returns>
+        // private CloudBlobClient GetAzureClient()
+        // {
+        //     // Get a handle on account, create a blob storage client and get container proxy
+        //     CloudStorageAccount storageAccount = CloudStorageAccount.Parse(BlobConnectionString);
+
+        //     return storageAccount.CreateCloudBlobClient();
+        // }
 
         /// <summary>
         /// Check if BLOB exists

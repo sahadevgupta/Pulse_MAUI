@@ -50,5 +50,8 @@ namespace Pulse_MAUI.Models
 
         [ObservableProperty]
         private string? _localReferenceID;
+
+        [JsonIgnore]
+        public string? TempFilePath;
     }
 }
