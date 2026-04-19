@@ -225,8 +225,9 @@ namespace Pulse_MAUI.Services
                             // item.Size = imgByte.Length;
 
                             // await itemService.SaveItem(item);
+                            blockBlob.Properties.ContentType = item.MimeType;
 
-                            blob.Properties.ContentType = item.MimeType;
+                            //blob.Properties.ContentType
                             await blockBlob.UploadFromByteArrayAsync(imgByte, 0, imgByte.Length);
 
                             item.AzurePath = blobPath;

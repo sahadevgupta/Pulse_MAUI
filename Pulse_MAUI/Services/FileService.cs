@@ -82,7 +82,7 @@ public class FileService(IDataManager dataManager,
 
                 if (!String.IsNullOrEmpty(item.AzurePath))
                 {
-                    img.Url = FileSystem.Current.AppDataDirectory + "/" + blobStorageRef + "/" + item.AzurePath.Replace("\\", "/");
+                    img.Url = FileSystem.Current.AppDataDirectory + "/" + item.AzurePath.Replace("\\", "/");
                     img.AvailableToDelete = false;
                 }
                 else
@@ -164,7 +164,7 @@ public class FileService(IDataManager dataManager,
 
             if (!String.IsNullOrEmpty(item.AzurePath))
             {
-                img.Url = FileSystem.Current.AppDataDirectory + "/" + blobStorageRef + "/" + item.AzurePath.Replace("\\", "/");
+                img.Url = FileSystem.Current.AppDataDirectory + "/" + item.AzurePath.Replace("\\", "/");
                 img.AvailableToDelete = false;
             }
             else

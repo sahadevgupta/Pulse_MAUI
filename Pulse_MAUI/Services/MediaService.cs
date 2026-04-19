@@ -22,7 +22,8 @@ public class MediaService : IMediaService
 
         if (results != null && results.Any())
         {
-            image.Url = results[0].FullPath;
+            var localFilePath = await SaveFileToCacheAsync(results[0]);
+            image.Url = localFilePath;
             image.AvailableToDelete = true;
         }
 
@@ -41,18 +42,7 @@ public class MediaService : IMediaService
 
             if (photo != null)
             {
-                var folderPath = Path.Combine(FileSystem.CacheDirectory, "Captured");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                // save the file into local storage
-                localFilePath = Path.Combine(folderPath, photo.FileName);
-
-                using Stream sourceStream = await photo.OpenReadAsync();
-                using FileStream localFileStream = File.OpenWrite(localFilePath);
-
-                await sourceStream.CopyToAsync(localFileStream);
+                localFilePath = await SaveFileToCacheAsync(photo);
             }
 
 
@@ -63,4 +53,21 @@ public class MediaService : IMediaService
         return image;
     }
 
+    private static async Task<string> SaveFileToCacheAsync(FileResult photo)
+    {
+        string localFilePath;
+        var folderPath = Path.Combine(FileSystem.CacheDirectory, "Captured");
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        // save the file into local storage
+        localFilePath = Path.Combine(folderPath, photo.FileName);
+
+        using Stream sourceStream = await photo.OpenReadAsync();
+        using FileStream localFileStream = File.OpenWrite(localFilePath);
+
+        await sourceStream.CopyToAsync(localFileStream);
+        return localFilePath;
+    }
 }

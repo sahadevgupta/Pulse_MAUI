@@ -109,8 +109,6 @@ public partial class FileListViewModel(IViewModelParameters viewModelParameters,
         Files.Add(image);
 
         await itemService.SaveItem(item);
-
-        var a = await itemService.GetItemListAsync();
     }
 
 

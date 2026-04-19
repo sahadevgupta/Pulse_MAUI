@@ -50,5 +50,16 @@ namespace Pulse_MAUI.Models
         /// The type of the control.
         /// </value>
         public int? ControlType { get; set; }
+
+        public ImageSource ImageSource
+        {
+            get
+            {
+                return ImageSource.FromStream(() =>
+                {
+                    return File.OpenRead(Url);
+                });
+            }
+        }
     }
 }
