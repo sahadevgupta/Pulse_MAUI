@@ -45,7 +45,7 @@
                                          Padding="12">
                                 <Label TextColor="White"
                                        Margin="50,0"
-                                       Text="{Binding Description,TargetNullValue='Testing fehj ejrejhjehfjerhjerhjgherj ger gerjgh ejrghejrk ghkejrg hekrjgh ejfh ewjfhkejwh fjkehfjkeh fjkehfkejf hekjfhejkrfhjkerfhejkrfhejkrf'}"
+                                       Text="{Binding Description}"
                                        FontSize="14"
                                        MaxLines="1"
                                        LineBreakMode="TailTruncation"

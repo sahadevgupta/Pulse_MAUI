@@ -55,9 +55,9 @@ namespace Pulse_MAUI.Services
             return user;
         }
 
-        public Task LogoutAsync(DatasyncClient client)
+        public async Task LogoutAsync(DatasyncClient client)
         {
-            throw new NotImplementedException();
+            await authService.Logoff();
         }
     }
 }

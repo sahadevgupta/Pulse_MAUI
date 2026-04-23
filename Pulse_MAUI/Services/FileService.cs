@@ -114,7 +114,7 @@ public class FileService(IDataManager dataManager,
                 if (!String.IsNullOrEmpty(item.AzurePath))
                 {
                     string LocalAzureReference = item.AzurePath.Replace("\\", "/");
-                    img.Url = FileSystem.Current.AppDataDirectory + "/" + blobStorageRef + "/" + LocalAzureReference;
+                    img.Url = FileSystem.Current.AppDataDirectory + "/" + LocalAzureReference;
                     img.AvailableToDelete = false;
                 }
                 else

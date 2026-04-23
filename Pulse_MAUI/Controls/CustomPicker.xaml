@@ -14,10 +14,10 @@
                TextColor="{Binding TitleColor,Source={x:Reference customPicker}}"/>
 
         <Border StrokeShape="RoundRectangle 8"
-                StrokeThickness="0"
+                StrokeThickness="1"
                 Grid.Row="1"
                 Padding="10,0"
-                BackgroundColor="WhiteSmoke">
+                BackgroundColor="White">
 
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>

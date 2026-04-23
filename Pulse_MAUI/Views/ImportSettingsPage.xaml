@@ -6,45 +6,150 @@
                 xmlns:pages="clr-namespace:Pulse_MAUI.Views"
                 xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
                 xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
-                Title="ImportSettingsPage"
-                x:DataType="vm:ImportSettingsPageViewModel">
+                x:DataType="vm:ImportSettingsPageViewModel"
+                Shell.BackgroundColor="{StaticResource DarkBlue}"
+                Shell.ForegroundColor="{StaticResource White}"
+                Shell.TitleColor="{StaticResource White}"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-  <StackLayout Padding="20,20,20,20"
-      Spacing="10">
-    <Label Text="{resources:Translate ImportPage_ImportTitle}"
-           VerticalOptions="CenterAndExpand"
-           HorizontalOptions="CenterAndExpand"
-           BackgroundColor="OrangeRed"
-        TextColor="White"/>
+    <!-- <StackLayout Padding="20,20,20,20"
+                 Spacing="10">
+        <Label Text="{resources:Translate ImportPage_ImportTitle}"
+               VerticalOptions="CenterAndExpand"
+               HorizontalOptions="CenterAndExpand"
+               BackgroundColor="OrangeRed"
+               TextColor="White"/>
 
-    <Label Text="Please enter the provided address into the box below and click Import to apply your customer settings to the application. Click Close to restart the application with new settings applied.">
-    </Label>
+        <Label Text="Please enter the provided address into the box below and click Import to apply your customer settings to the application. Click Close to restart the application with new settings applied.">
+        </Label>
 
 
-    <Label Text="{Binding ServiceName}"
-        x:Name="lblServiceName"
-           VerticalOptions="CenterAndExpand"
-           HorizontalOptions="CenterAndExpand"/>
+        <Label Text="{Binding ServiceName}"
+               x:Name="lblServiceName"
+               VerticalOptions="CenterAndExpand"
+               HorizontalOptions="CenterAndExpand"/>
 
-    <Entry Text="{Binding Url}"
-        x:Name="txtUrl"
-        HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand"
-        WidthRequest="350"/>
+        <Entry Text="{Binding Url}"
+               x:Name="txtUrl"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand"
+               WidthRequest="350"/>
 
-    <Button x:Name="btnImport"
-            Command="{Binding ImportSettingsCommand}"
-            HorizontalOptions="Center"
-            Text="{resources:Translate ImportPage_Import}"
-            WidthRequest="150"/>
+        <Button x:Name="btnImport"
+                Command="{Binding ImportSettingsCommand}"
+                HorizontalOptions="Center"
+                Text="{resources:Translate ImportPage_Import}"
+                WidthRequest="150"/>
 
-    <Button x:Name="btnCancel"
-            Command="{Binding CancelCommand}"
-            HorizontalOptions="Center"
-            Text="Close"
-            WidthRequest="150"/>
+        <Button x:Name="btnCancel"
+                Command="{Binding CancelCommand}"
+                HorizontalOptions="Center"
+                Text="Close"
+                WidthRequest="150"/>
 
-  </StackLayout>
+    </StackLayout> -->
 
+    <ScrollView x:Name="BodyScrollView">
+        <StackLayout Padding="20"
+                     Spacing="16">
+            <Border Style="{StaticResource CardFrame}">
+                <StackLayout Spacing="8">
+                    <Label Text="How to configure"
+                           FontFamily="SignikaBold"
+                           TextColor="{StaticResource DarkBlue}"
+                           FontSize="16"/>
+                    <Label Text="1. Confirm or enter the service URL. Your project manager will confirm the correct service URL for your project."
+                           FontSize="13"
+                           TextColor="{StaticResource TextGray}"/>
+                    <Label Text="2. Tap Import Settings &amp; Login. Your project manager will confirm when your account has been added to Pulse. Login using your own account."
+                           FontSize="13"
+                           TextColor="{StaticResource TextGray}"/>
+                    <Label Text="3. Use the Logout button on the sidebar to logout. Remember to synchronise first to avoid losing progress."
+                           FontSize="13"
+                           TextColor="{StaticResource TextGray}"/>
+                </StackLayout>
+            </Border>
+
+            <Label Text="Service URL"
+                   FontFamily="SignikaBold"
+                   Style="{StaticResource SectionTitleLabel}"/>
+            <Border Style="{StaticResource InputFieldBorder}">
+                <Entry MaxLength="255"
+                       Text="{Binding ServiceUrl}"
+                       Placeholder="https://your-service.azurewebsites.net"
+                       Keyboard="Url"
+                       FontFamily="SignikaRegular"
+                       TextColor="{StaticResource Black}"
+                       BackgroundColor="White"/>
+            </Border>
+
+
+            <Border Style="{StaticResource CardFrame}">
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="12"
+                      VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Save Pulse Photos to Device Photo Gallery"
+                               Style="{StaticResource SectionTitleLabel}"/>
+                        <Label Text="When enabled, photos taken in Pulse are also saved to your device and so are not removed on sync or logout. This setting resets on logout."
+                               FontSize="13"
+                               TextColor="{StaticResource TextGray}"/>
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1"
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            IsToggled="{Binding SavePhotosToDeviceGallery, Mode=TwoWay}"/>
+                </Grid>
+            </Border>
+
+            <Label x:Name="StatusLabel"
+                   Text="{Binding StatusMessage}"
+                   FontFamily="SignikaRegular"
+                   FontSize="13"
+                   IsVisible="{Binding StatusMessage, Converter={toolkit:IsStringNotNullOrEmptyConverter}}">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding StatusMessage}"
+                                 Value="Sign-in failed.">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource ErrorRed}"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding StatusMessage}"
+                                 Value="Login failed.">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource ErrorRed}"/>
+                    </DataTrigger>
+                    <Trigger TargetType="Label"
+                             Property="Text"
+                             Value="{x:Null}">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource TealGreen}"/>
+                    </Trigger>
+                </Label.Triggers>
+                <Label.TextColor>
+                    <StaticResource Key="TealGreen"/>
+                </Label.TextColor>
+            </Label>
+            <Button Text="Import Settings &amp; Login"
+                    Command="{Binding ImportSettingsCommand}"
+                    Style="{StaticResource AccentButton}"
+                    HorizontalOptions="Fill"
+                    Margin="0,8,0,0">
+                <!-- <Button.Triggers>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="False">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource LightGray}"/>
+                        <Setter Property="BackgroundColor"
+                                Value="{StaticResource ChalkGrey}"/>
+                        <Setter Property="Opacity"
+                                Value="1"/>
+                    </Trigger>
+                </Button.Triggers> -->
+            </Button>
+        </StackLayout>
+    </ScrollView>
 
 </pages:BasePage>

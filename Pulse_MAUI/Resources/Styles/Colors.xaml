@@ -12,7 +12,6 @@
     <Color x:Key="NeutralGray">#8C8C8C</Color>
     <Color x:Key="LightBackground">#F6F9FC</Color>
     <Color x:Key="CardBackground">#FFFFFF</Color>
-    <Color x:Key="ChalkGrey">#cee1ea</Color>
     <Color x:Key="Green">#008000</Color>
 
     <!-- GRADIENT -->
@@ -44,14 +43,33 @@
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
 
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
-    <Color x:Key="DarkBlue">#04273F</Color>
     <Color x:Key="StockLightBlue">#27aaE1</Color>
     <Color x:Key="PopupBackground">#A0000000</Color>
+
+    <!-- Engineurs Primary Palette -->
+    <Color x:Key="DarkBlue">#04273F</Color>
+    <Color x:Key="BrightBlue">#27AAE1</Color>
+    <Color x:Key="TealGreen">#4CA092</Color>
+    <Color x:Key="ChalkGrey">#CEE1EA</Color>
+    <Color x:Key="Black">#231F20</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+
+    <!-- Engineurs Secondary Palette -->
+    <Color x:Key="BrightGreen">#8DC63F</Color>
+    <Color x:Key="DarkGreen">#09382B</Color>
+    <Color x:Key="Purple">#5A3795</Color>
+    <Color x:Key="Mauve">#95A2D2</Color>
+    <Color x:Key="PaleBlue">#80C0E9</Color>
+
+    <!-- Functional colours -->
+    <Color x:Key="ErrorRed">#b51727</Color>
+    <Color x:Key="TextGray">#4d4e53</Color>
+    <Color x:Key="LightGray">#828282</Color>
+    <Color x:Key="BorderGray">#CEE1EA</Color>
+    <Color x:Key="PageBackground">#F5F8FA</Color>
 
 
 </ResourceDictionary>

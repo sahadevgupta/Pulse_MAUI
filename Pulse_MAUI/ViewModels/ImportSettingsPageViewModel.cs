@@ -1,10 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Xml.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Pulse_MAUI.Enums;
+using Pulse_MAUI.Events;
 using Pulse_MAUI.Helpers;
 using Pulse_MAUI.Interfaces;
 using Pulse_MAUI.Models;
-using Pulse_MAUI.Services;
-using System.Xml.Linq;
 
 namespace Pulse_MAUI.ViewModels
 {
@@ -16,10 +18,10 @@ namespace Pulse_MAUI.ViewModels
         readonly IDataManager _dataManager;
 
         [ObservableProperty]
-        private string? _url;
+        private string? _serviceUrl;
 
         [ObservableProperty]
-        private string? _serviceName;
+        private string _statusMessage = string.Empty;
 
         #endregion
 
@@ -28,9 +30,9 @@ namespace Pulse_MAUI.ViewModels
         {
             _dataManager = dataManager;
 
-            //#if DEBUG
-            Url = "https://pulseargwebappmobile.azurewebsites.net";
-            //#endif
+#if DEBUG
+            _serviceUrl = "https://pulseargwebappmobile.azurewebsites.net";
+#endif
         }
 
         #region [ Methods & Service Calls ]
@@ -73,8 +75,11 @@ namespace Pulse_MAUI.ViewModels
                 serviceInfo.ServiceError = "No Content in Response";
             }
             return serviceInfo;
+        }
 
-
+        private static void RefreshMenuState()
+        {
+            if (Shell.Current is AppShell s) s.SetStartupItem();
         }
 
         #endregion
@@ -84,26 +89,29 @@ namespace Pulse_MAUI.ViewModels
         [RelayCommand]
         private async Task ImportSettings()
         {
+            StatusMessage = "Connecting…";
             DialogService.ShowLoading("Importing Service Settings..");
 
             try
             {
-                if (Url?.Length > 0 || Url != @"http://")
+                if (ServiceUrl?.Length > 0 || ServiceUrl != @"http://")
                 {
                     string customUrl = string.Empty;
-                    var lastCharacter = Url.Last();
-                    if (Url.EndsWith("/"))
+                    var lastCharacter = ServiceUrl.Last();
+                    if (ServiceUrl.EndsWith("/"))
                     {
-                        customUrl = Url + @"Mobile/ServiceSetting.xml";
+                        customUrl = ServiceUrl + @"Mobile/ServiceSetting.xml";
                     }
                     else
                     {
-                        customUrl = Url + @"/Mobile/ServiceSetting.xml";
+                        customUrl = ServiceUrl + @"/Mobile/ServiceSetting.xml";
                     }
-                    var user = await _dataManager.LoginAsync(Url);
+                    StatusMessage = "Signing in with Microsoft…";
+                    var user = await _dataManager.LoginAsync(ServiceUrl);
 
                     if (user is object)
                     {
+                        StatusMessage = "Retrieving service settings…";
                         var setting = await _dataManager.GetSettings();
                         ServiceInfo info = ReadSettingData(setting);
 
@@ -113,30 +121,43 @@ namespace Pulse_MAUI.ViewModels
                             AppHelpers.AzureServiceUrl = info.ServiceURL;
                             AppHelpers.BlobStorageName = info.StorageName;
 
-                            ServiceName = "Found Service: " + info.ServiceTitle;
+                            StatusMessage = "Found Service: " + info.ServiceTitle;
                             // Please restart the application
                             DialogService.HideLoading();
-                            App.Current?.Windows[0].Page = new AppShell();
+                            RefreshMenuState();
+                            if (Shell.Current != null)
+                            {
+                                await Shell.Current.GoToAsync("//activities");
+                                await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.FlyoutIsPresented = false);
+                            }
+
+                            //var menuvm = ServiceHelper.GetService<MenuPageViewModel>();
+                            //if (menuvm != null)
+                            {
+                                WeakReferenceMessenger.Default.Send(new NotificationMessageEvent(NotifyType.StartSync));
+
+                            }
+
                         }
                         else
                         {
-                            ServiceName = "No Service Found";
+                            StatusMessage = "No Service Found";
                         }
                     }
                     else
                     {
-                        ServiceName = "Unable to Authenticate User";
+                        StatusMessage = "Unable to Authenticate User";
                     }
 
                 }
                 else
                 {
-                    ServiceName = "Please enter the provided address";
+                    StatusMessage = "Please enter the provided address";
                 }
             }
             catch (Exception ex)
             {
-                ServiceName = "Error: " + ex.Message;
+                StatusMessage = "Error: " + ex.Message;
             }
             finally
             {

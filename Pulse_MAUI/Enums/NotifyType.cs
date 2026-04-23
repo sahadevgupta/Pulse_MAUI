@@ -8,5 +8,6 @@ namespace Pulse_MAUI.Enums
     {
         ActivityFilterRefresh,
         PostSyncRefresh,
+        StartSync
     }
 }

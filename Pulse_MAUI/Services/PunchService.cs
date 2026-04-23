@@ -28,16 +28,18 @@ namespace Pulse_MAUI.Services
             var availableComSys = await lookupService.GetCommSystemListAsync();
             var availablePunches = await dataManager.GetAllPunchItemsAsync();
             var statusList = await lookupService.GetStatusLookups();
-
+            var priorities = await dataManager.GetAllPriority();
+            var lookups = await dataManager.GetAllLookupsAsync();
 
             foreach (var availablePunchItem in availablePunches)
             {
 
                 availablePunchItem.CommissioningSystem = availableComSys.Where(c => c.PUCId == availablePunchItem.PUCId).Select(c => c.Name).FirstOrDefault() ?? string.Empty;
                 availablePunchItem.Unit = availableUnits.Where(u => u.PUId == availablePunchItem.PUId).Select(u => u.Name).FirstOrDefault() ?? string.Empty;
+                //var a = statusList.Where(s => s.LookupId == availablePunchItem.Status).Select(s => s.Value).FirstOrDefault() ?? string.Empty;
                 availablePunchItem.StatusString = statusList.Where(s => s.LookupId == availablePunchItem.Status).Select(s => s.Value).FirstOrDefault() ?? string.Empty;
 
-                //availablePunchItem.IsDirty = false;
+                availablePunchItem.PriorityName = ResolvePriorityName(availablePunchItem, priorities, lookups);
 
 
                 try
@@ -107,5 +109,34 @@ namespace Pulse_MAUI.Services
             await dataManager.SavePunchItemAsync(punchItemToSave);
 
         }
+
+        private static string ResolvePriorityName(PunchItem punch, IEnumerable<Priority> priorities, IEnumerable<Lookup> lookups)
+        {
+            if (!string.IsNullOrWhiteSpace(punch.PriorityName))
+                return punch.PriorityName;
+
+            var projectPriority = priorities
+                .Where(p => p.ProjectId == punch.ProjectId && !string.IsNullOrWhiteSpace(p.Value))
+                .FirstOrDefault(p => p.PriorityId == punch.Priority);
+            if (projectPriority != null)
+                return projectPriority.Value!;
+
+            var anyPriority = priorities
+                .Where(p => !string.IsNullOrWhiteSpace(p.Value))
+                .FirstOrDefault(p => p.PriorityId == punch.Priority);
+            if (anyPriority != null)
+                return anyPriority.Value!;
+
+            var lookupPriority = lookups
+                .FirstOrDefault(l =>
+                    string.Equals(l.Name, "Priority", StringComparison.OrdinalIgnoreCase)
+                    && l.LookupId == punch.Priority
+                    && !string.IsNullOrWhiteSpace(l.Value));
+            if (lookupPriority != null)
+                return lookupPriority.Value!;
+
+            return string.Empty;
+        }
+
     }
 }

@@ -10,15 +10,15 @@ public class StatusToColorConverter : IValueConverter
         if (value == null)
             return Colors.Transparent;
 
-        string status = value.ToString()?.Trim().ToLower();
-
+        var status = value as string;
         return status switch
         {
-            "pending" => Application.Current.Resources["Gray300"],
-            "in progress" => Application.Current.Resources["PrimaryBlue"],
-            "closed complete" => Application.Current.Resources["PrimaryGreen"],
-            _ => Application.Current.Resources["Gray300"]
+            "Closed Complete" => Color.FromArgb("#5A3795"),
+            "Pending" => Color.FromArgb("#27AAE1"),
+            "In Progress" => Color.FromArgb("#4CA092"),
+            _ => Color.FromArgb("#04273F")
         };
+
     }
 
 

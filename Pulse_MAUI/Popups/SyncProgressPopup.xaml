@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopup:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="Pulse_MAUI.Popups.SyncProgressPopup"
+                 xmlns:mopup="clr-namespace:Mopups.Pages;assembly=Mopups"
+                 xmlns:mopupsanim="clr-namespace:Mopups.Animations;assembly=Mopups"
+                 BackgroundColor="{StaticResource PopupBackground}"
+                 CloseWhenBackgroundIsClicked="False"
+                 x:Name="syncProgressPopup">
+
+    <!-- <mopup:PopupPage.Animation>
+        <mopupsanim:MoveAnimation
+            DurationIn="400"
+            DurationOut="300"
+            EasingIn="SinIn"
+            EasingOut="SinOut"
+            PositionIn="Bottom"
+            PositionOut="Bottom"/>
+    </mopup:PopupPage.Animation> -->
+
+    <Border
+        Margin="20,30"
+        Padding="20"
+        BackgroundColor="White"
+        StrokeShape="RoundRectangle 12">
+
+        <Grid RowDefinitions="Auto,Auto,*,Auto"
+              RowSpacing="10">
+            <Label Grid.Row="0"
+                   Text="Synchronising"
+                   Style="{StaticResource SectionBannerLabel}"
+                   TextColor="{StaticResource DarkBlue}"/>
+
+            <Border Style="{StaticResource InputFieldBorder}"
+                    Grid.Row="1"
+                    MinimumHeightRequest="96"
+                    MaximumHeightRequest="180"
+                    VerticalOptions="Start">
+                <VerticalStackLayout>
+                    <Label Text="Current Step"
+                           Style="{StaticResource SectionTitleLabel}"/>
+                    <Label Text="{Binding CurrentStep}"
+                           x:Name="currentSteplbl"
+                           Style="{StaticResource LabelDefaultSignikaRegular}"
+                           TextColor="{StaticResource Black}"
+                           LineBreakMode="WordWrap"/>
+                    <Label Text="{Binding WarningMessage}"
+                           Style="{StaticResource LabelDefaultSignikaMedium}"
+                           TextColor="#D92D20"
+                           LineBreakMode="WordWrap"
+                           IsVisible="{Binding HasWarning}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Grid.Row="2"
+                    Style="{StaticResource InputFieldBorder}">
+
+                <Grid RowDefinitions="Auto,*"
+                      RowSpacing="6">
+                    <Label Grid.Row="0"
+                           Text="Overview"
+                           Style="{StaticResource SectionTitleLabel}"/>
+
+                    <CollectionView ItemsSource="{Binding SyncSteps}"
+                                    Grid.Row="1">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto,*"
+                                      ColumnSpacing="10"
+                                      Padding="2,3,2,4"
+                                      RowDefinitions="Auto,Auto">
+                                    <Label Text="[   ]"
+                                           x:Name="StepIndicator"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="{Binding Name}"
+                                           x:Name="StepNameLabel"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           FontAttributes="Bold"/>
+                                    <Label Text="{Binding Description}"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           FontSize="Small"/>
+
+                                    <!-- <Label Text="{Binding IsCurrent}"/> -->
+
+                                    <Grid.Triggers>
+                                        <DataTrigger TargetType="Grid"
+                                                     Binding="{Binding IsCurrent}"
+                                                     Value="True">
+                                            <Setter TargetName="StepIndicator"
+                                                    Property="Label.Text"
+                                                    Value="[...]"/>
+                                            <Setter TargetName="StepIndicator"
+                                                    Property="Label.TextColor"
+                                                    Value="{StaticResource BrightBlue}"/>
+                                            <Setter TargetName="StepNameLabel"
+                                                    Property="Label.TextColor"
+                                                    Value="{StaticResource BrightBlue}"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Grid"
+                                                     Binding="{Binding IsCompleted}"
+                                                     Value="True">
+                                            <Setter TargetName="StepIndicator"
+                                                    Property="Label.Text"
+                                                    Value="[OK]"/>
+                                            <Setter TargetName="StepIndicator"
+                                                    Property="Label.TextColor"
+                                                    Value="{StaticResource BrightGreen}"/>
+                                            <Setter TargetName="StepNameLabel"
+                                                    Property="Label.TextColor"
+                                                    Value="{StaticResource Black}"/>
+                                        </DataTrigger>
+                                    </Grid.Triggers>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+
+                </Grid>
+
+            </Border>
+
+
+            <Button Grid.Row="3"
+                    Text="{Binding CloseButtonText}"
+                    x:Name="button"
+                    Clicked="button_Clicked"
+                    IsEnabled="{Binding CanClose}"
+                    Style="{StaticResource AccentButton}"
+                    TextColor="{StaticResource White}"
+                    VerticalOptions="End"/>
+        </Grid>
+
+    </Border>
+
+</mopup:PopupPage>

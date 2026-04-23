@@ -44,6 +44,10 @@ namespace Pulse_MAUI.Services
                 });
             }
         }
+
+        public Task<bool> ShowConfirmAsync(string message, string title = "Pulse CMS",
+            string accept = "Yes", string cancel = "No")
+                => MainThread.InvokeOnMainThreadAsync(() => ShowConfirmCoreAsync(title, message, accept, cancel));
         public void ShowLoading(string message = "Loading...")
         {
             HideLoading();
@@ -54,5 +58,8 @@ namespace Pulse_MAUI.Services
         {
             lodingService.HideLoading();
         }
+
+        private static Task<bool> ShowConfirmCoreAsync(string title, string message, string accept, string cancel)
+            => Shell.Current.DisplayAlertAsync(title, message, accept, cancel);
     }
 }

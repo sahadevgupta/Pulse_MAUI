@@ -280,19 +280,20 @@ namespace Pulse_MAUI.Models
 		}
 
 
-		string? statusString;
+		string? _statusString;
 		[JsonIgnore] // doesnt get passed in the sync
 		public string? StatusString
 		{
 
 			get
 			{
-				return statusString;
+				return _statusString;
 			}
 
 			set
 			{
-				value = statusString;
+				_statusString = value;
+				OnPropertyChanged(nameof(StatusString));
 			}
 
 		}
@@ -496,7 +497,26 @@ namespace Pulse_MAUI.Models
 		/// </value>
 		public int? DisciplineId { get; set; }
 
+		public string IdFormatted => PunchId > 0 ? $"Punch ID: {PunchId}" : "New Punch";
 
+		string? _priorityName;
+		[JsonIgnore]
+		public string? PriorityName
+		{
+			get => _priorityName;
+			set
+			{
+				if (_priorityName != value)
+				{
+					_priorityName = value;
+					OnPropertyChanged();
+					OnPropertyChanged(nameof(PriorityDisplay));
+				}
+			}
+		}
+
+		[JsonIgnore]
+		public string PriorityDisplay => !string.IsNullOrWhiteSpace(PriorityName) ? PriorityName : (Priority > 0 ? $"Priority {Priority}" : string.Empty);
 
 	}
 }

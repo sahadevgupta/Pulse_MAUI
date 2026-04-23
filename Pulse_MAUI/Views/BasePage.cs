@@ -11,7 +11,7 @@ public class BasePage : ContentPage
 {
 	public BasePage()
 	{
-		ApplyStatusBarStyle();
+		//ApplyStatusBarStyle();
 	}
 
 	#region [ Methods ]
@@ -44,11 +44,11 @@ public class BasePage : ContentPage
 	{
 		base.OnAppearing();
 		Shell.SetTabBarIsVisible(this, false);
-		Shell.SetBackButtonBehavior(this, new BackButtonBehavior
-		{
-			Command = (this.BindingContext as BaseViewModel)?.ShowFlyoutCommand,
-			IconOverride = "hamburger_menu.png"
-		});
+		// Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+		// {
+		// 	Command = (this.BindingContext as BaseViewModel)?.ShowFlyoutCommand,
+		// 	IconOverride = "hamburger_menu.png"
+		// });
 
 		if (BindingContext is BaseViewModel viewModel)
 		{

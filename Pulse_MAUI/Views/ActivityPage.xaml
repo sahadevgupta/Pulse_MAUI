@@ -61,7 +61,6 @@
               RowSpacing="10"
               RowDefinitions="Auto,*">
 
-
               <Border Style="{StaticResource DefaultBorderStyle}"
                       StrokeShape="RoundRectangle 8"
                       BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
@@ -107,6 +106,21 @@
                                    <local:ActivityTaskView/>
                             </DataTemplate>
                      </CollectionView.ItemTemplate>
+                     <CollectionView.EmptyView>
+                            <StackLayout VerticalOptions="Center"
+                                         HorizontalOptions="Center"
+                                         Padding="40">
+                                   <Label Text="No activities found."
+                                          HorizontalOptions="Center"
+                                          TextColor="{StaticResource LightGray}"
+                                          FontSize="22"/>
+                                   <!-- <Label Text="Pull down to sync and refresh data."
+                                          HorizontalOptions="Center"
+                                          TextColor="{StaticResource LightGray}"
+                                          FontSize="18"
+                                          Margin="0,4,0,0"/> -->
+                            </StackLayout>
+                     </CollectionView.EmptyView>
                      <CollectionView.Footer>
                             <VerticalStackLayout BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
                                                  Margin="10"

@@ -10,10 +10,11 @@
              xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
              x:DataType="vm:MenuPageViewModel">
 
-    <Grid RowDefinitions="2.5*,6.5*,1*">
+    <Grid RowDefinitions="Auto,*,Auto"
+          RowSpacing="10">
 
         <!-- HEADER -->
-        <Grid Grid.Row="0"
+        <!-- <Grid Grid.Row="0"
               RowDefinitions="Auto,Auto"
               ColumnDefinitions="Auto,*"
               BackgroundColor="{x:Static helpers:Colors.StandardOrange}"
@@ -35,47 +36,223 @@
 
             <views:ProfileView Grid.Row="1"
                                Grid.ColumnSpan="2"/>
+        </Grid> -->
+
+        <Grid x:Name="FixedHeaderContainer"
+              Grid.Row="0"
+              BackgroundColor="#04273F"
+              Padding="16,16,20,10"
+              RowDefinitions="Auto,*,Auto">
+            <Image Grid.Row="0"
+                   Source="pulse_logo_horizontal_white.png"
+                   HeightRequest="72"
+                   HorizontalOptions="Start"
+                   Margin="0,12,0,0"
+                   Aspect="AspectFit">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenPulseWebsiteCommand}"/>
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Row="1"
+                   Text="Completions made precise."
+                   FontFamily="sans-serif"
+                   FontSize="16"
+                   TextColor="#CEE1EA"
+                   Margin="2,14,0,0"/>
+            <Label Grid.Row="2"
+                   Text="{Binding ProfileName}"
+                   FontFamily="sans-serif-medium"
+                   FontSize="18"
+                   TextColor="White"
+                   Margin="2,12,0,0"/>
         </Grid>
 
-        <!-- MENU LIST -->
-        <CollectionView
-            Grid.Row="1"
-            x:Name="optionsList"
-            ItemsSource="{Binding OptionsItems}"
-            SelectionMode="Single">
 
+        <CollectionView Grid.Row="1"
+                        Margin="0,10,0,0"
+                        x:Name="menus"
+                        ItemsSource="{Binding OptionsItems}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="8"
+                                   Orientation="Vertical"/>
+            </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MenuOption">
-                    <VerticalStackLayout Padding="10">
-                        <VerticalStackLayout.Triggers>
-                            <DataTrigger TargetType="VerticalStackLayout"
-                                         Binding="{Binding IsSelected}"
-                                         Value="True">
-                                <Setter Property="BackgroundColor"
-                                        Value="{StaticResource Gray100}"/>
-                            </DataTrigger>
-                        </VerticalStackLayout.Triggers>
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding BindingContext.MenuSelectedCommand,Source={x:Reference optionsList}}"
+                    <Border BackgroundColor="#0B3A59"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16"
+                            Margin="12,0"
+                            Padding="14,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.MenuSelectedCommand,Source={x:Reference menus}}"
                                                   CommandParameter="{Binding .}"/>
-                        </VerticalStackLayout.GestureRecognizers>
-                        <Label Text="{Binding Title}"
-                               Style="{StaticResource LabelLargeSignikaRegularStockLightBlueStyle}"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="12">
+                            <Image Source="{Binding IconSource}"
+                                   HeightRequest="24"
+                                   WidthRequest="24"
+                                   VerticalOptions="Center"
+                                   Aspect="AspectFit"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Title}"
+                                   FontFamily="sans-serif-medium"
+                                   FontSize="20"
+                                   TextColor="White"
+                                   VerticalTextAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                    </VerticalStackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- FOOTER BUTTON -->
-        <Button Grid.Row="2"
-                CornerRadius="0"
-                Padding="15"
-                TextTransform="Uppercase"
-                x:Name="synchroniseButton"
-                Command="{Binding SynchroniseDataCommand}"
-                Text="{resources:Translate MenuPage_Synchronise}"
-                VerticalOptions="End"
-                IsEnabled="{Binding IsSyncEnabled}"/>
+        <!-- <VerticalStackLayout x:Name="FixedMenuContainer"
+                             Grid.Row="1"
+                             Padding="12,8"
+                             Spacing="8"
+                             VerticalOptions="Start">
+            <Border BackgroundColor="#0B3A59"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14,12">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnActivitiesTapped"/>
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="12">
+                    <Image Source="activities_icon.svg"
+                           HeightRequest="24"
+                           WidthRequest="24"
+                           VerticalOptions="Center"
+                           Aspect="AspectFit"/>
+                    <Label Grid.Column="1"
+                           Text="Activities"
+                           FontFamily="sans-serif-medium"
+                           FontSize="20"
+                           TextColor="White"
+                           VerticalTextAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#0B3A59"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14,12">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPunchesTapped"/>
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="12">
+                    <Image Source="punches_icon.svg"
+                           HeightRequest="24"
+                           WidthRequest="24"
+                           VerticalOptions="Center"
+                           Aspect="AspectFit"/>
+                    <Label Grid.Column="1"
+                           Text="Punches"
+                           FontFamily="sans-serif-medium"
+                           FontSize="20"
+                           TextColor="White"
+                           VerticalTextAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="#0B3A59"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14,12">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnImportSettingsTapped"/>
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="12">
+                    <Image Source="settings_icon.svg"
+                           HeightRequest="24"
+                           WidthRequest="24"
+                           VerticalOptions="Center"
+                           Aspect="AspectFit"/>
+                    <Label Grid.Column="1"
+                           Text="Import Settings"
+                           FontFamily="sans-serif-medium"
+                           FontSize="20"
+                           TextColor="White"
+                           VerticalTextAlignment="Center"/>
+                </Grid>
+            </Border>
+        </VerticalStackLayout> -->
+
+        <StackLayout x:Name="FixedFooterContainer"
+                     Grid.Row="2"
+                     Padding="20,12,20,20"
+                     Spacing="10">
+            <Label Text="{Binding LastSyncText}"
+                   Style="{StaticResource LabelDefaultSignikaMedium}"
+                   FontSize="14"
+                   TextColor="#CEE1EA"
+                   Margin="0,0,5,4"/>
+            <Button Text="Synchronise"
+                    Command="{Binding SynchroniseDataUnifiedCommand}"
+                    IsEnabled="{Binding IsAuthenticated}"
+                    Style="{StaticResource FlyoutLightButton}">
+                <Button.Triggers>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="False">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource LightGray}"/>
+                        <Setter Property="BackgroundColor"
+                                Value="{StaticResource ChalkGrey}"/>
+                        <Setter Property="Opacity"
+                                Value="0.6"/>
+                    </Trigger>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="True">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource DarkBlue}"/>
+                        <Setter Property="BackgroundColor"
+                                Value="#FFFFFF"/>
+                        <Setter Property="Opacity"
+                                Value="1"/>
+                    </Trigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="Logout"
+                    Command="{Binding LogoutCommand}"
+                    ImageSource="logout_icon.svg"
+                    IsEnabled="{Binding IsAuthenticated}"
+                    Style="{StaticResource FlyoutAccentButton}">
+                <Button.Triggers>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="False">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource LightGray}"/>
+                        <Setter Property="Opacity"
+                                Value="0.45"/>
+                    </Trigger>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="True">
+                        <Setter Property="TextColor"
+                                Value="{StaticResource White}"/>
+                        <Setter Property="Opacity"
+                                Value="1"/>
+                    </Trigger>
+                </Button.Triggers>
+            </Button>
+            <Label Text="© 2026 Engineurs Pulse"
+                   FontFamily="SignikaRehular"
+                   FontSize="10"
+                   TextColor="#CEE1EA"/>
+            <Label Text="{Binding BuildNumberText}"
+                   FontFamily="SignikaRehular"
+                   FontSize="10"
+                   TextColor="#CEE1EA"
+                   Margin="0,-6,0,0"/>
+        </StackLayout>
+
+
     </Grid>
 </ContentView>

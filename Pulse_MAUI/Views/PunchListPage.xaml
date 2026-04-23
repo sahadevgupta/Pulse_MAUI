@@ -14,10 +14,11 @@
                 xmlns:views="clr-namespace:Pulse_MAUI.Views.ContentViews"
                 xmlns:vm="clr-namespace:Pulse_MAUI.ViewModels"
                 x:DataType="vm:PunchListPageViewModel"
-                Title="PunchListPage">
+                x:Name="PunchListPageRoot">
 
     <pages:BasePage.Resources>
-        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <converters:PunchPriorityColorConverter x:Key="PunchPriorityColorConverter"/>
+        <converters:PunchPriorityTextColorConverter x:Key="PunchPriorityTextColorConverter"/>
     </pages:BasePage.Resources>
 
     <Grid Padding="10"
@@ -76,21 +77,85 @@
                                 <behaviors:UltimateTapAnimationBehavior Command="{Binding BindingContext.ViewPunchCommand, Source={x:Reference activitiesList}}"
                                                                         CommandParameter="{Binding .}"/>
                             </Border.Behaviors>
-                            <VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto,Auto">
 
-                                <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                <Border Grid.Row="0"
+                                        Grid.Column="0"
+                                        BackgroundColor="{StaticResource DarkGreen}"
+                                        StrokeThickness="0"
+                                        Padding="6,2"
+                                        HorizontalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="4"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding IdFormatted}"
+                                           TextColor="White"
+                                           FontSize="11"
+                                           FontFamily="sans-serif-black"/>
+                                </Border>
+
+                                <!-- <Label Style="{StaticResource LabelDefaultSignikaRegular}"
                                        Text="{Binding PunchId, StringFormat='ID: {0}'}"
-                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+                                       TextColor="{x:Static helpers:Colors.StockLightBlue}"/> -->
 
                                 <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                       Margin="0,6,0,0"
+                                       Grid.Row="1"
                                        Text="{Binding Title}"
                                        TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
 
                                 <Label Style="{StaticResource LabelDefaultSignikaMedium}"
                                        Text="{Binding SubTitle}"
-                                       TextColor="Gray"/>
+                                       TextColor="Gray"
+                                       Grid.Row="2"/>
 
-                            </VerticalStackLayout>
+                                <Border Grid.Row="0"
+                                        Grid.Column="1"
+                                        BackgroundColor="{StaticResource DarkGreen}"
+                                        StrokeThickness="0"
+                                        Padding="6,2"
+                                        HorizontalOptions="End">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="4"/>
+                                    </Border.StrokeShape>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding StatusString}"
+                                                     Value="Open">
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{StaticResource TealGreen}"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding StatusString}"
+                                                     Value="Closed">
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{StaticResource DarkGreen}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding StatusString}"
+                                           TextColor="White"
+                                           FontSize="11"/>
+                                </Border>
+
+                                <Border Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,0,0,0"
+                                        BackgroundColor="{Binding Priority, Converter={StaticResource PunchPriorityColorConverter}}"
+                                        StrokeThickness="0"
+                                        Padding="6,2"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="End"
+                                        IsVisible="{Binding PriorityDisplay,Converter={toolkit:IsStringNotNullOrEmptyConverter}}">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="4"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding PriorityDisplay}"
+                                           TextColor="{Binding Priority, Converter={StaticResource PunchPriorityTextColorConverter}}"
+                                           FontSize="11"/>
+                                </Border>
+
+                            </Grid>
                         </Border>
                     </Grid>
 

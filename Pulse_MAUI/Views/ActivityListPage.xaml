@@ -82,12 +82,26 @@
 
                                 <VerticalStackLayout>
 
-                                    <Label Style="{StaticResource LabelDefaultSignikaRegular}"
+                                    <Border BackgroundColor="{StaticResource DarkBlue}"
+                                            StrokeThickness="0"
+                                            Padding="6,2"
+                                            HorizontalOptions="Start">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="4"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="{Binding PCAId, StringFormat='Activity ID: {0}'}"
+                                               TextColor="White"
+                                               FontSize="11"
+                                               FontFamily="sans-serif-black"/>
+                                    </Border>
+
+                                    <!-- <Label Style="{StaticResource LabelDefaultSignikaRegular}"
                                            Text="{Binding PCAId, StringFormat='ID: {0}'}"
-                                           TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
+                                           TextColor="{x:Static helpers:Colors.StockLightBlue}"/> -->
 
                                     <Label Style="{StaticResource LabelDefaultSignikaRegular}"
                                            Text="{Binding Name}"
+                                           Margin="0,6,0,2"
                                            TextColor="{x:Static helpers:Colors.StockLightBlue}"/>
 
                                     <Label Style="{StaticResource LabelDefaultSignikaMedium}"

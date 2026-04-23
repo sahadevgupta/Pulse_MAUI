@@ -9,9 +9,11 @@
     xmlns:models="clr-namespace:Pulse_MAUI.Models"
     xmlns:views="clr-namespace:Pulse_MAUI.Views"
     xmlns:resources="clr-namespace:Pulse_MAUI.Resources.Languages"
-    Shell.BackgroundColor="Black"
-    Shell.TitleColor="White"
-    Shell.ForegroundColor="White">
+    FlyoutBackgroundColor="#04273F"
+    BackgroundColor="{StaticResource DarkBlue}"
+    ForegroundColor="{StaticResource White}"
+    TitleColor="{StaticResource White}"
+    FlyoutIsPresented="False">
 
     <Shell.FlyoutBackdrop>
         <SolidColorBrush Color="#66000000"/>
@@ -19,17 +21,53 @@
 
     <Shell.FlyoutContentTemplate>
         <DataTemplate>
-            <views:MenuPage/>
+            <views:MenuPage x:Name="FixedHeaderContainer"/>
             <!-- FULL SCREEN FLYOUT -->
         </DataTemplate>
     </Shell.FlyoutContentTemplate>
 
-    <FlyoutItem Route="activityroot">
+    <!-- <FlyoutItem Route="activityroot">
         <ShellContent
             Route="activitylist"
             ContentTemplate="{DataTemplate views:ActivityListPage}"/>
         <ShellContent
             Route="punchlist"
             ContentTemplate="{DataTemplate views:PunchListPage}"/>
+    </FlyoutItem> -->
+
+    <FlyoutItem x:Name="ActivitiesItem"
+                Route="activities"
+                Shell.BackgroundColor="{StaticResource DarkBlue}"
+                Shell.ForegroundColor="{StaticResource White}"
+                Shell.TitleColor="{StaticResource White}"
+                Title="Activities"
+                FlyoutIcon="activities_icon.svg">
+        <ShellContent Title="Activities"
+                      ContentTemplate="{DataTemplate views:ActivityListPage}"
+                      Route="ActivityListPage"/>
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="PunchesItem"
+                Route="punches"
+                Shell.BackgroundColor="{StaticResource DarkBlue}"
+                Shell.ForegroundColor="{StaticResource White}"
+                Shell.TitleColor="{StaticResource White}"
+                Title="Punches"
+                FlyoutIcon="punches_icon.svg">
+        <ShellContent Title="Punches"
+                      ContentTemplate="{DataTemplate views:PunchListPage}"
+                      Route="PunchListPage"/>
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="ImportSettingsItem"
+                Route="import-settings"
+                Shell.BackgroundColor="{StaticResource DarkBlue}"
+                Shell.ForegroundColor="{StaticResource White}"
+                Shell.TitleColor="{StaticResource White}"
+                Title="Import Settings"
+                FlyoutIcon="settings_icon.svg">
+        <ShellContent Title="Import Settings"
+                      ContentTemplate="{DataTemplate views:ImportSettingsPage}"
+                      Route="ImportSettingsPage"/>
     </FlyoutItem>
 </Shell>
