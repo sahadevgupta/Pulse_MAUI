@@ -355,6 +355,7 @@ namespace Pulse_MAUI.ViewModels
                 {
                     var sb = new StringBuilder();
                     syncResult.ForEach(e => sb.AppendLine(e));
+                    SentrySdk.CaptureMessage($"Sync Error : {sb.ToString()}");
                     await DialogService.ShowAlertDialog("Sync Error", sb.ToString(), AlertType.Error);
                 }
             }

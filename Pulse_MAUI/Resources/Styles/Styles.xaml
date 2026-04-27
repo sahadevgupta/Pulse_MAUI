@@ -654,9 +654,7 @@
 
         <Style TargetType="Switch">
                 <Setter Property="OnColor"
-                        Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"/>
-                <Setter Property="ThumbColor"
-                        Value="{StaticResource White}"/>
+                        Value="{AppThemeBinding Light={StaticResource BrightBlue}, Dark={StaticResource White}}"/>
                 <Setter Property="VisualStateManager.VisualStateGroups">
                         <VisualStateGroupList>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -674,7 +672,7 @@
                                                         <Setter Property="OnColor"
                                                                 Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray200}}"/>
                                                         <Setter Property="ThumbColor"
-                                                                Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"/>
+                                                                Value="{AppThemeBinding Light={StaticResource BrightBlue}, Dark={StaticResource White}}"/>
                                                 </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Off">

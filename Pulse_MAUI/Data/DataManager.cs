@@ -496,124 +496,135 @@ namespace Pulse_MAUI.Data
             //ReadOnlyCollection<MobileServiceTableOperationError> syncErrors = null;
             List<string> Errors = new List<string>();
 
-            try
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet || Connectivity.Current.NetworkAccess == NetworkAccess.ConstrainedInternet)
             {
 
-                //First do a push
-                long? _pendingOperations = this.client.PendingOperations;
-                Debug.WriteLine($"Pending operations before push: {_pendingOperations}");
-
-                if (_pendingOperations > 0)
+                try
                 {
-                    Debug.WriteLine("Executing push operation...");
-                    try
+
+                    //First do a push
+                    long? _pendingOperations = this.client.PendingOperations;
+                    Debug.WriteLine($"Pending operations before push: {_pendingOperations}");
+
+                    if (_pendingOperations > 0)
                     {
-                        await this.client.PushTablesAsync();
-                        Debug.WriteLine("Push completed successfully");
+                        Debug.WriteLine("Executing push operation...");
+                        try
+                        {
+                            await this.client.PushTablesAsync();
+                            Debug.WriteLine("Push completed successfully");
+                        }
+                        catch (Exception pushEx)
+                        {
+                            Debug.WriteLine($"Push failed: {pushEx.Message}");
+                            Errors.Add($"Push failed: {pushEx.Message}");
+                            // Continue with pull even if push fails
+                        }
                     }
-                    catch (Exception pushEx)
+                    else
                     {
-                        Debug.WriteLine($"Push failed: {pushEx.Message}");
-                        Errors.Add($"Push failed: {pushEx.Message}");
-                        // Continue with pull even if push fails
+                        Debug.WriteLine("No pending operations to push");
                     }
-                }
-                else
-                {
-                    Debug.WriteLine("No pending operations to push");
-                }
 
-                var a1 = await this.itemTable.ToListAsync();
-                await this.itemTable.PullItemsAsync(this.itemTable.CreateQuery());
+                    var a1 = await this.itemTable.ToListAsync();
+                    await this.itemTable.PullItemsAsync(this.itemTable.CreateQuery());
 
-                var a = await this.itemTable.ToListAsync();
+                    var a = await this.itemTable.ToListAsync();
 
 
-                if (!secondPass)
-                {
-                    await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.activityTable.PullItemsAsync(this.activityTable.CreateQuery());
-
-                    await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.punchItemTable.PullItemsAsync(this.punchItemTable.CreateQuery());
-
-                    await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.engineerTable.PullItemsAsync(this.engineerTable.CreateQuery());
-
-                    await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.userTable.PullItemsAsync(this.userTable.CreateQuery());
-
-                    await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.projectTable.PullItemsAsync(this.projectTable.CreateQuery());
-
-                    await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.commissioningSystemTable.PullItemsAsync(this.commissioningSystemTable.CreateQuery());
-
-                    await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.unitTable.PullItemsAsync(this.unitTable.CreateQuery());
-
-                    await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.componentTable.PullItemsAsync(this.componentTable.CreateQuery());
-
-
-                    await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
+                    if (!secondPass)
                     {
-                        QueryId = incremental ? "LookupDataIncremental" : null
-                    });
+                        await this.activityTable.PurgeItemsAsync(activityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.activityTable.PullItemsAsync(this.activityTable.CreateQuery());
+
+                        await this.punchItemTable.PurgeItemsAsync(punchItemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.punchItemTable.PullItemsAsync(this.punchItemTable.CreateQuery());
+
+                        await this.engineerTable.PurgeItemsAsync(engineerTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.engineerTable.PullItemsAsync(this.engineerTable.CreateQuery());
+
+                        await this.userTable.PurgeItemsAsync(userTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.userTable.PullItemsAsync(this.userTable.CreateQuery());
+
+                        await this.projectTable.PurgeItemsAsync(projectTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.projectTable.PullItemsAsync(this.projectTable.CreateQuery());
+
+                        await this.commissioningSystemTable.PurgeItemsAsync(commissioningSystemTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.commissioningSystemTable.PullItemsAsync(this.commissioningSystemTable.CreateQuery());
+
+                        await this.unitTable.PurgeItemsAsync(unitTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.unitTable.PullItemsAsync(this.unitTable.CreateQuery());
+
+                        await this.componentTable.PurgeItemsAsync(componentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.componentTable.PullItemsAsync(this.componentTable.CreateQuery());
 
 
-                    await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.priorityTable.PullItemsAsync(this.priorityTable.CreateQuery());
-
-                    await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.activityTaskTable.PullItemsAsync(this.activityTaskTable.CreateQuery());
-
-                    await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.equipmentTable.PullItemsAsync(this.equipmentTable.CreateQuery());
+                        await this.lookupTable.PullItemsAsync(this.lookupTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PullOptions
+                        {
+                            QueryId = incremental ? "LookupDataIncremental" : null
+                        });
 
 
-                    await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
-                    await this.disciplineTable.PullItemsAsync(this.disciplineTable.CreateQuery());
+                        await this.priorityTable.PurgeItemsAsync(priorityTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.priorityTable.PullItemsAsync(this.priorityTable.CreateQuery());
+
+                        await this.activityTaskTable.PurgeItemsAsync(activityTaskTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.activityTaskTable.PullItemsAsync(this.activityTaskTable.CreateQuery());
+
+                        await this.equipmentTable.PurgeItemsAsync(equipmentTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.equipmentTable.PullItemsAsync(this.equipmentTable.CreateQuery());
+
+
+                        await this.disciplineTable.PurgeItemsAsync(disciplineTable.CreateQuery(), new Microsoft.Datasync.Client.Offline.PurgeOptions(), CancellationToken.None);
+                        await this.disciplineTable.PullItemsAsync(this.disciplineTable.CreateQuery());
+
+                    }
 
                 }
+                catch (DatasyncConflictException conflict)
+                {
+                    var response = conflict.Request;
 
+                    if (response != null && response.Content != null)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        Debug.WriteLine(content);
+
+                        Errors.Add("(PushFailedException) due to conflicts" + content);
+                    }
+
+                }
+                catch (DatasyncInvalidOperationException ex)
+                {
+                    var route = ex.Request.RequestUri.AbsolutePath;
+                    // var x = ex.Response.ToString();
+                    System.Diagnostics.Debug.WriteLine("Error on: {0}", route);
+                    Errors.Add("Error on Sync (Invalid Operation) " + ex.ToString());
+                    var error = ex.Message;
+
+                }
+                catch (Exception ex)
+                {
+                    if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                    {
+                        Errors.Add("Error on Sync: Unable to connect to the server.\nIt appears there is an internet issue.Please check your connection and try syncing again.");
+
+                    }
+                    else if (ex.Message.Contains("Unable to resolve host"))
+                    {
+                        Errors.Add("Error on Sync: Unable to connect to the server.\nIt appears there is an internet issue.Please check your connection and try syncing again.");
+                    }
+                    else
+                    {
+                        Errors.Add("Error on Sync (Exception) " + ex.ToString());
+                    }
+
+                }
             }
-            catch (DatasyncConflictException exc)
+            else
             {
-                //var table = ex;        // "Tasks"
-                //var id = ex.ItemId;              // "123"
-
-                //var client = ex.ClientItem;      // JObject: your local pending version
-                //var server = ex.ServerItem;      // JObject: latest server version
-                //var original = ex.OriginalItem;  // JObject: previous version
-
-                //if (exc.IsConflictStatusCode != null)
-                //{
-                //    syncErrors = exc.PushResult.Errors;
-
-                //    foreach (var err in exc.Data.Keys)
-                //    {
-                //        Errors.Add("(PushFailedException) + Error on Sync Table:  " + err.TableName.ToString());
-                //    }
-
-                //}
-
-
+                Errors.Add("Error on Sync: Unable to connect to the server.\nIt appears there is an internet issue.Please check your connection and try syncing again.");
             }
-            catch (DatasyncInvalidOperationException ex)
-            {
-                var route = ex.Request.RequestUri.AbsolutePath;
-                // var x = ex.Response.ToString();
-                System.Diagnostics.Debug.WriteLine("Error on: {0}", route);
-                Errors.Add("Error on Sync (Invalid Operation) " + ex.ToString());
-                var error = ex.Message;
-
-            }
-            catch (Exception ex)
-            {
-                Errors.Add("Error on Sync (Exception) " + ex.ToString());
-            }
-
             return Errors;
         }
 

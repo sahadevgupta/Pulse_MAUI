@@ -174,5 +174,15 @@ namespace Pulse_MAUI.ViewModels
         }
 
         #endregion
+
+        #region [ Override Methods ]
+
+        public override void LoadDataOnAppearing()
+        {
+            StatusMessage = string.Empty;
+            base.LoadDataOnAppearing();
+        }
+
+        #endregion
     }
 }

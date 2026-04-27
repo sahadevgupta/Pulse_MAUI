@@ -153,7 +153,7 @@
                 <Editor MaxLength="1000"
                         HeightRequest="100"
                         Placeholder="{resources:Translate PunchPage_EditorPlaceHolder}"
-                        Text="{Binding Punch.Description}"/>
+                        Text="{Binding Punch.Comments}"/>
 
                 <controls:CustomPicker Title="{resources:Translate PunchPage_Status}"
                                        IsEnabled="{Binding IsNewPunch, Converter={toolkit:InvertedBoolConverter}}"

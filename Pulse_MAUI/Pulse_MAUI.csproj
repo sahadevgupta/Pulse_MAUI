@@ -18,15 +18,18 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Pulse MAUI</ApplicationTitle>
+		<ApplicationTitle>Pulse</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<!-- <ApplicationId>com.companyname.pulse_maui</ApplicationId> -->
-		<ApplicationId>com.Pulse.Pulse_MAUI</ApplicationId>
+		<ApplicationId>com.engineurs.pcatablet</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>3</ApplicationVersion>
+		<BuildYear>$([System.DateTime]::UtcNow.ToString("yy"))</BuildYear>
+		<BuildDayOfYear>$([System.DateTime]::UtcNow.DayOfYear.ToString("000"))</BuildDayOfYear>
+		<BuildHourMinute>$([System.DateTime]::UtcNow.ToString("HHmm"))</BuildHourMinute>
+		<ApplicationVersion>$([System.Int32]::Parse('$(BuildYear)$(BuildDayOfYear)$(BuildHourMinute)'))</ApplicationVersion>
+		<ApplicationDisplayVersion>1.2.$(BuildYear)$(BuildDayOfYear).$(BuildHourMinute)</ApplicationDisplayVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -125,9 +128,9 @@
 
 		<AndroidKeyStore>true</AndroidKeyStore>
 		<AndroidSigningKeyStore>Platforms/Android/KeyStore/Pulse.keystore</AndroidSigningKeyStore>
-		<AndroidSigningKeyAlias>Pulse</AndroidSigningKeyAlias>
-		<AndroidSigningKeyPass>1234567890</AndroidSigningKeyPass>
-		<AndroidSigningStorePass>1234567890</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>pulse</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>Argtech@123</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>Argtech@123</AndroidSigningStorePass>
 
 		<!-- Reduce size -->
 		<AndroidPackageFormat>aab</AndroidPackageFormat>
